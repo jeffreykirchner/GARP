@@ -1,4 +1,4 @@
-# Multi-User Django Websocket Template
+# GARP
 Testing the generalized axiom of revealed preferences with three budget constraints.
 
 ## Local setup on Windows:
