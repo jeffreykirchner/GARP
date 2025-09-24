@@ -1,5 +1,5 @@
 # Multi-User Django Websocket Template
-Template for a multi-user Django Channels experiment.
+Testing the generalized axiom of revealed preferences with three budget constraints.
 
 ## Local setup on Windows:
 
@@ -9,7 +9,7 @@ Clone this repo into the new folder using the command:
 	
 ```
 cd new_folder_name
-git clone https://github.com/jeffreykirchner/multi_user_socket_template.git .
+git clone https://github.com/jeffreykirchner/GARP.git .
 ```
 
 Install PostgreSQL and REDIS in WSL: https://learn.microsoft.com/en-us/windows/wsl/tutorials/wsl-database<br>
@@ -17,7 +17,7 @@ Install PostgreSQL and REDIS in WSL: https://learn.microsoft.com/en-us/windows/w
 Set up PostgreSQL in WSL:
 ```
 create user dbadmin with encrypted password 'password_here';
-create database multi_user_socket_template with owner dbadmin;
+create database garp with owner dbadmin;
 ```
 
 ## Project Setup
@@ -27,20 +27,20 @@ local_settings.py is used for local development and is excluded from the repo<br
 Update the database section of this file with the info from your locally run instance of PostgreSQL.
 
 ### Python and Virtual Environment Setup:
-Install Python 3.12:
+Install Python 3.13:
 ```
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt update 
-sudo apt install python3.12
-sudo apt-get install python3.12-distutils
+sudo apt install python3.13
+sudo apt-get install python3.13-distutils
 ```
 
 Install Virtual Environment:
 ```
 sudo apt install pipx
 pipx install virtualenv
-virtualenv --python=python3.12 _project_env
-source _project_env/bin/activate
+virtualenv --python=python3.13 _garp_env
+source _garp_env/bin/activate
 pip install -r requirements.txt
 
 //deactivate virtual environment
