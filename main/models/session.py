@@ -178,7 +178,7 @@ class Session(models.Model):
                             "finished":False,
                             "session_periods":{str(i.id) : i.json() for i in self.session_periods.all()},
                             "session_periods_order" : list(self.session_periods.all().values_list('id', flat=True)),
-                            "tokens":{},}
+                            }
         
         inventory = {str(i):0 for i in list(self.session_periods.all().values_list('id', flat=True))}
 
@@ -208,7 +208,6 @@ class Session(models.Model):
         
         parameter_set  = self.parameter_set.json_for_session
 
-        #tokens
         self.save()
 
     def reset_experiment(self):

@@ -67,20 +67,6 @@ class ParameterSetForm(forms.ModelForm):
                                             widget=forms.NumberInput(attrs={"v-model":"parameter_set.reconnection_limit",
                                                                             "step":"1",
                                                                             "min":"1"}))
-
-    tokens_per_period = forms.IntegerField(label='Tokens per Period',
-                                           min_value=1,
-                                           widget=forms.NumberInput(attrs={"v-model":"parameter_set.tokens_per_period",
-                                                                           "step":"1",
-                                                                           "min":"0"}))
-    
-    token_cents_value = forms.DecimalField(label='Token Value (¢)',
-                                            max_digits=6,
-                                            decimal_places=2,
-                                            min_value=0.01,
-                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.token_cents_value",
-                                                                                      "step":"0.01",
-                                                                                      "min":"0.01"}))
     
     interaction_length = forms.IntegerField(label='Interaction Length (seconds)',
                                             min_value=1,
@@ -156,7 +142,7 @@ class ParameterSetForm(forms.ModelForm):
         fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'interaction_length', 'cool_down_length',
                  'chat_gpt_mode', 'show_instructions', 
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
-                 'tokens_per_period', 'token_cents_value', 'interaction_range',
+                 'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height', 'test_mode']
 
