@@ -42,11 +42,6 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         let id_label = new PIXI.Text({text:parameter_set_player.id_label, 
                                       style:text_style});
         id_label.anchor.set(0.5);
-        
-        let token_graphic = PIXI.Sprite.from(app.pixi_textures.sprite_sheet_2.textures["cherry_small.png"]);
-        token_graphic.anchor.set(1, 0.5)
-        token_graphic.scale.set(0.3);
-        token_graphic.alpha = 0.7;
 
         let inventory_label = new PIXI.Text({text:subject.inventory[current_period_id], 
                                              style:text_style});
@@ -59,13 +54,11 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         avatar_container.addChild(gear_sprite);
         avatar_container.addChild(face_sprite);
         avatar_container.addChild(id_label);
-        avatar_container.addChild(token_graphic);
         avatar_container.addChild(inventory_label);
         avatar_container.addChild(status_label);
         
         face_sprite.position.set(0, -avatar_container.height * 0.03);
         id_label.position.set(0, -avatar_container.height * 0.2);
-        token_graphic.position.set(-2, +avatar_container.height * 0.18);
         inventory_label.position.set(2, +avatar_container.height * 0.18);
         status_label.position.set(0, -avatar_container.height/2 + 30);
 
