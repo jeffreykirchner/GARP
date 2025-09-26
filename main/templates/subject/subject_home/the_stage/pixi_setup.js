@@ -17,9 +17,14 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'water_tex', src:'{% static "water_tile.jpg"%}'});
     PIXI.Assets.add({alias:'dash_tex', src:'{% static "dash_1.png"%}'});
     PIXI.Assets.add({alias:'factory_tex', src:'{% static "factory.png"%}'});
+    PIXI.Assets.add({alias:'consumer_tex', src:'{% static "consumer.png"%}'});
+    PIXI.Assets.add({alias:'tray_tex', src:'{% static "tray.png"%}'});
+    PIXI.Assets.add({alias:'cash_register_tex', src:'{% static "cash_register.png"%}'});
+    PIXI.Assets.add({alias:'counter_top_tex', src:'{% static "counter_top.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
-                                               'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex']);
+                                               'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
+                                               'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
