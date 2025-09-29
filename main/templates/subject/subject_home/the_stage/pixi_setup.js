@@ -40,7 +40,7 @@ setup_pixi: function setup_pixi(){
         }
         else
         {
-            app.setup_pixi_minimap();
+            // app.setup_pixi_minimap();
             app.setup_subject_status_overlay();
         }
     });

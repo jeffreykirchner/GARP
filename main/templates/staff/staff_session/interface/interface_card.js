@@ -6,7 +6,7 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.session_players_order)
     {
         const player_id = app.session.session_players_order[i];
-        pixi_avatars[player_id].inventory_label = app.session.world_state.session_players[player_id].inventory[period_id];
+       
     }
 },
 

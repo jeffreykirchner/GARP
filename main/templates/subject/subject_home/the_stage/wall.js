@@ -25,6 +25,7 @@ setup_pixi_wall: function setup_pixi_wall()
         //outline.endFill();
 
         wall_container.addChild(outline);
+        wall_container.zIndex = 100;
 
         pixi_walls[i].wall_container = wall_container;
 
