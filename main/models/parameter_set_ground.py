@@ -60,7 +60,7 @@ class ParameterSetGround(models.Model):
         self.rotation = new_ps.get("rotation")
         self.scale = new_ps.get("scale")
         self.render_order = new_ps.get("render_order", 0)
-        self.enable_clipping = new_ps.get("enable_clipping", False)
+        self.enable_clipping = True if new_ps.get("enable_clipping", False) else False
 
         self.save()
         

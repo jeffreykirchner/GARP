@@ -50,6 +50,7 @@ class ParameterSet(models.Model):
 
     reconnection_limit = models.IntegerField(verbose_name='Limit Subject Screen Reconnection Trys', default=25)       #limit subject screen reconnection trys
 
+    enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
     test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                                #if true subject screens will do random auto testing
 
     json_for_session = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                   #json model of parameter set 
@@ -102,6 +103,7 @@ class ParameterSet(models.Model):
             self.avatar_animation_speed = new_ps.get("avatar_animation_speed", 1.0)
 
             self.reconnection_limit = new_ps.get("reconnection_limit", None)
+            self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
             self.save()
 
@@ -269,6 +271,7 @@ class ParameterSet(models.Model):
         self.json_for_session["avatar_animation_speed"] = self.avatar_animation_speed
 
         self.json_for_session["reconnection_limit"] = self.reconnection_limit
+        self.json_for_session["enable_chat"] = 1 if self.enable_chat else 0
 
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 
