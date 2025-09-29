@@ -21,10 +21,13 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'tray_tex', src:'{% static "tray.png"%}'});
     PIXI.Assets.add({alias:'cash_register_tex', src:'{% static "cash_register.png"%}'});
     PIXI.Assets.add({alias:'counter_top_tex', src:'{% static "counter_top.png"%}'});
+    PIXI.Assets.add({alias:'orange_tex', src:'{% static "orange.png"%}'});
+    PIXI.Assets.add({alias:'apple_tex', src:'{% static "apple.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
-                                               'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex']);
+                                               'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
+                                               'orange_tex', 'apple_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
