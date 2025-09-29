@@ -43,10 +43,6 @@ setup_pixi_subjects: function setup_pixi_subjects(){
                                       style:text_style});
         id_label.anchor.set(0.5);
 
-        let inventory_label = new PIXI.Text({text:subject.inventory[current_period_id], 
-                                             style:text_style});
-        inventory_label.anchor.set(0, 0.5);
-
         let status_label = new PIXI.Text({text:"Working ... 10", style:text_style});
         status_label.anchor.set(0.5);
         status_label.visible = false;
@@ -54,17 +50,14 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         avatar_container.addChild(gear_sprite);
         avatar_container.addChild(face_sprite);
         avatar_container.addChild(id_label);
-        avatar_container.addChild(inventory_label);
         avatar_container.addChild(status_label);
         
         face_sprite.position.set(0, -avatar_container.height * 0.03);
         id_label.position.set(0, -avatar_container.height * 0.2);
-        inventory_label.position.set(2, +avatar_container.height * 0.18);
         status_label.position.set(0, -avatar_container.height/2 + 30);
 
         pixi_avatars[i].status_label = status_label;
         pixi_avatars[i].gear_sprite = gear_sprite;
-        pixi_avatars[i].inventory_label = inventory_label;
 
         avatar_container.scale.set(app.session.parameter_set.avatar_scale);
 
@@ -322,7 +315,7 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.session_players_order)
     {
         const player_id = app.session.session_players_order[i];
-        pixi_avatars[player_id].inventory_label.text = app.session.world_state.session_players[player_id].inventory[period_id];
+       
     }
 },
 
@@ -440,8 +433,6 @@ take_interaction: function take_interaction(message_data)
         source_player.inventory[period] = message_data.source_player_inventory;
         target_player.inventory[period] = message_data.target_player_inventory;
         
-        pixi_avatars[source_player_id].inventory_label.text = source_player.inventory[currnent_period_id];
-        pixi_avatars[target_player_id].inventory_label.text = target_player.inventory[currnent_period_id];
 
         //add transfer beam
         if(message_data.direction == "send")

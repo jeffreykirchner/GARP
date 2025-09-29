@@ -133,6 +133,10 @@ class ParameterSetForm(forms.ModelForm):
                                                                       "min":"1000"}))
                                                                 
 
+    enable_chat = forms.ChoiceField(label='Enable Chat',
+                                    choices=((1, 'Yes'), (0, 'No')),
+                                    widget=forms.Select(attrs={"v-model":"parameter_set.enable_chat",}))
+    
     test_mode = forms.ChoiceField(label='Test Mode',
                                   choices=((1, 'Yes'), (0, 'No')),
                                   widget=forms.Select(attrs={"v-model":"parameter_set.test_mode",}))
@@ -144,7 +148,7 @@ class ParameterSetForm(forms.ModelForm):
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
-                 'world_width', 'world_height', 'test_mode']
+                 'world_width', 'world_height', 'enable_chat', 'test_mode']
 
     def clean_survey_link(self):
         
