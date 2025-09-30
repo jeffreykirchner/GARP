@@ -131,7 +131,16 @@ class ParameterSetForm(forms.ModelForm):
                                       widget=forms.NumberInput(attrs={"v-model":"parameter_set.world_height",
                                                                       "step":"1",
                                                                       "min":"1000"}))
-                                                                
+
+    orchard_apple_location = forms.CharField(label='Apple Orchard Location (x,y)',
+                                              max_length=100,
+                                              initial="100,150",
+                                              widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_apple_location",}))
+
+    orchard_orange_location = forms.CharField(label='Orange Orchard Location (x,y)',
+                                               max_length=100,
+                                               initial="300,150",
+                                               widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_orange_location",}))
 
     enable_chat = forms.ChoiceField(label='Enable Chat',
                                     choices=((1, 'Yes'), (0, 'No')),
@@ -148,7 +157,8 @@ class ParameterSetForm(forms.ModelForm):
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
-                 'world_width', 'world_height', 'enable_chat', 'test_mode']
+                 'world_width', 'world_height','orchard_apple_location', 'orchard_orange_location', 
+                 'enable_chat', 'test_mode']
 
     def clean_survey_link(self):
         

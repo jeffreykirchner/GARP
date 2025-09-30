@@ -39,9 +39,9 @@ setup_pixi_subjects: function setup_pixi_subjects(){
             stroke: {color:'black', width: 3},
         };
 
-        let id_label = new PIXI.Text({text:parameter_set_player.id_label, 
-                                      style:text_style});
-        id_label.anchor.set(0.5);
+        // let id_label = new PIXI.Text({text:parameter_set_player.id_label, 
+        //                               style:text_style});
+        // id_label.anchor.set(0.5);
 
         let status_label = new PIXI.Text({text:"Working ... 10", style:text_style});
         status_label.anchor.set(0.5);
@@ -49,11 +49,11 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         avatar_container.addChild(gear_sprite);
         avatar_container.addChild(face_sprite);
-        avatar_container.addChild(id_label);
+        // avatar_container.addChild(id_label);
         avatar_container.addChild(status_label);
         
         face_sprite.position.set(0, -avatar_container.height * 0.03);
-        id_label.position.set(0, -avatar_container.height * 0.2);
+        // id_label.position.set(0, -avatar_container.height * 0.2);
         status_label.position.set(0, -avatar_container.height/2 + 30);
 
         pixi_avatars[i].status_label = status_label;
@@ -302,7 +302,6 @@ select_all: function select_all()
         app.selected_player.interaction_amount =session_player.inventory[app.session.session_periods_order[app.session.world_state.current_period-1]];
     }
 },
-
 
 /**
  * update the inventory of the player

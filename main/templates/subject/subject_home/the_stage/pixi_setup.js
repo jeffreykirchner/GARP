@@ -23,11 +23,15 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'counter_top_tex', src:'{% static "counter_top.png"%}'});
     PIXI.Assets.add({alias:'orange_tex', src:'{% static "orange.png"%}'});
     PIXI.Assets.add({alias:'apple_tex', src:'{% static "apple.png"%}'});
+    PIXI.Assets.add({alias:'orchard_apple_tex', src:'{% static "apple_tree.png"%}'});
+    PIXI.Assets.add({alias:'orchard_orange_tex', src:'{% static "orange_tree.png"%}'});
+    PIXI.Assets.add({alias:'double_click_tex', src:'{% static "double_click.png"%}'}); 
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
                                                'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
-                                               'orange_tex', 'apple_tex']);
+                                               'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
+                                               'double_click_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
@@ -35,6 +39,8 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_subjects();
         app.setup_pixi_wall();
         app.setup_pixi_barrier();
+        app.setup_pixi_orchard_apple();
+        app.setup_pixi_orchard_orange();
         
         if(app.pixi_mode!="subject")
         {

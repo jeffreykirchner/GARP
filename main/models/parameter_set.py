@@ -43,15 +43,18 @@ class ParameterSet(models.Model):
     cool_down_length = models.IntegerField(verbose_name='Cool Down Length', default=10)                       #cool down length in seconds
     interaction_range = models.IntegerField(verbose_name='Interaction Range', default=300)                    #interaction range in pixels
 
-    avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=1) #avatar scale
+    avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=1)                            #avatar scale
     avatar_bound_box_percent = models.DecimalField(verbose_name='Avatar Bound Box Percent', decimal_places=2, max_digits=3, default=0.75) #avatar bound box percent for interaction
-    avatar_move_speed = models.DecimalField(verbose_name='Move Speed', decimal_places=1, max_digits=3, default=5.0)            #move speed
-    avatar_animation_speed = models.DecimalField(verbose_name='Animation Speed', decimal_places=2, max_digits=3, default=1.0)  #animation speed
+    avatar_move_speed = models.DecimalField(verbose_name='Move Speed', decimal_places=1, max_digits=3, default=5.0)                       #move speed
+    avatar_animation_speed = models.DecimalField(verbose_name='Animation Speed', decimal_places=2, max_digits=3, default=1.0)             #animation speed
 
     reconnection_limit = models.IntegerField(verbose_name='Limit Subject Screen Reconnection Trys', default=25)       #limit subject screen reconnection trys
 
+    orchard_apple_location = models.CharField(max_length=100, default="100,150", verbose_name="Apple Orchard Location", blank=True, null=True)       #x,y location of apple orchard
+    orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
+
     enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
-    test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                                #if true subject screens will do random auto testing
+    test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                               #if true subject screens will do random auto testing
 
     json_for_session = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                   #json model of parameter set 
 
@@ -103,6 +106,10 @@ class ParameterSet(models.Model):
             self.avatar_animation_speed = new_ps.get("avatar_animation_speed", 1.0)
 
             self.reconnection_limit = new_ps.get("reconnection_limit", None)
+
+            self.orchard_apple_location = new_ps.get("orchard_apple_location", "100,150")
+            self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
+
             self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
             self.save()
@@ -272,6 +279,9 @@ class ParameterSet(models.Model):
 
         self.json_for_session["reconnection_limit"] = self.reconnection_limit
         self.json_for_session["enable_chat"] = 1 if self.enable_chat else 0
+
+        self.json_for_session["orchard_apple_location"] = self.orchard_apple_location
+        self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
 
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 

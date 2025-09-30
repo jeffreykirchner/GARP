@@ -274,7 +274,8 @@ let app = Vue.createApp({
             app.setup_pixi_wall();
             app.setup_pixi_barrier();
             app.update_subject_status_overlay();
-            // app.setup_pixi_minimap();
+            app.setup_pixi_orchard_apple();
+            app.setup_pixi_orchard_orange();
         },
 
         /** send winsock request to get session info
@@ -347,7 +348,6 @@ let app = Vue.createApp({
             app.interaction_start_modal.hide();
             app.help_modal.hide();
 
-            // app.setup_pixi_minimap();
             app.remove_all_notices();
 
             app.notices_seen = [];
@@ -563,6 +563,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/ground.js"%}
         {%include "subject/subject_home/help_doc_subject.js"%}
         {%include "subject/subject_home/the_stage/chat_gpt.js"%}
+        {%include "subject/subject_home/the_stage/orchard.js"%}
 
         /** clear form error messages
         */
