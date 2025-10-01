@@ -426,7 +426,6 @@ let app = Vue.createApp({
             {
                 let session_player = message_data.session_player_status[p];
                 app.session.world_state.session_players[p].interaction = session_player.interaction;
-                app.session.world_state.session_players[p].frozen = session_player.frozen;
                 app.session.world_state.session_players[p].cool_down = session_player.cool_down;
             }
 

@@ -312,9 +312,6 @@ take_interaction: function take_interaction(message_data)
         let period = message_data.period;
 
         //update status
-
-        source_player.frozen = false
-        target_player.frozen = false
     
         source_player.interaction = 0;
         target_player.interaction = 0;
@@ -411,9 +408,6 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
 
     if(message_data.value == "success")
     {
-
-        source_player.frozen = false
-        target_player.frozen = false
 
         source_player.interaction = 0;
         target_player.interaction = 0;

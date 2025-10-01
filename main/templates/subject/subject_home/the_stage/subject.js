@@ -25,19 +25,6 @@ subject_pointer_click: function subject_pointer_click(event)
         return;
     }
 
-    if(local_player.frozen)
-    {
-        app.add_text_emitters("No movement while interacting.", 
-                        local_player.current_location.x, 
-                        local_player.current_location.y,
-                        local_player.current_location.x,
-                        local_player.current_location.y-100,
-                        0xFFFFFF,
-                        28,
-                        null);
-        return;
-    }
-
     //can't move ontop of other players
     for(let i in app.session.world_state.session_players)
     {
@@ -85,19 +72,6 @@ subject_pointer_right_click: function subject_pointer_right_click(event)
     if(!app.session.world_state.hasOwnProperty('started')) return;
     let local_pos = event.data.getLocalPosition(event.currentTarget);
     let local_player = app.session.world_state.session_players[app.session_player.id];
-
-    if(local_player.frozen)
-    {
-        app.add_text_emitters("No actions while interacting.", 
-                        local_player.current_location.x, 
-                        local_player.current_location.y,
-                        local_player.current_location.x,
-                        local_player.current_location.y-100,
-                        0xFFFFFF,
-                        28,
-                        null);
-        return;
-    }
 
     if(local_player.cool_down > 0)
     {
