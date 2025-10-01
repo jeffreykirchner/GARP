@@ -51,38 +51,6 @@ class InterfaceMixin():
 
         await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
-        
-    async def interaction(self, event):
-        '''
-        a subject has submitted an interaction, handled by staff consumer
-        '''
-        pass
-
-    async def update_interaction(self, event):
-        '''
-        a subject has submitted an interaction, update
-        '''
-
-        event_data = json.loads(event["group_data"])
-
-        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
-        
-    async def cancel_interaction(self, event):
-        '''
-        a subject has canceled an interaction, handled by staff consumer
-        '''
-        pass
-
-    async def update_cancel_interaction(self, event):
-        '''
-        a subject has canceled an interaction, update
-        '''
-
-        event_data = json.loads(event["group_data"])
-
-        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
     
     async def update_rescue_subject(self, event):
         '''

@@ -405,7 +405,6 @@ let app = Vue.createApp({
             for(let p in message_data.session_player_status)
             {
                 let session_player = message_data.session_player_status[p];
-                app.session.world_state.session_players[p].interaction = session_player.interaction;
                 app.session.world_state.session_players[p].cool_down = session_player.cool_down;
             }
 

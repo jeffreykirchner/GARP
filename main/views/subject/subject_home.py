@@ -17,7 +17,6 @@ from main.models import SessionPlayer
 from main.models import Parameters
 
 from main.forms import EndGameForm
-from main.forms import InteractionForm
 
 class SubjectHomeView(View):
     '''
@@ -40,9 +39,6 @@ class SubjectHomeView(View):
         for i in EndGameForm():
            form_ids.append(i.html_name)
 
-        for i in InteractionForm():
-           form_ids.append(i.html_name)
-
         # sprite_sheet_css = generate_css_sprite_sheet('main/static/avatars.json', static('avatars.png'))
 
         parameters = Parameters.objects.first()
@@ -53,7 +49,6 @@ class SubjectHomeView(View):
                                "player_key" :  session_player.player_key,
                                "id" : session.id,
                                "end_game_form" : EndGameForm(),
-                               "interaction_form" : InteractionForm(),
                                "form_ids" : form_ids,
                                "websocket_path" : self.websocket_path,
                                "page_key" : f'session-{session.id}',

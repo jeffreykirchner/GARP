@@ -68,12 +68,6 @@ class ParameterSetForm(forms.ModelForm):
                                                                             "step":"1",
                                                                             "min":"1"}))
     
-    interaction_length = forms.IntegerField(label='Interaction Length (seconds)',
-                                            min_value=1,
-                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.interaction_length",
-                                                                            "step":"1",
-                                                                            "min":"1"}))
-    
     interaction_range = forms.IntegerField(label='Interaction Range (Pixels)',
                                            min_value=100,
                                            max_value=800,
@@ -152,7 +146,7 @@ class ParameterSetForm(forms.ModelForm):
 
     class Meta:
         model=ParameterSet
-        fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'interaction_length', 'cool_down_length',
+        fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'cool_down_length',
                  'chat_gpt_mode', 'show_instructions', 
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',

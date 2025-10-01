@@ -69,49 +69,7 @@ subject_pointer_tap: function subject_pointer_tap(event)
  */
 subject_pointer_right_click: function subject_pointer_right_click(event)
 {
-    if(!app.session.world_state.hasOwnProperty('started')) return;
-    let local_pos = event.data.getLocalPosition(event.currentTarget);
-    let local_player = app.session.world_state.session_players[app.session_player.id];
-
-    if(local_player.cool_down > 0)
-    {
-        app.add_text_emitters("No actions cooling down.", 
-                        local_player.current_location.x, 
-                        local_player.current_location.y,
-                        local_player.current_location.x,
-                        local_player.current_location.y-100,
-                        0xFFFFFF,
-                        28,
-                        null);
-        return;
-    }
-    
-    for(let i in app.session.world_state.session_players)
-    {
-        let obj = app.session.world_state.session_players[i];
-
-        if(app.get_distance(obj.current_location, local_pos) < 100 &&
-            app.get_distance(obj.current_location, local_player.current_location) <= app.session.parameter_set.interaction_range+125)
-        {
-
-            if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
-                app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-            {
-                app.add_text_emitters("No interactions while on break.", 
-                                        obj.current_location.x, 
-                                        obj.current_location.y,
-                                        obj.current_location.x,
-                                        obj.current_location.y-100,
-                                        0xFFFFFF,
-                                        28,
-                                        null);
-                return;
-            }
-
-            app.subject_avatar_click(i);              
-            break;
-        }
-    }
+   
 },
 
 /**

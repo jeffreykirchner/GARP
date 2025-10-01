@@ -39,8 +39,6 @@ class ParameterSet(models.Model):
     world_width = models.IntegerField(verbose_name='Width of world in pixels', default=10000)                 #world width in pixels
     world_height = models.IntegerField(verbose_name='Height of world in pixels', default=10000)               #world height in pixels
 
-    interaction_length = models.IntegerField(verbose_name='Interaction Length', default=10)                   #interaction length in seconds
-    cool_down_length = models.IntegerField(verbose_name='Cool Down Length', default=10)                       #cool down length in seconds
     interaction_range = models.IntegerField(verbose_name='Interaction Range', default=300)                    #interaction range in pixels
 
     avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=1)                            #avatar scale
@@ -96,7 +94,6 @@ class ParameterSet(models.Model):
             self.world_width = new_ps.get("world_width", 1000)
             self.world_height = new_ps.get("world_height", 1000)
 
-            self.interaction_length = new_ps.get("interaction_length", 10)
             self.cool_down_length = new_ps.get("cool_down_length", 10)
             self.interaction_range = new_ps.get("interaction_range", 300)
 
@@ -268,7 +265,6 @@ class ParameterSet(models.Model):
         self.json_for_session["world_width"] = self.world_width
         self.json_for_session["world_height"] = self.world_height
 
-        self.json_for_session["interaction_length"] = self.interaction_length
         self.json_for_session["cool_down_length"] = self.cool_down_length
         self.json_for_session["interaction_range"] = self.interaction_range
         

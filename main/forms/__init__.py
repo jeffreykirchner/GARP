@@ -30,4 +30,3 @@ from .help_doc_subject_form import HelpDocSubjectForm
 from .help_doc_subject_form_admin import HelpDocSubjectFormAdmin
 
 from .end_game_form import EndGameForm
-from .interaction_form import InteractionForm
