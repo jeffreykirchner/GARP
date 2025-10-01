@@ -186,6 +186,8 @@ class Session(models.Model):
             v['current_location'] = {'x':i['parameter_set_player__start_x'], 'y':i['parameter_set_player__start_y']}
             v['target_location'] = v['current_location']
             v['earnings'] = 0
+            v['apples'] = 0
+            v['oranges'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             
             self.world_state["session_players"][str(i['id'])] = v

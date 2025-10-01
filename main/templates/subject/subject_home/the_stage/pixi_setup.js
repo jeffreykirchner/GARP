@@ -41,6 +41,11 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_barrier();
         app.setup_pixi_orchard_apple();
         app.setup_pixi_orchard_orange();
+
+        if(app.session.started)
+        {
+            app.update_player_inventory();
+        }
         
         if(app.pixi_mode!="subject")
         {

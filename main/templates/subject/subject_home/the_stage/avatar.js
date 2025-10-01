@@ -39,6 +39,14 @@ setup_pixi_subjects: function setup_pixi_subjects(){
             stroke: {color:'black', width: 3},
         };
 
+        let text_style_2 = {
+            fontFamily: 'Arial',
+            fontSize: 46,
+            fill: 'white',
+            // align: 'left',
+            stroke: {color:'black', width:3},
+        };
+
         // let id_label = new PIXI.Text({text:parameter_set_player.id_label, 
         //                               style:text_style});
         // id_label.anchor.set(0.5);
@@ -47,14 +55,49 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         status_label.anchor.set(0.5);
         status_label.visible = false;
 
+        //good one
+        let good_one_container = new PIXI.Container();
+        good_one_container.alpha = 0.75;
+
+        let good_one_label = new PIXI.Text({text:"00", style:text_style_2});
+        good_one_label.anchor.set(0, 0.5);
+
+        let good_one_sprite = PIXI.Sprite.from(app.pixi_textures["apple_tex"]);
+        good_one_sprite.anchor.set(1, 0.5);
+        good_one_sprite.scale.set(0.5);
+
+        good_one_container.addChild(good_one_label);
+        good_one_container.addChild(good_one_sprite);
+        good_one_label.position.set(+5,0);
+        good_one_sprite.position.set(-5,0);
+
+        //good two
+        let good_two_container = new PIXI.Container();
+        good_two_container.alpha = 0.75;
+        let good_two_label = new PIXI.Text({text:"00", style:text_style_2});
+        good_two_label.anchor.set(0, 0.5);
+
+        let good_two_sprite = PIXI.Sprite.from(app.pixi_textures["orange_tex"]);
+        good_two_sprite.anchor.set(1, 0.5);
+        good_two_sprite.scale.set(0.5);
+
+        good_two_container.addChild(good_two_label);
+        good_two_container.addChild(good_two_sprite);
+        good_two_label.position.set(+5,0);
+        good_two_sprite.position.set(-5,0);
+
         avatar_container.addChild(gear_sprite);
         avatar_container.addChild(face_sprite);
+        avatar_container.addChild(good_one_container);
+        avatar_container.addChild(good_two_container);
         // avatar_container.addChild(id_label);
         avatar_container.addChild(status_label);
         
         face_sprite.position.set(0, -avatar_container.height * 0.03);
         // id_label.position.set(0, -avatar_container.height * 0.2);
         status_label.position.set(0, -avatar_container.height/2 + 30);
+        good_one_container.position.set(-80, -gear_sprite.height/2 - 0);
+        good_two_container.position.set(+80, -gear_sprite.height/2 - 0);
 
         pixi_avatars[i].status_label = status_label;
         pixi_avatars[i].gear_sprite = gear_sprite;
@@ -94,6 +137,8 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         pixi_avatars[i].avatar = {};
         pixi_avatars[i].avatar_container = avatar_container;
+        pixi_avatars[i].apples_label = good_one_label;
+        pixi_avatars[i].oranges_label = good_two_label;
 
         pixi_container_main.addChild(pixi_avatars[i].avatar_container);
 
@@ -215,12 +260,14 @@ destroy_setup_pixi_subjects: function destroy_setup_pixi_subjects()
 update_player_inventory: function update_player_inventory()
 {
 
-    let period_id = app.session.session_periods_order[app.session.world_state.current_period-1];
+    // let period_id = app.session.session_periods_order[app.session.world_state.current_period-1];
 
-    for(const i in app.session.session_players_order)
+    for(const i in app.session.world_state.session_players)
     {
-        const player_id = app.session.session_players_order[i];
-       
+        let session_player = app.session.world_state.session_players[i];
+        pixi_avatars[i].apples_label.text = session_player.apples < 10 ? `0${session_player.apples}` : session_player.apples;
+        pixi_avatars[i].oranges_label.text = session_player.oranges < 10 ? `0${session_player.oranges}` : session_player.oranges;
+
     }
 },
 
