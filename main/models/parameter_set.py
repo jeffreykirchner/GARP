@@ -94,7 +94,6 @@ class ParameterSet(models.Model):
             self.world_width = new_ps.get("world_width", 1000)
             self.world_height = new_ps.get("world_height", 1000)
 
-            self.cool_down_length = new_ps.get("cool_down_length", 10)
             self.interaction_range = new_ps.get("interaction_range", 300)
 
             self.avatar_scale = new_ps.get("avatar_scale", 1)
@@ -265,7 +264,6 @@ class ParameterSet(models.Model):
         self.json_for_session["world_width"] = self.world_width
         self.json_for_session["world_height"] = self.world_height
 
-        self.json_for_session["cool_down_length"] = self.cool_down_length
         self.json_for_session["interaction_range"] = self.interaction_range
         
         self.json_for_session["avatar_scale"] = self.avatar_scale

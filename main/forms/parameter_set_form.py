@@ -75,12 +75,6 @@ class ParameterSetForm(forms.ModelForm):
                                                                            "step":"1",
                                                                            "max":"800",
                                                                            "min":"100"}))
-    
-    cool_down_length = forms.IntegerField(label='Cool Down Length (seconds)',
-                                          min_value=1,
-                                          widget=forms.NumberInput(attrs={"v-model":"parameter_set.cool_down_length",
-                                                                          "step":"1",
-                                                                          "min":"1"}))
 
     avatar_scale = forms.DecimalField(label='Avatar Scale',
                                       max_digits=3,
@@ -146,7 +140,7 @@ class ParameterSetForm(forms.ModelForm):
 
     class Meta:
         model=ParameterSet
-        fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'cool_down_length',
+        fields =['period_count', 'period_length', 'break_frequency', 'break_length',
                  'chat_gpt_mode', 'show_instructions', 
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',
