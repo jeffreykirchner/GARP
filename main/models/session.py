@@ -195,8 +195,6 @@ class Session(models.Model):
 
             v['current_location'] = {'x':i['parameter_set_player__start_x'], 'y':i['parameter_set_player__start_y']}
             v['target_location'] = v['current_location']
-            v['inventory'] = inventory
-            v['tractor_beam_target'] = None
             v['frozen'] = False
             v['cool_down'] = 0
             v['interaction'] = 0

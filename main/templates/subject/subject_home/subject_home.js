@@ -428,7 +428,6 @@ let app = Vue.createApp({
                 app.session.world_state.session_players[p].interaction = session_player.interaction;
                 app.session.world_state.session_players[p].frozen = session_player.frozen;
                 app.session.world_state.session_players[p].cool_down = session_player.cool_down;
-                app.session.world_state.session_players[p].tractor_beam_target = session_player.tractor_beam_target;
             }
 
             //update player location

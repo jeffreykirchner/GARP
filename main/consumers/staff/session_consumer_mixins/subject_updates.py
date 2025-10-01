@@ -215,9 +215,6 @@ class SubjectUpdatesMixin():
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
 
-        if session_player["frozen"] or session_player["tractor_beam_target"]:
-            return
-
         session_player["target_location"] = target_location
         session_player["current_location"] = current_location
 

@@ -129,20 +129,6 @@ setup_pixi_subjects: function setup_pixi_subjects(){
 
         pixi_container_main.addChild(pixi_avatars[i].chat.container);
 
-        //tractor beam
-        pixi_avatars[i].tractor_beam = [];
-        subject.tractor_beam_target = null;
-
-        for(let j=0; j<15; j++)
-        {
-            let tractor_beam_sprite = PIXI.Sprite.from(app.pixi_textures.sprite_sheet_2.textures["particle2.png"]);
-            tractor_beam_sprite.anchor.set(0.5);
-            tractor_beam_sprite.visible = false;
-            tractor_beam_sprite.zIndex = 1500;
-            pixi_avatars[i].tractor_beam.push(tractor_beam_sprite);
-            pixi_container_main.addChild(tractor_beam_sprite);
-        }
-
         //interaction range
         let interaction_container = new PIXI.Container();
         interaction_container.position.set(subject.current_location.x, subject.current_location.y);
@@ -242,12 +228,6 @@ subject_avatar_click: function subject_avatar_click(target_player_id)
         }
     }
 
-    // console.log("subject avatar click", target_player_id);
-
-    // app.send_message("tractor_beam", 
-    //                  {"target_player_id" : target_player_id},
-    //                  "group");
-
     app.selected_player.session_player = app.session.world_state.session_players[target_player_id];
     app.selected_player.selected_player_id = target_player_id;
     app.selected_player.parameter_set_player = app.get_parameter_set_player_from_player_id(target_player_id);
@@ -269,41 +249,6 @@ start_send: function start_send()
 },
 
 /**
- * start take seeds
- */
-start_take: function start_take()
-{
-    let session_player = app.session.world_state.session_players[app.session_player.id];
-    let target_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
-    
-    app.working = true;
-    app.selected_player.interaction_type = "take";
-    app.selected_player.interaction_amount = 0;
-    
-    app.send_message("tractor_beam", 
-                    {"target_player_id": app.selected_player.selected_player_id,
-                     "interaction_type": app.selected_player.interaction_type},
-                     "group");
-},
-
-/**
- * select all seeds
- */
-select_all: function select_all()
-{
-    if(app.selected_player.interaction_type == "send")
-    {
-        let session_player = app.session.world_state.session_players[app.session_player.id];
-        app.selected_player.interaction_amount = session_player.inventory[app.session.session_periods_order[app.session.world_state.current_period-1]];
-    }
-    else if(app.selected_player.interaction_type == "take")
-    {
-        let session_player = app.session.world_state.session_players[app.selected_player.selected_player_id];
-        app.selected_player.interaction_amount =session_player.inventory[app.session.session_periods_order[app.session.world_state.current_period-1]];
-    }
-},
-
-/**
  * update the inventory of the player
  */
 update_player_inventory: function update_player_inventory()
@@ -315,53 +260,6 @@ update_player_inventory: function update_player_inventory()
     {
         const player_id = app.session.session_players_order[i];
        
-    }
-},
-
-/**
- * result of subject activating tractor beam
- */
-take_tractor_beam: function take_tractor_beam(message_data)
-{
-    let source_player_id = message_data.source_player_id;
-
-    if(message_data.status == "success")
-    {
-        let player_id = message_data.player_id;
-        let target_player_id = message_data.target_player_id;
-    
-        app.session.world_state.session_players[player_id].tractor_beam_target = target_player_id;
-    
-        app.session.world_state.session_players[player_id].frozen = true
-        app.session.world_state.session_players[target_player_id].frozen = true
-    
-        app.session.world_state.session_players[player_id].interaction = app.session.parameter_set.interaction_length;
-        app.session.world_state.session_players[target_player_id].interaction = app.session.parameter_set.interaction_length;
-    
-        if(app.is_subject)
-        {
-            if(player_id == app.session_player.id)
-            {
-                app.interaction_start_modal.hide();
-
-                app.interaction_modal.toggle();
-                app.interaction_modal_open = true;
-
-                app.working = false;
-            }
-            else if(target_player_id == app.session_player.id)
-            {
-                app.working = false;
-            }
-        }
-        
-    }
-    else
-    {
-        if(app.is_subject && source_player_id == app.session_player.id)
-        {
-            app.interaction_start_error = message_data.error_message[0].message;
-        }
     }
 },
 
@@ -414,7 +312,6 @@ take_interaction: function take_interaction(message_data)
         let period = message_data.period;
 
         //update status
-        source_player.tractor_beam_target = null;
 
         source_player.frozen = false
         target_player.frozen = false
@@ -514,7 +411,6 @@ take_cancel_interaction: function take_cancel_interaction(message_data)
 
     if(message_data.value == "success")
     {
-        source_player.tractor_beam_target = null;
 
         source_player.frozen = false
         target_player.frozen = false
@@ -582,73 +478,6 @@ take_target_location_update: function take_target_location_update(message_data)
     else
     {
         
-    }
-},
-
-/**
- * update tractor beam between two players
- */
-setup_tractor_beam: function setup_tractor_beam(source_id, target_id)
-{
-    let source_player = app.session.world_state.session_players[source_id];
-    let target_player = app.session.world_state.session_players[target_id];
-
-    let parameter_set_player = app.session.parameter_set.parameter_set_players[source_player.parameter_set_player_id];
-
-    let dY = source_player.current_location.y - target_player.current_location.y;
-    let dX = source_player.current_location.x - target_player.current_location.x;
-
-    let myX = source_player.current_location.x;
-    let myY = source_player.current_location.y;
-    let targetX = target_player.current_location.x;
-    let targetY = target_player.current_location.y;
-    
-    let tempAngle = Math.atan2(dY, dX);
-    let tempSlope = (myY - targetY) / (myX - targetX);
-
-    if (myX - targetX == 0) tempSlope = 0.999999999999;
-
-    let tempYIntercept = myY - tempSlope * myX;
-
-    // Rectangle rectTractor;
-    let tractorCircles = pixi_avatars[source_id].tractor_beam.length;
-    let tempScale = 1 / tractorCircles;
-
-    let xIncrement = Math.sqrt(Math.pow(myX - targetX, 2) + Math.pow(myY - targetY, 2)) / tractorCircles;
-
-    for (let i=0; i<tractorCircles; i++)
-    {
-        let temp_x = (myX - Math.cos(tempAngle) * xIncrement * i);
-        let temp_y = (myY - Math.sin(tempAngle) * xIncrement * i);
-
-        let tb_sprite = pixi_avatars[source_id].tractor_beam[i];
-        tb_sprite.position.set(temp_x, temp_y)
-        tb_sprite.scale.set(tempScale * i);
-        tb_sprite.visible = true;
-        
-        if (app.pixi_tick_tock.value == 'tick')
-        {
-            if (i%2 == 0)
-            {
-                tb_sprite.tint = parameter_set_player.hex_color;
-            }
-            else
-            {
-                tb_sprite.tint = 0xFFFFFF;
-            }
-        }
-        else
-        {
-            if (i%2 == 0)
-            {
-               tb_sprite.tint = 0xFFFFFF;
-            }
-            else
-            {
-                tb_sprite.tint = parameter_set_player.hex_color;
-            }
-        }
-
     }
 },
 
@@ -780,25 +609,6 @@ move_player: function move_player(delta)
 
         chat_container.visible = obj.show_chat;
     }   
-
-    //update tractor beams and status
-    for(let i in app.session.world_state.session_players)
-    {
-        let player = app.session.world_state.session_players[i];
-
-        if(player.tractor_beam_target)
-        {
-            app.setup_tractor_beam(i, player.tractor_beam_target);
-        }
-        else
-        {
-            for (let j=0; j< pixi_avatars[i].tractor_beam.length; j++)
-            {
-                let tb_sprite = pixi_avatars[i].tractor_beam[j];
-                tb_sprite.visible = false;
-            }
-        }
-    }
 
     for(let i in app.session.world_state.session_players)
     {
