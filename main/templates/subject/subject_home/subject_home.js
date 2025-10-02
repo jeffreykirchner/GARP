@@ -170,6 +170,9 @@ let app = Vue.createApp({
                 case "clear_chat_gpt_history":
                     app.take_clear_chat_gpt_history(message_data);
                     break;
+                case "update_harvest_fruit":
+                    app.take_update_harvest_fruit(message_data);
+                    break;
             }
 
             app.first_load_done = true;

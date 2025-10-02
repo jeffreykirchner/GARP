@@ -43,7 +43,7 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
 
     orchard_apple_container.zIndex = 1;
     orchard_apple_container.eventMode = 'static';
-    orchard_apple_container.on("pointertap", app.setup_pixi_orchard_apple_double_click);
+    orchard_apple_container.on("pointertap", app.orchard_apple_double_click);
 
     pixi_orchard_apple = {container:null,
                           label:null,
@@ -103,7 +103,7 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
 
     orchard_orange_container.zIndex = 1;
     orchard_orange_container.eventMode = 'static';
-    orchard_orange_container.on("pointertap", app.setup_pixi_orchard_orange_double_click);
+    orchard_orange_container.on("pointertap", app.orchard_orange_double_click);
 
     pixi_orchard_orange = {container:null,
                           label:null,
@@ -118,7 +118,7 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
 
 },
 
-setup_pixi_orchard_apple_double_click: function setup_pixi_orchard_apple_double_click()
+orchard_apple_double_click: function orchard_apple_double_click()
 {
     if(app.pixi_mode != "subject") return;
 
@@ -126,7 +126,9 @@ setup_pixi_orchard_apple_double_click: function setup_pixi_orchard_apple_double_
 
     if(pixi_orchard_apple.last_click && (now - pixi_orchard_apple.last_click) < 400)
     {        
-            console.log("harvest apple");
+        app.send_message("harvest_fruit", 
+                        {"type" : "apple", }
+                        "group");  
 
         pixi_orchard_apple.last_click = null;
     }
@@ -136,7 +138,7 @@ setup_pixi_orchard_apple_double_click: function setup_pixi_orchard_apple_double_
     }
 },
 
-setup_pixi_orchard_orange_double_click: function setup_pixi_orchard_orange_double_click()
+orchard_orange_double_click: function orchard_orange_double_click()
 {
     if(app.pixi_mode != "subject") return;
 
@@ -144,7 +146,9 @@ setup_pixi_orchard_orange_double_click: function setup_pixi_orchard_orange_doubl
 
     if(pixi_orchard_orange.last_click && (now - pixi_orchard_orange.last_click) < 400)
     {        
-            console.log("harvest orange");
+        app.send_message("harvest_fruit", 
+                        {"type" : "orange", }
+                        "group");
 
         pixi_orchard_orange.last_click = null;
     }
@@ -152,5 +156,16 @@ setup_pixi_orchard_orange_double_click: function setup_pixi_orchard_orange_doubl
     {
         pixi_orchard_orange.last_click = now;
     }
+},
+
+take_update_harvest_fruit: function take_update_harvest_fruit(data)
+{
+    let session_player_id = data.session_player_id;
+    let session_player = app.session.world_state.session_players[session_player_id];
+
+    session_player.apples = data.apples;
+    session_player.oranges = data.oranges;
+
+    app.update_player_inventory();
 },
 
