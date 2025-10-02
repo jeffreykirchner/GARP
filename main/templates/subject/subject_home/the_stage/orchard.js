@@ -121,14 +121,16 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
 orchard_apple_double_click: function orchard_apple_double_click()
 {
     if(app.pixi_mode != "subject") return;
+    if(app.working) return;
 
     let now = Date.now();
 
     if(pixi_orchard_apple.last_click && (now - pixi_orchard_apple.last_click) < 400)
-    {        
-        app.send_message("harvest_fruit", 
-                        {"type" : "apple", }
-                        "group");  
+    {
+        app.working = true;
+        app.send_message("harvest_fruit",
+                        {"fruit_type" : "apple", },
+                        "group");
 
         pixi_orchard_apple.last_click = null;
     }
@@ -141,13 +143,15 @@ orchard_apple_double_click: function orchard_apple_double_click()
 orchard_orange_double_click: function orchard_orange_double_click()
 {
     if(app.pixi_mode != "subject") return;
+    if(app.working) return;
 
     let now = Date.now();
 
     if(pixi_orchard_orange.last_click && (now - pixi_orchard_orange.last_click) < 400)
     {        
+        app.working = true;
         app.send_message("harvest_fruit", 
-                        {"type" : "orange", }
+                        {"fruit_type" : "orange", },
                         "group");
 
         pixi_orchard_orange.last_click = null;
@@ -163,9 +167,45 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
 
+
+    if(app.is_subject && session_player_id == app.session_player.id)
+    {
+        app.working = false;
+    }
+
+    let source_location={x:0, y:0};
+    let source_tex = null;
+
+    if(data.fruit_type == "apple")
+    {
+        let location = app.session.parameter_set.orchard_apple_location.split(",");
+        source_location.x = parseInt(location[0]) + pixi_orchard_apple['container'].width/2;
+        source_location.y = parseInt(location[1]) + pixi_orchard_apple['container'].height/2;
+        source_tex = app.pixi_textures['apple_tex'];
+    }
+    else if(data.fruit_type == "orange")
+    {
+        let location = app.session.parameter_set.orchard_orange_location.split(",");
+        source_location.x = parseInt(location[0]) + pixi_orchard_orange['container'].width/2;
+        source_location.y = parseInt(location[1]) + pixi_orchard_orange['container'].height/2;
+        source_tex = app.pixi_textures['orange_tex'];
+    }
+    
+    let elements = [];
+    let element = {source_change: "",
+                   target_change: "+", 
+                   texture:source_tex,
+                }
+    elements.push(element);
+    app.add_transfer_beam(source_location, 
+                          session_player.current_location,
+                          elements,
+                          false,
+                          true);
+
     session_player.apples = data.apples;
     session_player.oranges = data.oranges;
-
+    
     app.update_player_inventory();
 },
 

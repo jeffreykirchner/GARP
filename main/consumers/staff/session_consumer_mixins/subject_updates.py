@@ -304,9 +304,13 @@ class SubjectUpdatesMixin():
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
-            
 
-        self.session_events.append(SessionEvent(session_id=self.session_id, 
+        if event_data["fruit_type"] == "apple":
+            session_player["apples"] += 1
+        elif event_data["fruit_type"] == "orange":
+            session_player["oranges"] += 1
+
+        self.session_events.append(SessionEvent(session_id=self.session_id,
                                                 session_player_id=player_id,
                                                 type=event['type'],
                                                 period_number=self.world_state_local["current_period"],
@@ -316,6 +320,7 @@ class SubjectUpdatesMixin():
         result = {"value" : "success", 
                   "apples" : session_player["apples"], 
                   "oranges" : session_player["oranges"],
+                  "fruit_type" : event_data["fruit_type"],
                   "session_player_id" : player_id}
         
         await self.send_message(message_to_self=None, message_to_group=result,
