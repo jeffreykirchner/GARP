@@ -2,6 +2,7 @@
 parameterset period 
 '''
 
+from email.policy import default
 from django.db import models
 
 from main.models import ParameterSet
@@ -15,6 +16,15 @@ class ParameterSetPeriod(models.Model):
 
     period_number = models.IntegerField(verbose_name='Period Number', default=1)
 
+    factory_apple_price = models.IntegerField(verbose_name='Factory Apple Price (¢)', default=50)
+    wholesale_apple_price = models.IntegerField(verbose_name='Wholesale Apple Price (¢)', default=100)
+
+    factory_orange_price = models.IntegerField(verbose_name='Factory Orange Price (¢)', default=30)
+    wholesale_orange_price = models.IntegerField(verbose_name='Wholesale Orange Price (¢)', default=80)
+
+    wholsaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)
+    retailer_budget = models.IntegerField(verbose_name='Retailer Budget (¢)', default=1000)
+
     timestamp = models.DateTimeField(auto_now_add=True)
     updated= models.DateTimeField(auto_now=True)
 
@@ -24,7 +34,7 @@ class ParameterSetPeriod(models.Model):
     class Meta:
         verbose_name = 'Parameter Set Period'
         verbose_name_plural = 'Parameter Set Periods'
-        ordering = ['id']
+        ordering = ['period_number']
 
     def from_dict(self, new_ps):
         '''

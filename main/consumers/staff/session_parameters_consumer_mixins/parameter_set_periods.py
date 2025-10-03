@@ -52,6 +52,22 @@ class ParameterSetPeriodsMixin():
         await self.send_message(message_to_self=message_data, message_to_group=None,
                                 message_type="update_parameter_set", send_to_client=True, send_to_group=False)
 
+def re_number_parameterset_periods(session_id):
+    '''
+    re-number the parameterset periods
+    '''
+
+    try:        
+        session = Session.objects.get(id=session_id)
+        parameter_set_periods = session.parameter_set.parameter_set_periods.all().order_by('period_number')
+    except ObjectDoesNotExist:
+        logger = logging.getLogger(__name__) 
+        logger.warning(f"re_number_parameterset_periods session, not found ID: {session_id}")
+    
+    for idx, psp in enumerate(parameter_set_periods):
+        psp.period_number = idx + 1
+        psp.save()
+
 @sync_to_async
 def take_update_parameter_set_period(data):
     '''
@@ -105,6 +121,7 @@ def take_remove_parameterset_period(data):
         return
     
     parameter_set_period.delete()
+    re_number_parameterset_periods(session_id)
     session.parameter_set.update_json_fk(update_periods=True)
     
     return {"value" : "success"}
@@ -126,6 +143,7 @@ def take_add_parameterset_period(data):
         return {"value" : "fail"}
 
     parameter_set_period = ParameterSetPeriod.objects.create(parameter_set=session.parameter_set)
+    re_number_parameterset_periods(session_id)
     session.parameter_set.update_json_fk(update_periods=True)
 
     return {"value" : "success"}
