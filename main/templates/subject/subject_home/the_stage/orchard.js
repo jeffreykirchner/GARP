@@ -26,7 +26,7 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"$N.NN / Apple", style:style});
+    let label = new PIXI.Text({text:"NNN¢ / Apple", style:style});
     label.anchor.set(0.5);
 
     //add double click graphic bottom left corner of container
@@ -86,7 +86,7 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"$N.NN / Orange", style:style});
+    let label = new PIXI.Text({text:"NNN¢ / Orange", style:style});
     label.anchor.set(0.5);
 
     //add double click graphic to top bottom right of container
@@ -116,6 +116,17 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
 
     pixi_container_main.addChild(pixi_orchard_orange.container);
 
+},
+
+/**
+ * update orchard labels with the prices from the parameter set
+ */
+update_orchard_labels: function update_orchard_labels()
+{
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    pixi_orchard_apple.label.text = parameter_set_period.orchard_apple_price + "¢ / Apple";
+    pixi_orchard_orange.label.text = parameter_set_period.orchard_orange_price + "¢ / Orange";
 },
 
 orchard_apple_double_click: function orchard_apple_double_click()

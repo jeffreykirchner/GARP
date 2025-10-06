@@ -166,6 +166,8 @@ class Session(models.Model):
                             "timer_history":[],
                             "started":True,
                             "finished":False,
+                            "orange_tray_inventory":0,
+                            "apple_tray_inventory":0,
                             "session_periods":{str(i.id) : i.json() for i in self.session_periods.all()},
                             "session_periods_order" : list(self.session_periods.all().values_list('id', flat=True)),
                             }

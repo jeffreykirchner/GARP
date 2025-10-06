@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='parametersetperiod',
-            name='factory_orange_price',
+            name='orchard_orange_price',
             field=models.IntegerField(default=30, verbose_name='Factory Orange Price (¢)'),
         ),
         migrations.AddField(

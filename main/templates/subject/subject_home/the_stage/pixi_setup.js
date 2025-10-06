@@ -41,6 +41,7 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_barrier();
         app.setup_pixi_orchard_apple();
         app.setup_pixi_orchard_orange();
+        app.update_orchard_labels();
 
         if(app.session.started)
         {

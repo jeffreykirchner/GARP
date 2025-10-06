@@ -260,6 +260,7 @@ let app = Vue.createApp({
             app.update_subject_status_overlay();
             app.setup_pixi_orchard_apple();
             app.setup_pixi_orchard_orange();
+            app.update_orchard_labels();
         },
 
         /** send winsock request to get session info
