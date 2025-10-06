@@ -215,6 +215,9 @@ let app = Vue.createApp({
                 case "update_process_chat_gpt_prompt":
                     app.take_process_chat_gpt_prompt(message_data);
                     break;
+                case "update_harvest_fruit":
+                    app.take_update_harvest_fruit(message_data);
+                    break;
             }
             app.working = false;
             app.process_the_feed(message_type, message_data);
@@ -405,10 +408,6 @@ let app = Vue.createApp({
             for(let p in message_data.session_player_status)
             {
                 let session_player = message_data.session_player_status[p];
-                app.session.world_state.session_players[p].interaction = session_player.interaction;
-                app.session.world_state.session_players[p].frozen = session_player.frozen;
-                app.session.world_state.session_players[p].cool_down = session_player.cool_down;
-                app.session.world_state.session_players[p].tractor_beam_target = session_player.tractor_beam_target;
             }
 
             //update player location
@@ -450,6 +449,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/move_objects.js"%}
         {%include "subject/subject_home/the_stage/barriers.js"%}
         {%include "subject/subject_home/the_stage/ground.js"%}        
+        {%include "subject/subject_home/the_stage/orchard.js"%}
         {%include "js/help_doc.js"%}
     
         /** clear form error messages

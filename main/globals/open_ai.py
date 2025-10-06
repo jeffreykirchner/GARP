@@ -1,6 +1,5 @@
 
 import os
-import base64
 import json
 
 from openai import AzureOpenAI
@@ -27,22 +26,23 @@ def chat_gpt_generate_completion(messages):
     :return: The generated completion response.
     """
 
-    try:
-        response = client.chat.completions.create(
-            model=deployment,
-            messages=messages,
-            max_tokens=800,
-            temperature=1,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            stop=None,
-            stream=False
-        )
+    with client as c:
+        try:
+            response = c.chat.completions.create(
+                model=deployment,
+                messages=messages,
+                max_tokens=800,
+                temperature=1,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                stop=None,
+                stream=False
+            )
 
-        return response.to_json()
-    except Exception as e:
-        return json.dumps({ "error": str(e)}, cls=DjangoJSONEncoder)
+            return response.to_json()
+        except Exception as e:
+            return json.dumps({ "error": str(e)}, cls=DjangoJSONEncoder)
 
     
 

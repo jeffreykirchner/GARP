@@ -148,16 +148,6 @@ class Session(models.Model):
             summary_data_player = summary_data[i_s]
             summary_data_player["earnings"] = 0
             summary_data_player["cherries_harvested"] = 0
-
-            summary_data_interactions = {}
-            for j in session_players:
-                j_s = str(j["id"])
-                summary_data_interactions[j_s] = {"cherries_i_took":0, 
-                                                  "cherries_i_sent":0,
-                                                  "cherries_they_took":0, 
-                                                  "cherries_they_sent":0,}
-            
-            summary_data_player["interactions"] = summary_data_interactions
                 
         self.session_periods.all().update(summary_data=summary_data)
 
@@ -176,6 +166,8 @@ class Session(models.Model):
                             "timer_history":[],
                             "started":True,
                             "finished":False,
+                            "orange_tray_inventory":0,
+                            "apple_tray_inventory":0,
                             "session_periods":{str(i.id) : i.json() for i in self.session_periods.all()},
                             "session_periods_order" : list(self.session_periods.all().values_list('id', flat=True)),
                             }
@@ -195,12 +187,9 @@ class Session(models.Model):
 
             v['current_location'] = {'x':i['parameter_set_player__start_x'], 'y':i['parameter_set_player__start_y']}
             v['target_location'] = v['current_location']
-            v['inventory'] = inventory
-            v['tractor_beam_target'] = None
-            v['frozen'] = False
-            v['cool_down'] = 0
-            v['interaction'] = 0
             v['earnings'] = 0
+            v['apples'] = 0
+            v['oranges'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             
             self.world_state["session_players"][str(i['id'])] = v
@@ -341,13 +330,6 @@ class Session(models.Model):
                                 parameter_set_players[player_s]["parameter_set_player__id_label"],
                                 summary_data_player["earnings"],
                                 ]
-                    
-                    for p in world_state["session_players"]:
-                        p_s = str(p)
-                        temp_row.append(summary_data_player["interactions"][p_s]["cherries_i_sent"])
-                        temp_row.append(summary_data_player["interactions"][p_s]["cherries_i_took"])
-                        temp_row.append(summary_data[p_s]["interactions"][player_s]["cherries_i_sent"])
-                        temp_row.append(summary_data[p_s]["interactions"][player_s]["cherries_i_took"])
                     
                     writer.writerow(temp_row)
                     

@@ -12,3 +12,5 @@ let pixi_barriers = {};                        //barriers
 let pixi_grounds = {};                         //grounds
 let wall_search = {counter:0, current_location:{x:-1,y:-1}, target_location:{x:-1,y:-1}};
 let wall_search_objects = [];
+let pixi_orchard_apple = {container:null,rect:null};              //pixi apple object
+let pixi_orchard_orange = {container:null,rect:null};             //pixi orange object

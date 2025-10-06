@@ -68,12 +68,6 @@ class ParameterSetForm(forms.ModelForm):
                                                                             "step":"1",
                                                                             "min":"1"}))
     
-    interaction_length = forms.IntegerField(label='Interaction Length (seconds)',
-                                            min_value=1,
-                                            widget=forms.NumberInput(attrs={"v-model":"parameter_set.interaction_length",
-                                                                            "step":"1",
-                                                                            "min":"1"}))
-    
     interaction_range = forms.IntegerField(label='Interaction Range (Pixels)',
                                            min_value=100,
                                            max_value=800,
@@ -81,12 +75,6 @@ class ParameterSetForm(forms.ModelForm):
                                                                            "step":"1",
                                                                            "max":"800",
                                                                            "min":"100"}))
-    
-    cool_down_length = forms.IntegerField(label='Cool Down Length (seconds)',
-                                          min_value=1,
-                                          widget=forms.NumberInput(attrs={"v-model":"parameter_set.cool_down_length",
-                                                                          "step":"1",
-                                                                          "min":"1"}))
 
     avatar_scale = forms.DecimalField(label='Avatar Scale',
                                       max_digits=3,
@@ -131,8 +119,41 @@ class ParameterSetForm(forms.ModelForm):
                                       widget=forms.NumberInput(attrs={"v-model":"parameter_set.world_height",
                                                                       "step":"1",
                                                                       "min":"1000"}))
-                                                                
 
+    orchard_apple_location = forms.CharField(label='Apple Orchard Location (x,y)',
+                                              max_length=100,
+                                              initial="100,150",
+                                              widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_apple_location",}))
+
+    orchard_orange_location = forms.CharField(label='Orange Orchard Location (x,y)',
+                                               max_length=100,
+                                               initial="300,150",
+                                               widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_orange_location",}))
+    
+    orange_tray_capacity = forms.IntegerField(label='Orange Tray Capacity',
+                                              min_value=0,
+                                              widget=forms.NumberInput(attrs={"v-model":"parameter_set.orange_tray_capacity",
+                                                                              "step":"1",
+                                                                              "min":"0"}))
+    
+    apple_tray_capacity = forms.IntegerField(label='Apple Tray Capacity',
+                                             min_value=0,
+                                             widget=forms.NumberInput(attrs={"v-model":"parameter_set.apple_tray_capacity",
+                                                                             "step":"1",
+                                                                             "min":"0"}))
+    
+    orange_tray_starting_inventory = forms.IntegerField(label='Orange Tray Starting Inventory',
+                                                        min_value=0,
+                                                        widget=forms.NumberInput(attrs={"v-model":"parameter_set.orange_tray_starting_inventory",
+                                                                                        "step":"1",
+                                                                                        "min":"0"}))
+    
+    apple_tray_starting_inventory = forms.IntegerField(label='Apple Tray Starting Inventory',
+                                                       min_value=0,
+                                                       widget=forms.NumberInput(attrs={"v-model":"parameter_set.apple_tray_starting_inventory",
+                                                                                       "step":"1",
+                                                                                       "min":"0"}))
+    
     enable_chat = forms.ChoiceField(label='Enable Chat',
                                     choices=((1, 'Yes'), (0, 'No')),
                                     widget=forms.Select(attrs={"v-model":"parameter_set.enable_chat",}))
@@ -143,12 +164,14 @@ class ParameterSetForm(forms.ModelForm):
 
     class Meta:
         model=ParameterSet
-        fields =['period_count', 'period_length', 'break_frequency', 'break_length', 'interaction_length', 'cool_down_length',
+        fields =['period_count', 'period_length', 'break_frequency', 'break_length',
                  'chat_gpt_mode', 'show_instructions', 
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
-                 'world_width', 'world_height', 'enable_chat', 'test_mode']
+                 'world_width', 'world_height','orchard_apple_location', 'orchard_orange_location', 
+                 'orange_tray_capacity', 'apple_tray_capacity', 'orange_tray_starting_inventory', 'apple_tray_starting_inventory',
+                 'enable_chat', 'test_mode']
 
     def clean_survey_link(self):
         

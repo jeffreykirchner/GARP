@@ -52,8 +52,6 @@ let app = Vue.createApp({
 
                     // modals
                     end_game_modal : null,
-                    interaction_modal : null,
-                    insteration_start_modal : null,
                     help_modal : null,
                     chat_gpt_modal : null,
                     test_mode : {%if session.parameter_set.test_mode%}true{%else%}false{%endif%},
@@ -74,26 +72,11 @@ let app = Vue.createApp({
                     scroll_direction : {x:0, y:0},
                     draw_bounding_boxes: false,
 
-                    //selected avatar
-                    selected_player : {
-                        session_player:null,
-                        parameter_set_player:null,
-                        interaction_amount:null,
-                    },
-
-                    //forms
-                    interaction_form : {direction:null, amount:null},
-
                     //test mode
                     test_mode_location_target : null,
 
                     //errors
-                    interaction_start_error: null,
-                    interaction_error: null,
                     chat_gpt_error: null,
-
-                    //open modals
-                    interaction_start_modal_open : false,
 
                     //chat gpt
                     chat_gpt_text : "",
@@ -187,6 +170,9 @@ let app = Vue.createApp({
                 case "clear_chat_gpt_history":
                     app.take_clear_chat_gpt_history(message_data);
                     break;
+                case "update_harvest_fruit":
+                    app.take_update_harvest_fruit(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -211,15 +197,12 @@ let app = Vue.createApp({
         do_first_load: function do_first_load()
         {           
             app.end_game_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('end_game_modal'), {keyboard: false})   
-            app.interaction_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_modal'), {keyboard: false})
-            app.interaction_start_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('interaction_start_modal'), {keyboard: false})          
+           
             app.help_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('help_modal'), {keyboard: false})
             app.chat_gpt_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('chat_gpt_modal'), {keyboard: false})
 
             document.getElementById('end_game_modal').addEventListener('hidden.bs.modal', app.hide_end_game_modal);
-            document.getElementById('interaction_modal').addEventListener('hidden.bs.modal', app.hide_interaction_modal);
-            document.getElementById('interaction_start_modal').addEventListener('hidden.bs.modal', app.hide_interaction_start_modal);
-
+    
             {%if session.parameter_set.test_mode%} setTimeout(app.do_test_mode, app.random_number(1000 , 1500)); {%endif%}
 
             // if game is finished show modal
@@ -271,10 +254,13 @@ let app = Vue.createApp({
         {
             app.setup_pixi_ground();
             app.setup_pixi_subjects();
+            app.update_player_inventory();
             app.setup_pixi_wall();
             app.setup_pixi_barrier();
             app.update_subject_status_overlay();
-            // app.setup_pixi_minimap();
+            app.setup_pixi_orchard_apple();
+            app.setup_pixi_orchard_orange();
+            app.update_orchard_labels();
         },
 
         /** send winsock request to get session info
@@ -343,11 +329,8 @@ let app = Vue.createApp({
 
             app.end_game_modal.hide();        
             
-            app.interaction_modal.hide();
-            app.interaction_start_modal.hide();
             app.help_modal.hide();
 
-            // app.setup_pixi_minimap();
             app.remove_all_notices();
 
             app.notices_seen = [];
@@ -411,24 +394,12 @@ let app = Vue.createApp({
                 
                 // app.setup_pixi_minimap();
                 app.update_player_inventory();
-
-                //add break notice
-                if(app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-                {
-                    app.add_notice("Break Time: Interactions are disabled. Chat is enabled.", 
-                                    app.session.world_state.current_period,
-                                    app.session.parameter_set.period_length);
-                }
             }
 
             //update player states
             for(let p in message_data.session_player_status)
             {
                 let session_player = message_data.session_player_status[p];
-                app.session.world_state.session_players[p].interaction = session_player.interaction;
-                app.session.world_state.session_players[p].frozen = session_player.frozen;
-                app.session.world_state.session_players[p].cool_down = session_player.cool_down;
-                app.session.world_state.session_players[p].tractor_beam_target = session_player.tractor_beam_target;
             }
 
             //update player location
@@ -472,7 +443,6 @@ let app = Vue.createApp({
         show_end_game_modal: function show_end_game_modal(){
             if(app.end_game_modal_visible) return;
    
-            app.interaction_modal.hide();
             app.help_modal.hide();
 
             app.end_game_modal.toggle();
@@ -563,6 +533,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/ground.js"%}
         {%include "subject/subject_home/help_doc_subject.js"%}
         {%include "subject/subject_home/the_stage/chat_gpt.js"%}
+        {%include "subject/subject_home/the_stage/orchard.js"%}
 
         /** clear form error messages
         */

@@ -127,3 +127,13 @@ get_parameter_set_group_from_player_id: function get_parameter_set_group_from_pl
     let parameter_set_player = app.session.parameter_set.parameter_set_players[parameter_set_player_id];
     return app.session.parameter_set.parameter_set_groups[parameter_set_player.parameter_set_group];
 },
+
+/**
+ * get the current parameter set period based on the current period in the world state
+ */
+get_current_parameter_set_period: function get_current_parameter_set_period()
+{
+    let current_period_index = app.session.world_state.current_period;
+    let current_period_id = app.session.parameter_set.parameter_set_periods_order[current_period_index-1];
+    return app.session.parameter_set.parameter_set_periods[current_period_id];
+},

@@ -39,19 +39,25 @@ class ParameterSet(models.Model):
     world_width = models.IntegerField(verbose_name='Width of world in pixels', default=10000)                 #world width in pixels
     world_height = models.IntegerField(verbose_name='Height of world in pixels', default=10000)               #world height in pixels
 
-    interaction_length = models.IntegerField(verbose_name='Interaction Length', default=10)                   #interaction length in seconds
-    cool_down_length = models.IntegerField(verbose_name='Cool Down Length', default=10)                       #cool down length in seconds
     interaction_range = models.IntegerField(verbose_name='Interaction Range', default=300)                    #interaction range in pixels
 
-    avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=1) #avatar scale
+    avatar_scale = models.DecimalField(verbose_name='Avatar Scale', decimal_places=2, max_digits=3, default=1)                            #avatar scale
     avatar_bound_box_percent = models.DecimalField(verbose_name='Avatar Bound Box Percent', decimal_places=2, max_digits=3, default=0.75) #avatar bound box percent for interaction
-    avatar_move_speed = models.DecimalField(verbose_name='Move Speed', decimal_places=1, max_digits=3, default=5.0)            #move speed
-    avatar_animation_speed = models.DecimalField(verbose_name='Animation Speed', decimal_places=2, max_digits=3, default=1.0)  #animation speed
+    avatar_move_speed = models.DecimalField(verbose_name='Move Speed', decimal_places=1, max_digits=3, default=5.0)                       #move speed
+    avatar_animation_speed = models.DecimalField(verbose_name='Animation Speed', decimal_places=2, max_digits=3, default=1.0)             #animation speed
 
     reconnection_limit = models.IntegerField(verbose_name='Limit Subject Screen Reconnection Trys', default=25)       #limit subject screen reconnection trys
 
+    orchard_apple_location = models.CharField(max_length=100, default="100,150", verbose_name="Apple Orchard Location", blank=True, null=True)       #x,y location of apple orchard
+    orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
+
+    orange_tray_capacity = models.IntegerField(verbose_name='Orange Tray Capacity', default=100)           #maximum capacity of orange tray
+    apple_tray_capacity = models.IntegerField(verbose_name='Apple Tray Capacity', default=100)             #maximum capacity of apple tray
+    orange_tray_starting_inventory = models.IntegerField(verbose_name='Orange Tray Starting Inventory', default=0)  #starting inventory of orange tray
+    apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
+
     enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
-    test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                                #if true subject screens will do random auto testing
+    test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                               #if true subject screens will do random auto testing
 
     json_for_session = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                   #json model of parameter set 
 
@@ -93,8 +99,6 @@ class ParameterSet(models.Model):
             self.world_width = new_ps.get("world_width", 1000)
             self.world_height = new_ps.get("world_height", 1000)
 
-            self.interaction_length = new_ps.get("interaction_length", 10)
-            self.cool_down_length = new_ps.get("cool_down_length", 10)
             self.interaction_range = new_ps.get("interaction_range", 300)
 
             self.avatar_scale = new_ps.get("avatar_scale", 1)
@@ -103,6 +107,15 @@ class ParameterSet(models.Model):
             self.avatar_animation_speed = new_ps.get("avatar_animation_speed", 1.0)
 
             self.reconnection_limit = new_ps.get("reconnection_limit", None)
+
+            self.orchard_apple_location = new_ps.get("orchard_apple_location", "100,150")
+            self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
+
+            self.orange_tray_capacity = new_ps.get("orange_tray_capacity", 100)
+            self.apple_tray_capacity = new_ps.get("apple_tray_capacity", 100)
+            self.orange_tray_starting_inventory = new_ps.get("orange_tray_starting_inventory", 0)
+            self.apple_tray_starting_inventory = new_ps.get("apple_tray_starting_inventory", 0)
+
             self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
             self.save()
@@ -261,8 +274,6 @@ class ParameterSet(models.Model):
         self.json_for_session["world_width"] = self.world_width
         self.json_for_session["world_height"] = self.world_height
 
-        self.json_for_session["interaction_length"] = self.interaction_length
-        self.json_for_session["cool_down_length"] = self.cool_down_length
         self.json_for_session["interaction_range"] = self.interaction_range
         
         self.json_for_session["avatar_scale"] = self.avatar_scale
@@ -273,6 +284,14 @@ class ParameterSet(models.Model):
         self.json_for_session["reconnection_limit"] = self.reconnection_limit
         self.json_for_session["enable_chat"] = 1 if self.enable_chat else 0
 
+        self.json_for_session["orchard_apple_location"] = self.orchard_apple_location
+        self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
+
+        self.json_for_session["orange_tray_capacity"] = self.orange_tray_capacity
+        self.json_for_session["apple_tray_capacity"] = self.apple_tray_capacity
+        self.json_for_session["orange_tray_starting_inventory"] = self.orange_tray_starting_inventory
+        self.json_for_session["apple_tray_starting_inventory"] = self.apple_tray_starting_inventory
+
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 
         self.save()
@@ -282,7 +301,8 @@ class ParameterSet(models.Model):
                              update_walls=False,
                              update_barriers=False,
                              update_grounds=False,
-                             update_groups=False):
+                             update_groups=False,
+                             update_periods=False):
         '''
         update json model
         '''
@@ -310,6 +330,10 @@ class ParameterSet(models.Model):
             self.json_for_session["parameter_set_groups_order"] = list(self.parameter_set_groups.all().values_list('id', flat=True))
             self.json_for_session["parameter_set_groups"] = {str(p.id) : p.json() for p in self.parameter_set_groups.all()}
 
+        if update_periods:
+            self.json_for_session["parameter_set_periods_order"] = list(self.parameter_set_periods.all().values_list('id', flat=True))
+            self.json_for_session["parameter_set_periods"] = {str(p.id) : p.json() for p in self.parameter_set_periods.all()}
+
         self.save()
 
     def json(self, update_required=False):
@@ -325,7 +349,8 @@ class ParameterSet(models.Model):
                                 update_walls=True,
                                 update_barriers=True,
                                 update_grounds=True,
-                                update_groups=True)
+                                update_groups=True,
+                                update_periods=True)
 
         return self.json_for_session
     

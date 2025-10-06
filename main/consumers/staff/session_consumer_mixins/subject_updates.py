@@ -215,9 +215,6 @@ class SubjectUpdatesMixin():
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
 
-        if session_player["frozen"] or session_player["tractor_beam_target"]:
-            return
-
         session_player["target_location"] = target_location
         session_player["current_location"] = current_location
 
@@ -291,6 +288,54 @@ class SubjectUpdatesMixin():
         
         await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
         self.session_events = []
+
+    async def harvest_fruit(self, event):
+        '''
+        harvest fruit from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        # logger = logging.getLogger(__name__) 
+        # logger.info(f"target_location_update: world state controller {self.controlling_channel} channel name {self.channel_name}")
+        
+        logger = logging.getLogger(__name__)
+        
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+
+        if event_data["fruit_type"] == "apple":
+            session_player["apples"] += 1
+        elif event_data["fruit_type"] == "orange":
+            session_player["oranges"] += 1
+
+        self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                session_player_id=player_id,
+                                                type=event['type'],
+                                                period_number=self.world_state_local["current_period"],
+                                                time_remaining=self.world_state_local["time_remaining"],
+                                                data=event_data))
+        
+        result = {"value" : "success", 
+                  "apples" : session_player["apples"], 
+                  "oranges" : session_player["oranges"],
+                  "fruit_type" : event_data["fruit_type"],
+                  "session_player_id" : player_id}
+        
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, 
+                                send_to_group=True)
+
+    async def update_harvest_fruit(self, event):
+        '''
+        update harvest fruit from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
                                       
     
 
