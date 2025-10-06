@@ -22,7 +22,7 @@ class ParameterSetPeriod(models.Model):
     factory_orange_price = models.IntegerField(verbose_name='Factory Orange Price (¢)', default=30)
     wholesale_orange_price = models.IntegerField(verbose_name='Wholesale Orange Price (¢)', default=80)
 
-    wholsaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)
+    wholesaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)
     retailer_budget = models.IntegerField(verbose_name='Retailer Budget (¢)', default=1000)
 
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -43,6 +43,15 @@ class ParameterSetPeriod(models.Model):
         '''
         self.period_number = new_ps.get("period_number")
 
+        self.factory_apple_price = new_ps.get("factory_apple_price")
+        self.wholesale_apple_price = new_ps.get("wholesale_apple_price")
+
+        self.factory_orange_price = new_ps.get("factory_orange_price")
+        self.wholesale_orange_price = new_ps.get("wholesale_orange_price")
+
+        self.wholesaler_budget = new_ps.get("wholesaler_budget")
+        self.retailer_budget = new_ps.get("retailer_budget")
+
         self.save()
         
         message = "Parameters loaded successfully."
@@ -59,7 +68,7 @@ class ParameterSetPeriod(models.Model):
         '''
         update parameter set json
         '''
-        self.parameter_set.json_for_session["parameter_set_walls"][self.id] = self.json()
+        self.parameter_set.json_for_session["parameter_set_periods"][self.id] = self.json()
 
         self.parameter_set.save()
 
@@ -74,6 +83,15 @@ class ParameterSetPeriod(models.Model):
 
             "id" : self.id,
             "period_number" : self.period_number,
+
+            "factory_apple_price" : self.factory_apple_price,
+            "wholesale_apple_price" : self.wholesale_apple_price,
+
+            "factory_orange_price" : self.factory_orange_price,
+            "wholesale_orange_price" : self.wholesale_orange_price,
+
+            "wholesaler_budget" : self.wholesaler_budget,
+            "retailer_budget" : self.retailer_budget,
         }
     
     def get_json_for_subject(self, update_required=False):

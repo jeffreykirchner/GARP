@@ -24,14 +24,23 @@
                                     Number
                                 </th> 
                                 <th scope="col" class = "m-1 p-1">
-                                    
+                                    Orchard Apple Price
                                 </th>         
                                 <th scope="col" class = "m-1 p-1">
-                                    
+                                    Wholesale Apple Price
                                 </th> 
                                 <th scope="col" class = "m-1 p-1">
-                                    
+                                    Orchard Orange Price
                                 </th>                
+                                <th scope="col" class = "m-1 p-1">
+                                    Wholesale Orange Price
+                                </th>
+                                <th scope="col" class = "m-1 p-1">
+                                    Wholesaler Budget
+                                </th>
+                                <th scope="col" class = "m-1 p-1">
+                                    Retailer Budget
+                                </th>
                             </tr>
                         </thead>
                         <tbody id="period_list">
@@ -45,17 +54,28 @@
                                 </td>
                                 <td v-on:click="show_edit_parameter_set_period(p)" 
                                    class="player_table_cell">
-                                   
+                                   [[ temp_p.factory_apple_price ]]
                                 </td>
                                 <td v-on:click="show_edit_parameter_set_period(p)" 
                                     class="player_table_cell">
-                                    
+                                    [[ temp_p.wholesale_apple_price ]]
                                 </td>
                                 <td v-on:click="show_edit_parameter_set_period(p)" 
                                     class="player_table_cell">
-                                   
+                                    [[ temp_p.factory_orange_price ]]
                                 </td>
-                               
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[ temp_p.wholesale_orange_price ]]
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[ temp_p.wholesaler_budget ]]
+                                </td>
+                                <td v-on:click="show_edit_parameter_set_period(p)" 
+                                    class="player_table_cell">
+                                    [[ temp_p.retailer_budget ]]
+                                </td>
                             </tr>
                         </tbody>
                         

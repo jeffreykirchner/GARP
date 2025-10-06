@@ -129,18 +129,6 @@ class ParameterSetForm(forms.ModelForm):
                                                max_length=100,
                                                initial="300,150",
                                                widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_orange_location",}))
-
-    wholesaler_budget = forms.IntegerField(label='Wholesaler Budget (¢)',
-                                           min_value=0,
-                                           widget=forms.NumberInput(attrs={"v-model":"parameter_set.wholesaler_budget",
-                                                                           "step":"1",
-                                                                           "min":"0"}))
-
-    retailer_budget = forms.IntegerField(label='Retailer Budget (¢)',
-                                          min_value=0,
-                                          widget=forms.NumberInput(attrs={"v-model":"parameter_set.retailer_budget",
-                                                                          "step":"1",
-                                                                          "min":"0"}))
     
     enable_chat = forms.ChoiceField(label='Enable Chat',
                                     choices=((1, 'Yes'), (0, 'No')),
@@ -158,7 +146,6 @@ class ParameterSetForm(forms.ModelForm):
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height','orchard_apple_location', 'orchard_orange_location', 
-                 'wholesaler_budget', 'retailer_budget',
                  'enable_chat', 'test_mode']
 
     def clean_survey_link(self):

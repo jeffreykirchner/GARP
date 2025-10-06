@@ -142,7 +142,12 @@ def take_add_parameterset_period(data):
         logger.warning(f"take_add_parameterset_period session, not found ID: {session_id}")
         return {"value" : "fail"}
 
+    # get last parameterset period
+    last_period = session.parameter_set.parameter_set_periods.last()
+
     parameter_set_period = ParameterSetPeriod.objects.create(parameter_set=session.parameter_set)
+    if last_period:
+        parameter_set_period.from_dict(last_period.json())
     re_number_parameterset_periods(session_id)
     session.parameter_set.update_json_fk(update_periods=True)
 

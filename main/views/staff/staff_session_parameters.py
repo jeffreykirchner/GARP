@@ -25,6 +25,7 @@ from main.forms import ParameterSetWallForm
 from main.forms import ParameterSetBarrierForm
 from main.forms import ParameterSetGroupForm
 from main.forms import ParameterSetGroundForm
+from main.forms import ParameterSetPeriodForm
 
 class StaffSessionParametersView(SingleObjectMixin, View):
     '''
@@ -48,6 +49,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         parameter_set_barrier_form = ParameterSetBarrierForm()
         parameter_set_group_form = ParameterSetGroupForm()
         parameter_set_ground_form = ParameterSetGroundForm()
+        parameter_set_period_form = ParameterSetPeriodForm()
 
         parameter_set_player_form.fields["parameter_set_group"].queryset = session.parameter_set.parameter_set_groups.all()
         parameter_set_barrier_form.fields["parameter_set_groups"].queryset = session.parameter_set.parameter_set_groups.all()
@@ -76,6 +78,9 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         for i in parameter_set_ground_form:
             parameterset_form_ids.append(i.html_name)
 
+        for i in parameter_set_period_form:
+            parameterset_form_ids.append(i.html_name)
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"channel_key" : uuid.uuid4(),
@@ -89,6 +94,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
                                "parameter_set_group_form" : parameter_set_group_form,
                                "parameter_set_barrier_form" : parameter_set_barrier_form,
                                "parameter_set_ground_form" : parameter_set_ground_form,
+                               "parameter_set_period_form" : parameter_set_period_form,
                                
                                "import_parameters_form" : ImportParametersForm(user=request.user, session_id=session.id),
 

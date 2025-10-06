@@ -51,9 +51,6 @@ class ParameterSet(models.Model):
     orchard_apple_location = models.CharField(max_length=100, default="100,150", verbose_name="Apple Orchard Location", blank=True, null=True)       #x,y location of apple orchard
     orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
 
-    wholesaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)            #budget for wholesaler in US cents
-    retailer_budget = models.IntegerField(verbose_name='Retailer Budget (¢)', default=1000)                #budget for retailer in US cents
-
     enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
     test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                               #if true subject screens will do random auto testing
 
@@ -108,9 +105,6 @@ class ParameterSet(models.Model):
 
             self.orchard_apple_location = new_ps.get("orchard_apple_location", "100,150")
             self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
-
-            self.wholesaler_budget = new_ps.get("wholesaler_budget", 1000)
-            self.retailer_budget = new_ps.get("retailer_budget", 1000)
 
             self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
@@ -282,9 +276,6 @@ class ParameterSet(models.Model):
 
         self.json_for_session["orchard_apple_location"] = self.orchard_apple_location
         self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
-
-        self.json_for_session["wholesaler_budget"] = self.wholesaler_budget
-        self.json_for_session["retailer_budget"] = self.retailer_budget
 
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 
