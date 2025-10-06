@@ -51,6 +51,11 @@ class ParameterSet(models.Model):
     orchard_apple_location = models.CharField(max_length=100, default="100,150", verbose_name="Apple Orchard Location", blank=True, null=True)       #x,y location of apple orchard
     orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
 
+    orange_tray_capacity = models.IntegerField(verbose_name='Orange Tray Capacity', default=100)           #maximum capacity of orange tray
+    apple_tray_capacity = models.IntegerField(verbose_name='Apple Tray Capacity', default=100)             #maximum capacity of apple tray
+    orange_tray_starting_inventory = models.IntegerField(verbose_name='Orange Tray Starting Inventory', default=0)  #starting inventory of orange tray
+    apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
+
     enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
     test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                               #if true subject screens will do random auto testing
 
@@ -105,6 +110,11 @@ class ParameterSet(models.Model):
 
             self.orchard_apple_location = new_ps.get("orchard_apple_location", "100,150")
             self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
+
+            self.orange_tray_capacity = new_ps.get("orange_tray_capacity", 100)
+            self.apple_tray_capacity = new_ps.get("apple_tray_capacity", 100)
+            self.orange_tray_starting_inventory = new_ps.get("orange_tray_starting_inventory", 0)
+            self.apple_tray_starting_inventory = new_ps.get("apple_tray_starting_inventory", 0)
 
             self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
@@ -276,6 +286,11 @@ class ParameterSet(models.Model):
 
         self.json_for_session["orchard_apple_location"] = self.orchard_apple_location
         self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
+
+        self.json_for_session["orange_tray_capacity"] = self.orange_tray_capacity
+        self.json_for_session["apple_tray_capacity"] = self.apple_tray_capacity
+        self.json_for_session["orange_tray_starting_inventory"] = self.orange_tray_starting_inventory
+        self.json_for_session["apple_tray_starting_inventory"] = self.apple_tray_starting_inventory
 
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 

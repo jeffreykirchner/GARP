@@ -130,6 +130,30 @@ class ParameterSetForm(forms.ModelForm):
                                                initial="300,150",
                                                widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_orange_location",}))
     
+    orange_tray_capacity = forms.IntegerField(label='Orange Tray Capacity',
+                                              min_value=0,
+                                              widget=forms.NumberInput(attrs={"v-model":"parameter_set.orange_tray_capacity",
+                                                                              "step":"1",
+                                                                              "min":"0"}))
+    
+    apple_tray_capacity = forms.IntegerField(label='Apple Tray Capacity',
+                                             min_value=0,
+                                             widget=forms.NumberInput(attrs={"v-model":"parameter_set.apple_tray_capacity",
+                                                                             "step":"1",
+                                                                             "min":"0"}))
+    
+    orange_tray_starting_inventory = forms.IntegerField(label='Orange Tray Starting Inventory',
+                                                        min_value=0,
+                                                        widget=forms.NumberInput(attrs={"v-model":"parameter_set.orange_tray_starting_inventory",
+                                                                                        "step":"1",
+                                                                                        "min":"0"}))
+    
+    apple_tray_starting_inventory = forms.IntegerField(label='Apple Tray Starting Inventory',
+                                                       min_value=0,
+                                                       widget=forms.NumberInput(attrs={"v-model":"parameter_set.apple_tray_starting_inventory",
+                                                                                       "step":"1",
+                                                                                       "min":"0"}))
+    
     enable_chat = forms.ChoiceField(label='Enable Chat',
                                     choices=((1, 'Yes'), (0, 'No')),
                                     widget=forms.Select(attrs={"v-model":"parameter_set.enable_chat",}))
@@ -146,6 +170,7 @@ class ParameterSetForm(forms.ModelForm):
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height','orchard_apple_location', 'orchard_orange_location', 
+                 'orange_tray_capacity', 'apple_tray_capacity', 'orange_tray_starting_inventory', 'apple_tray_starting_inventory',
                  'enable_chat', 'test_mode']
 
     def clean_survey_link(self):
