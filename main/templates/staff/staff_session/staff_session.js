@@ -281,6 +281,7 @@ let app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
+            app.update_orchard_labels();
         },
 
         /** send winsock request to get session info
@@ -450,6 +451,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/barriers.js"%}
         {%include "subject/subject_home/the_stage/ground.js"%}        
         {%include "subject/subject_home/the_stage/orchard.js"%}
+        {%include "subject/subject_home/the_stage/tray.js"%}
         {%include "js/help_doc.js"%}
     
         /** clear form error messages

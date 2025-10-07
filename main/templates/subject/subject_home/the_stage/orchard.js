@@ -125,8 +125,10 @@ update_orchard_labels: function update_orchard_labels()
 {
     let parameter_set_period = app.get_current_parameter_set_period();
 
-    pixi_orchard_apple.label.text = parameter_set_period.orchard_apple_price + "¢ / Apple";
-    pixi_orchard_orange.label.text = parameter_set_period.orchard_orange_price + "¢ / Orange";
+    if(!parameter_set_period) return;
+
+    pixi_orchard_apple.label.text = "Buy: " + parameter_set_period.orchard_apple_price + "¢ / Apple";
+    pixi_orchard_orange.label.text = "Buy: " + parameter_set_period.orchard_orange_price + "¢ / Orange";
 },
 
 orchard_apple_double_click: function orchard_apple_double_click()

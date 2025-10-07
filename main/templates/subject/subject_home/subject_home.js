@@ -173,6 +173,9 @@ let app = Vue.createApp({
                 case "update_harvest_fruit":
                     app.take_update_harvest_fruit(message_data);
                     break;
+                case "update_tray_fruit":
+                    app.take_update_tray_fruit(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -258,9 +261,9 @@ let app = Vue.createApp({
             app.setup_pixi_wall();
             app.setup_pixi_barrier();
             app.update_subject_status_overlay();
-            app.setup_pixi_orchard_apple();
-            app.setup_pixi_orchard_orange();
+        
             app.update_orchard_labels();
+            app.update_tray_labels();
         },
 
         /** send winsock request to get session info
@@ -534,6 +537,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/help_doc_subject.js"%}
         {%include "subject/subject_home/the_stage/chat_gpt.js"%}
         {%include "subject/subject_home/the_stage/orchard.js"%}
+        {%include "subject/subject_home/the_stage/tray.js"%}
 
         /** clear form error messages
         */

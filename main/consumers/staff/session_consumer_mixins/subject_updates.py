@@ -336,6 +336,90 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def tray_fruit(self, event):
+        '''
+        move fruit to or from the tray from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        # logger = logging.getLogger(__name__) 
+        # logger.info(f"target_location_update: world state controller {self.controlling_channel} channel name {self.channel_name}")
+        
+        logger = logging.getLogger(__name__)
+        logger.info(f"tray_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
+
+        status = "success"
+        error_message = ""
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        parameter_set = self.parameter_set_local
+
+       
+        if parameter_set_player["id_label"] == "W":
+            #wholesaler move fruit to tray
+
+            if event_data["fruit_type"] == "apple":
+                if session_player["apples"] <= 0:
+                    status = "fail"
+                    error_message = "No apples to place on tray."
+                elif world_state["apple_tray_inventory"] >= parameter_set["apple_tray_capacity"]:
+                    status = "fail"
+                    error_message = "Apple tray full."
+                
+                if status == "success":
+                    session_player["apples"] -= 1
+                    world_state["apple_tray_inventory"] += 1
+
+            elif event_data["fruit_type"] == "orange":
+                if session_player["oranges"] <= 0:
+                    status = "fail"
+                    error_message = "No oranges to place on tray."
+                elif world_state["orange_tray_inventory"] >= parameter_set["orange_tray_capacity"]:
+                    status = "fail"
+                    error_message = "Orange tray full."
+
+                if status == "success":
+                    session_player["oranges"] -= 1
+                    world_state["orange_tray_inventory"] += 1
+
+        if status == "success":
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                session_player_id=player_id,
+                                                type=event['type'],
+                                                period_number=self.world_state_local["current_period"],
+                                                time_remaining=self.world_state_local["time_remaining"],
+                                                data=event_data))
+
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "session_player_apples" : session_player["apples"],
+                  "session_player_oranges" : session_player["oranges"],
+                  "apple_tray_inventory" : world_state["apple_tray_inventory"],
+                  "orange_tray_inventory" : world_state["orange_tray_inventory"],
+                  "fruit_type" : event_data["fruit_type"],
+                  "session_player_id" : player_id}
+        
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False, 
+                                send_to_group=True)
+
+    async def update_tray_fruit(self, event):
+        '''
+        update tray fruit from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
                                       
     
 

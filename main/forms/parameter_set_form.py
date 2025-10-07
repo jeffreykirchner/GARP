@@ -129,6 +129,16 @@ class ParameterSetForm(forms.ModelForm):
                                                max_length=100,
                                                initial="300,150",
                                                widget=forms.TextInput(attrs={"v-model":"parameter_set.orchard_orange_location",}))
+
+    orange_tray_location = forms.CharField(label='Orange Tray Location (x,y)',
+                                           max_length=100,
+                                           initial="500,150",
+                                           widget=forms.TextInput(attrs={"v-model":"parameter_set.orange_tray_location",}))
+
+    apple_tray_location = forms.CharField(label='Apple Tray Location (x,y)',
+                                          max_length=100,
+                                          initial="700,150",
+                                          widget=forms.TextInput(attrs={"v-model":"parameter_set.apple_tray_location",}))
     
     orange_tray_capacity = forms.IntegerField(label='Orange Tray Capacity',
                                               min_value=0,
@@ -170,6 +180,7 @@ class ParameterSetForm(forms.ModelForm):
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height','orchard_apple_location', 'orchard_orange_location', 
+                 'orange_tray_location', 'apple_tray_location',
                  'orange_tray_capacity', 'apple_tray_capacity', 'orange_tray_starting_inventory', 'apple_tray_starting_inventory',
                  'enable_chat', 'test_mode']
 
