@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('main', '0084_rename_orchard_orange_price_parametersetperiod_factory_orange_price'),
+        ('main', '0083_add_tray_fields_to_parameter_set'),
     ]
 
     operations = [
