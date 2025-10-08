@@ -137,6 +137,7 @@ class InterfaceMixin():
         '''
         pass
 
+    @check_message_for_me
     async def update_harvest_fruit(self, event):
         '''
         update target location from subject screen
@@ -147,6 +148,7 @@ class InterfaceMixin():
         await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
 
+    @check_message_for_me
     async def update_tray_fruit(self, event):
         '''
         update tray fruit from subject screen

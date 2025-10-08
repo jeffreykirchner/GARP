@@ -389,6 +389,26 @@ class SubjectUpdatesMixin():
                 if status == "success":
                     session_player["oranges"] -= 1
                     world_state["orange_tray_inventory"] += 1
+        elif parameter_set_player["id_label"] == "R":
+            #retailer move fruit from tray to inventory
+
+            if event_data["fruit_type"] == "apple":
+                if world_state["apple_tray_inventory"] <= 0:
+                    status = "fail"
+                    error_message = "No apples on tray."
+                
+                if status == "success":
+                    session_player["apples"] += 1
+                    world_state["apple_tray_inventory"] -= 1
+
+            elif event_data["fruit_type"] == "orange":
+                if world_state["orange_tray_inventory"] <= 0:
+                    status = "fail"
+                    error_message = "No oranges on tray."
+
+                if status == "success":
+                    session_player["oranges"] += 1
+                    world_state["orange_tray_inventory"] -= 1
 
         if status == "success":
             self.session_events.append(SessionEvent(session_id=self.session_id,
@@ -407,9 +427,14 @@ class SubjectUpdatesMixin():
                   "fruit_type" : event_data["fruit_type"],
                   "session_player_id" : player_id}
         
-        await self.send_message(message_to_self=None, message_to_group=result,
-                                message_type=event['type'], send_to_client=False, 
-                                send_to_group=True)
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False, 
+                                    send_to_group=True)
 
     async def update_tray_fruit(self, event):
         '''

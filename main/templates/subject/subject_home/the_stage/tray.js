@@ -42,6 +42,7 @@ setup_pixi_tray_apple: function setup_pixi_tray_apple()
     //add apples tray based on parameter_set apple_tray_capacity
     let apples = [];
     let spacer = 35;
+    let z_index = app.session.parameter_set.apple_tray_capacity;
     let start_x = tray.x + spacer;
     let total_width = tray.width - spacer*2;
     let spacing = total_width / app.session.parameter_set.apple_tray_capacity;
@@ -49,6 +50,7 @@ setup_pixi_tray_apple: function setup_pixi_tray_apple()
         let apple = new PIXI.Sprite(app.pixi_textures['apple_tex']);
         apple.scale.set(0.5);
         apple.anchor.set(0.5);
+        apple.zIndex = z_index--;
         apple.position.set(i * spacing + start_x+5, app.pixi_textures['tray_tex'].height/2-30);
         tray_apple_container.addChild(apple);
         apples.push(apple);
@@ -116,6 +118,7 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
     //add oranges tray based on parameter_set orange_tray_capacity
     let oranges = [];
     let spacer = 35;
+    let z_index = app.session.parameter_set.orange_tray_capacity;
     let start_x = tray.x + spacer;
     let total_width = tray.width - spacer*2;
     let spacing = total_width / app.session.parameter_set.orange_tray_capacity;
@@ -123,6 +126,7 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
         let orange = new PIXI.Sprite(app.pixi_textures['orange_tex']);
         orange.scale.set(0.5);
         orange.anchor.set(0.5);
+        orange.zIndex = z_index--;
         orange.position.set(i * spacing + start_x+5, app.pixi_textures['tray_tex'].height/2-30);
         tray_orange_container.addChild(orange);
         oranges.push(orange);
@@ -169,6 +173,34 @@ update_tray_labels: function update_tray_labels()
 
     pixi_tray_apple.label_price.text = buy_sell_text + parameter_set_period.wholesale_apple_price + "¢ / Apple";
     pixi_tray_orange.label_price.text = buy_sell_text + parameter_set_period.wholesale_orange_price + "¢ / Orange";
+
+    //set alpha of of apple not in tray to 50%
+    let world_state = app.session.world_state;
+    for(let i=0; i<pixi_tray_apple.apples.length; i++)
+    {
+        if(i < world_state.apple_tray_inventory)
+        {
+            pixi_tray_apple.apples[i].alpha = 1.0;
+        }
+        else
+        {
+            pixi_tray_apple.apples[i].alpha = 0.25;
+        }
+    }
+
+    //set alpha of of orange not in tray to 50%
+    for(let i=0; i<pixi_tray_orange.oranges.length; i++)
+    {
+        if(i < world_state.orange_tray_inventory)
+        {
+            pixi_tray_orange.oranges[i].alpha = 1.0;
+        }
+        else
+        {
+            pixi_tray_orange.oranges[i].alpha = 0.25;
+        }
+    }
+
 },
 
 tray_apple_double_click: function tray_apple_double_click()
@@ -227,6 +259,20 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
     if(app.is_subject && session_player_id == app.session_player.id)
     {
         app.working = false;
+        if(data.value == "fail")
+        {
+            let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
+
+            app.add_text_emitters("Error: " + data.error_message, 
+                    current_location.x, 
+                    current_location.y,
+                    current_location.x,
+                    current_location.y-100,
+                    0xFFFFFF,
+                    28,
+                    null)
+            return;
+        }
     }
 
     let source_location={x:0, y:0};
@@ -295,5 +341,6 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
     
     app.update_orchard_labels();    
     app.update_player_inventory();
+    app.update_tray_labels();
 },
 
