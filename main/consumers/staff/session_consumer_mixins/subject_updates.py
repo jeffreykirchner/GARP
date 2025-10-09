@@ -304,28 +304,50 @@ class SubjectUpdatesMixin():
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
+        world_state = self.world_state_local
+        status = "success"
+        error_message = ""
 
         if event_data["fruit_type"] == "apple":
-            session_player["apples"] += 1
+            if world_state["apple_orchard_inventory"] <= 0:
+                status = "fail"
+                error_message = "No apples left to harvest"
+            else:
+                world_state["apple_orchard_inventory"] -= 1
+                session_player["apples"] += 1
         elif event_data["fruit_type"] == "orange":
-            session_player["oranges"] += 1
-
-        self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                session_player_id=player_id,
-                                                type=event['type'],
-                                                period_number=self.world_state_local["current_period"],
-                                                time_remaining=self.world_state_local["time_remaining"],
-                                                data=event_data))
+            if world_state["orange_orchard_inventory"] <= 0:
+                status = "fail"
+                error_message = "No oranges left to harvest"
+            else:
+                world_state["orange_orchard_inventory"] -= 1
+                session_player["oranges"] += 1
         
-        result = {"value" : "success", 
+        if status == "success":
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+        
+        result = {"value" : status,
+                  "error_message" : error_message, 
                   "apples" : session_player["apples"], 
                   "oranges" : session_player["oranges"],
+                  "apple_orchard_inventory" : world_state["apple_orchard_inventory"],
+                  "orange_orchard_inventory" : world_state["orange_orchard_inventory"],
                   "fruit_type" : event_data["fruit_type"],
                   "session_player_id" : player_id}
         
-        await self.send_message(message_to_self=None, message_to_group=result,
-                                message_type=event['type'], send_to_client=False, 
-                                send_to_group=True)
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False, 
+                                    send_to_group=True)
 
     async def update_harvest_fruit(self, event):
         '''
