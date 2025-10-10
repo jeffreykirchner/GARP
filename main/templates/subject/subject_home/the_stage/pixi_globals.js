@@ -15,4 +15,5 @@ let wall_search_objects = [];
 let pixi_orchard_apple = {};              //pixi apple object
 let pixi_orchard_orange = {};             //pixi orange object
 let pixi_tray_apple = {};                 //pixi apple tray object
-let pixi_tray_orange = {};
+let pixi_tray_orange = {};                //pixi orange tray object
+let pixi_register = {};                   //pixi cash register object

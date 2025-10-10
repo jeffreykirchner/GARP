@@ -538,6 +538,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/chat_gpt.js"%}
         {%include "subject/subject_home/the_stage/orchard.js"%}
         {%include "subject/subject_home/the_stage/tray.js"%}
+        {%include "subject/subject_home/the_stage/register.js"%}
 
         /** clear form error messages
         */
