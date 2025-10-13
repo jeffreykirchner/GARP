@@ -27,12 +27,14 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'orchard_orange_tex', src:'{% static "orange_tree.png"%}'});
     PIXI.Assets.add({alias:'double_click_tex', src:'{% static "double_click.png"%}'}); 
     PIXI.Assets.add({alias:'tree_tex', src:'{% static "tree.png"%}'}); 
+    PIXI.Assets.add({alias:'check_mark_tex', src:'{% static "check_mark.png"%}'}); 
+    PIXI.Assets.add({alias:'x_mark_tex', src:'{% static "x_mark.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
                                                'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
                                                'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
-                                               'double_click_tex', 'tree_tex']);
+                                               'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
@@ -190,6 +192,7 @@ game_loop: function game_loop(delta)
     app.move_player(delta.deltaTime);
     app.move_text_emitters(delta.deltaTime);
     app.animate_transfer_beams(delta.deltaTime);
+    app.update_check_marks();
 
     if(app.pixi_mode=="subject" && app.session.started)
     {   

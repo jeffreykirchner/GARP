@@ -5,10 +5,17 @@ setup_pixi_register: function setup_pixi_register()
 {
     let parameter_set = app.session.parameter_set;
     let register_container = new PIXI.Container();
+    let wholesaler_pad_container = new PIXI.Container();
+    let retailer_pad_container = new PIXI.Container();
+    let world_state = app.session.world_state;
+
     register_container.zIndex = 1;
+    wholesaler_pad_container.zIndex = 1;
+    retailer_pad_container.zIndex = 1;
 
     let location = parameter_set.register_location.split(",");
 
+    //register container
     register_container.position.set(location[0], location[1]);
 
     //add graphic
@@ -27,34 +34,101 @@ setup_pixi_register: function setup_pixi_register()
 
     let label = new PIXI.Text({text:"Total: NNN¢", style:style});
     label.anchor.set(0.5);
-
-    //add double click graphic bottom left corner of container
-    // let double_click_graphic = new PIXI.Sprite(app.pixi_textures['double_click_tex']);
-    // double_click_graphic.anchor.set(0.5);
    
     register_container.addChild(graphic);
     register_container.addChild(label);
-    // register_container.addChild(double_click_graphic);
 
     label.position.set(0, register_container.height/2 + label.height/2 + 5);
-    // double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2 + 10, label.y- double_click_graphic.height/2+10);
 
-    //add apples in random positions on the tree
+    //add wholesaler pad
+    let wholesaler_outline_dash = new PIXI.Graphics();
+    let check_mark_wholesaler_sprite = new PIXI.Sprite(app.pixi_textures['check_mark_tex']);
+    let x_mark_wholesaler_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
 
-    register_container.zIndex = 1;
-    register_container.eventMode = 'static';
-    register_container.on("pointertap", app.register_double_click);
+    let wholesaler_outline_fill_color = 0xFFFFFF;
+    if(world_state.session_players_order.length > 0)
+    {
+        wholesaler_outline_fill_color = app.get_parameter_set_player_from_player_id(world_state.session_players_order[0]).hex_color;
+    }
+    wholesaler_outline_dash.rect(0, 0, 400, 300);
+    wholesaler_outline_dash.fill({color:wholesaler_outline_fill_color, alpha:0.25});
 
-    pixi_register = {container:null,
+    let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
+    matrix_2.rotate(1.5708);
+    wholesaler_outline_dash.stroke({width:10,
+                            texture:app.pixi_textures['dash_tex'],
+                            alpha:0.5,
+                            alignment:1,
+                            color:0x000000,
+                            matrix:matrix_2});
+
+
+    x_mark_wholesaler_sprite.position.set(parseInt(wholesaler_outline_dash.width) - parseInt(x_mark_wholesaler_sprite.width) - 10, 10);
+    check_mark_wholesaler_sprite.position.set(parseInt(wholesaler_outline_dash.width) - parseInt(check_mark_wholesaler_sprite.width) - 10, 10);
+
+    wholesaler_pad_container.addChild(wholesaler_outline_dash);
+    wholesaler_pad_container.addChild(check_mark_wholesaler_sprite);
+    wholesaler_pad_container.addChild(x_mark_wholesaler_sprite);
+
+    wholesaler_pad_container.position.set(register_container.x - wholesaler_pad_container.width - register_container.width/2 - 30,
+                                          register_container.y - wholesaler_pad_container.height/2);
+
+    //add retailer pad
+    let retailer_outline_dash = new PIXI.Graphics();
+    let check_mark_retailer_sprite = new PIXI.Sprite(app.pixi_textures['check_mark_tex']);
+    let x_mark_retailer_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
+
+    retailer_outline_dash.rect(0, 0, 400, 300);
+    let retailer_outline_fill_color = 0xFFFFFF;
+    if(world_state.session_players_order.length > 1)
+    {
+        retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(world_state.session_players_order[1]).hex_color;
+    }
+    retailer_outline_dash.fill({color:retailer_outline_fill_color, alpha:0.5});
+    retailer_outline_dash.anchor = 0.5;
+
+    let matrix_3 = new PIXI.Matrix(1,0,0,1,0,0);
+    matrix_3.rotate(1.5708);
+    retailer_outline_dash.stroke({width:10,
+                            texture:app.pixi_textures['dash_tex'],
+                            alpha:0.5,
+                            alignment:1,
+                            color:0x000000,
+                            matrix:matrix_3});
+
+    retailer_pad_container.addChild(retailer_outline_dash);
+    retailer_pad_container.addChild(check_mark_retailer_sprite);
+    retailer_pad_container.addChild(x_mark_retailer_sprite);
+
+    x_mark_retailer_sprite.position.set(10,10);
+    check_mark_retailer_sprite.position.set(10,10);
+    retailer_pad_container.position.set(parseInt(register_container.x) + parseInt(register_container.width)/2 + 30,
+                                        register_container.y - retailer_pad_container.height/2);
+
+    //build pixi json
+    pixi_register = {register_container:null,
+                     wholesaler_pad_container:null,
+                     retailer_pad_container:null,
                      label:null,
+                     check_mark_wholesaler_sprite:null,
+                     x_mark_wholesaler_sprite:null,
+                     check_mark_retailer_sprite:null,
+                     x_mark_retailer_sprite:null,
                      last_click:null,
-                     rect:null};
+    }
 
-    pixi_register.container = register_container;
+    pixi_register.register_container = register_container;
+    pixi_register.wholesaler_pad_container = wholesaler_pad_container;
+    pixi_register.retailer_pad_container = retailer_pad_container;
+    pixi_register.check_mark_wholesaler_sprite = check_mark_wholesaler_sprite;
+    pixi_register.x_mark_wholesaler_sprite = x_mark_wholesaler_sprite;
+    pixi_register.check_mark_retailer_sprite = check_mark_retailer_sprite;
+    pixi_register.x_mark_retailer_sprite = x_mark_retailer_sprite;
     pixi_register.label = label;
-    pixi_register.rect = {x:location[0], y:location[1], width:app.pixi_textures['cash_register_tex'].width, height:app.pixi_textures['cash_register_tex'].height};
 
-    pixi_container_main.addChild(pixi_register.container);
+    pixi_container_main.addChild(pixi_register.register_container);
+    pixi_container_main.addChild(pixi_register.wholesaler_pad_container);
+    pixi_container_main.addChild(pixi_register.retailer_pad_container);
 
 },
 
@@ -183,3 +257,70 @@ take_update_register: function take_update_register(data)
     app.update_register_labels();
 },
 
+/**
+ * check if point is in wholesaler pad
+ */
+is_in_wholesaler_pad: function is_in_wholesaler_pad(point)
+{
+    return app.check_point_in_rectagle(point, 
+                {x:pixi_register.wholesaler_pad_container.x,
+                 y:pixi_register.wholesaler_pad_container.y,
+                 width:pixi_register.wholesaler_pad_container.width,
+                 height:pixi_register.wholesaler_pad_container.height});
+},
+
+/**
+ *  check if point is in retailer pad
+ */
+is_in_retailer_pad: function is_in_retailer_pad(point)
+{
+    return app.check_point_in_rectagle(point, 
+                {x:pixi_register.retailer_pad_container.x,
+                 y:pixi_register.retailer_pad_container.y,
+                 width:pixi_register.retailer_pad_container.width,
+                 height:pixi_register.retailer_pad_container.height});
+},
+
+/**
+ * update check and x marks on wholesaler and retailer pads if player is in them
+ */
+update_check_marks: function update_check_marks()
+{
+    if(!app.session.started) return;
+
+    let wholesaler_position = {x:0, y:0};
+    let retailer_position = {x:0, y:0};
+    let world_state = app.session.world_state;
+
+    if(world_state.session_players_order.length > 0)
+    {
+        wholesaler_position = world_state.session_players[world_state.session_players_order[0]].current_location;
+    }
+
+    if(world_state.session_players_order.length > 1)
+    {
+        retailer_position = world_state.session_players[world_state.session_players_order[1]].current_location;
+    }
+
+    if(app.is_in_wholesaler_pad(wholesaler_position))
+    {
+        pixi_register.check_mark_wholesaler_sprite.visible = true;
+        pixi_register.x_mark_wholesaler_sprite.visible = false;
+    }
+    else
+    {
+        pixi_register.check_mark_wholesaler_sprite.visible = false;
+        pixi_register.x_mark_wholesaler_sprite.visible = true;
+    }
+
+    if(app.is_in_retailer_pad(retailer_position))
+    {
+        pixi_register.check_mark_retailer_sprite.visible = true;
+        pixi_register.x_mark_retailer_sprite.visible = false;
+    }
+    else
+    {
+        pixi_register.check_mark_retailer_sprite.visible = false;
+        pixi_register.x_mark_retailer_sprite.visible = true;
+    }
+},
