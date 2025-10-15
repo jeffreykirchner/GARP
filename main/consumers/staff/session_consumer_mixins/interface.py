@@ -44,6 +44,8 @@ class InterfaceMixin():
 
         await self.send_message(message_to_self=result, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
-    
+
+
+
 
 

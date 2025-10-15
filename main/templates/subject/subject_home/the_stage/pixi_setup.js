@@ -54,6 +54,7 @@ setup_pixi: function setup_pixi(){
             app.update_player_inventory();
             app.update_tray_labels();
             app.update_orchard_labels();
+            app.update_register_labels();
         }
         
         if(app.pixi_mode!="subject")

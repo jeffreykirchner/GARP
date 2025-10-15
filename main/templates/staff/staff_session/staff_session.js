@@ -218,6 +218,12 @@ let app = Vue.createApp({
                 case "update_harvest_fruit":
                     app.take_update_harvest_fruit(message_data);
                     break;
+                case "update_tray_fruit":
+                    app.take_update_tray_fruit(message_data);
+                    break;
+                case "update_checkout":
+                    app.take_update_checkout(message_data);
+                    break;
             }
             app.working = false;
             app.process_the_feed(message_type, message_data);

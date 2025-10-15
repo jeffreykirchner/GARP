@@ -342,5 +342,6 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
     app.update_orchard_labels();    
     app.update_player_inventory();
     app.update_tray_labels();
+    app.update_register_labels();
 },
 

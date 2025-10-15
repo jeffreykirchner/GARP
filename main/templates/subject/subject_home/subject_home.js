@@ -176,6 +176,9 @@ let app = Vue.createApp({
                 case "update_tray_fruit":
                     app.take_update_tray_fruit(message_data);
                     break;
+                case "update_checkout":
+                    app.take_update_checkout(message_data);
+                    break;
             }
 
             app.first_load_done = true;

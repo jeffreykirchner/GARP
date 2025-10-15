@@ -34,11 +34,23 @@ setup_pixi_register: function setup_pixi_register()
 
     let label = new PIXI.Text({text:"Total: NNN¢", style:style});
     label.anchor.set(0.5);
+    let label2 = new PIXI.Text({text:"Checkout", style:style});
+    label2.anchor.set(0.5);
+
+    let double_click_graphic = new PIXI.Sprite(app.pixi_textures['double_click_tex']);
+    double_click_graphic.anchor.set(0.5);
    
     register_container.addChild(graphic);
     register_container.addChild(label);
+    // register_container.addChild(label2);
+    register_container.addChild(double_click_graphic);
 
     label.position.set(0, register_container.height/2 + label.height/2 + 5);
+    label2.position.set(0, -register_container.height/2 - label2.height/2 +10);
+    double_click_graphic.position.set(-graphic.width/2+30, -graphic.height/2);
+
+    register_container.eventMode = 'static';
+    register_container.on("pointertap", app.register_double_click);
 
     //add wholesaler pad
     let wholesaler_outline_dash = new PIXI.Graphics();
@@ -46,7 +58,7 @@ setup_pixi_register: function setup_pixi_register()
     let x_mark_wholesaler_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
 
     let wholesaler_outline_fill_color = 0xFFFFFF;
-    if(world_state.session_players_order.length > 0)
+    if(world_state.session_players_order && world_state.session_players_order.length > 0)
     {
         wholesaler_outline_fill_color = app.get_parameter_set_player_from_player_id(world_state.session_players_order[0]).hex_color;
     }
@@ -80,7 +92,7 @@ setup_pixi_register: function setup_pixi_register()
 
     retailer_outline_dash.rect(0, 0, 400, 300);
     let retailer_outline_fill_color = 0xFFFFFF;
-    if(world_state.session_players_order.length > 1)
+    if(world_state.session_players_order && world_state.session_players_order.length > 1)
     {
         retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(world_state.session_players_order[1]).hex_color;
     }
@@ -104,6 +116,8 @@ setup_pixi_register: function setup_pixi_register()
     check_mark_retailer_sprite.position.set(10,10);
     retailer_pad_container.position.set(parseInt(register_container.x) + parseInt(register_container.width)/2 + 30,
                                         register_container.y - retailer_pad_container.height/2);
+
+    
 
     //build pixi json
     pixi_register = {register_container:null,
@@ -140,34 +154,15 @@ update_register_labels: function update_register_labels()
     let parameter_set_period = app.get_current_parameter_set_period();
     let world_state = app.session.world_state;
 
-    if(!parameter_set_period) return;
-
-    pixi_register.label.text = "Buy: " + parameter_set_period.register_price + "¢ / Apple";
-    pixi_register_orange.label.text = "Buy: " + parameter_set_period.register_orange_price + "¢ / Orange";
-
-    //hide fruit if it has been harvested
-    for(let i=0; i<pixi_register.apples.length; i++)
+    if(world_state.session_players_order && world_state.session_players_order.length > 1)
     {
-        if(i < world_state.apple_register_inventory)
-        {
-            pixi_register.apples[i].visible = true;
-        }
-        else
-        {
-            pixi_register.apples[i].visible = false;
-        }
-    }
-
-    for(let i=0; i<pixi_register_orange.oranges.length; i++)
-    {
-        if(i < world_state.orange_register_inventory)
-        {
-            pixi_register_orange.oranges[i].visible = true;
-        }
-        else
-        {
-            pixi_register_orange.oranges[i].visible = false;
-        }
+        let retailer_player_id = world_state.session_players_order[1];
+        let retailer_player = world_state.session_players[retailer_player_id];
+        let total_apples = retailer_player.apples;
+        let total_oranges = retailer_player.oranges;
+        
+        let total_cost = parameter_set_period.wholesale_apple_price * total_apples + parameter_set_period.wholesale_orange_price * total_oranges;
+        pixi_register.label.text = "Total: " + total_cost + "¢";
     }
 },
 
@@ -175,17 +170,74 @@ register_double_click: function register_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+    if(!app.session.started) return;
 
     let now = Date.now();
 
     if(pixi_register.last_click && (now - pixi_register.last_click) < 400)
     {
-        app.working = true;
-        app.send_message("harvest_fruit",
-                        {"fruit_type" : "apple", },
-                        "group");
-
         pixi_register.last_click = null;
+
+        let wholesaler_position = null;
+        let retailer_position = null;
+        let world_state = app.session.world_state;
+        if(world_state.session_players_order.length > 0)
+        {
+            wholesaler_position = world_state.session_players[world_state.session_players_order[0]].current_location;
+            if(world_state.session_players_order[0] == app.session_player.id)
+            {
+                app.add_text_emitters("Error: The retailer must checkout.",
+                    world_state.session_players[app.session_player.id].current_location.x,
+                    world_state.session_players[app.session_player.id].current_location.y,
+                    world_state.session_players[app.session_player.id].current_location.x,
+                    world_state.session_players[app.session_player.id].current_location.y-100,
+                    0xFFFFFF,
+                    28,
+                    null);
+                return;
+            }
+        }
+
+        if(world_state.session_players_order.length > 1)
+        {
+            retailer_position = world_state.session_players[world_state.session_players_order[1]].current_location;
+        }
+
+        if(!wholesaler_position || !retailer_position)
+        {
+            return;
+        }
+
+        if(!app.is_in_wholesaler_pad(wholesaler_position))
+        {
+            app.add_text_emitters("Error: Wholesaler not in pad", 
+                    world_state.session_players[app.session_player.id].current_location.x, 
+                    world_state.session_players[app.session_player.id].current_location.y,
+                    world_state.session_players[app.session_player.id].current_location.x,
+                    world_state.session_players[app.session_player.id].current_location.y-100,
+                    0xFFFFFF,
+                    28,
+                    null)
+            return;
+        }
+        if(!app.is_in_retailer_pad(retailer_position))
+        {
+            app.add_text_emitters("Error: Retailer not in pad", 
+                    world_state.session_players[app.session_player.id].current_location.x, 
+                    world_state.session_players[app.session_player.id].current_location.y,
+                    world_state.session_players[app.session_player.id].current_location.x,
+                    world_state.session_players[app.session_player.id].current_location.y-100,
+                    0xFFFFFF,
+                    28,
+                    null)
+            return;
+        }
+
+        app.working = true;
+        app.send_message("checkout",
+                        {},
+                        "group");
+        
     }
     else
     {
@@ -193,7 +245,7 @@ register_double_click: function register_double_click()
     }
 },
 
-take_update_register: function take_update_register(data)
+take_update_checkout: function take_update_checkout(data)
 {
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
