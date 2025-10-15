@@ -139,7 +139,7 @@ class Session(models.Model):
         '''
         current_period = world_state["current_period"]
         parameter_set_period_id = parameter_set["parameter_set_periods_order"][current_period]  #current period is 1 based, list is 0 based
-        parameter_set_period = parameter_set["parameter_set_periods"][parameter_set_period_id]
+        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
         session_players = world_state["session_players"]
 
         for i in session_players:
