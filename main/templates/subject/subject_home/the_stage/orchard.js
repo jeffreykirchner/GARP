@@ -248,11 +248,14 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
                     null)
             return;
         }
+
+        session_player.earnings = data.earnings;
+        app.update_subject_status_overlay();
     }
 
     let source_location={x:0, y:0};
     let source_tex = null;
-
+   
     if(data.fruit_type == "apple")
     {
         let location = app.session.parameter_set.orchard_apple_location.split(",");
@@ -269,11 +272,9 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
     }
     
     let elements = [];
-    let element = {source_change: "",
-                   target_change: "+", 
-                   texture:source_tex,
-                }
-    elements.push(element);
+    elements.push({source_change: "",
+                    target_change: "-" + data.fruit_cost + "¢   +", 
+                    texture:source_tex});
     app.add_transfer_beam(source_location, 
                           session_player.current_location,
                           elements,
