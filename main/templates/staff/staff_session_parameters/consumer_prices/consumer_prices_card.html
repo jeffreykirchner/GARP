@@ -1,0 +1,49 @@
+<div class="card">                  
+    <div class="card-header fw-bold">                
+        <span class="align-middle">
+            Consumer Prices
+        </span>      
+
+        <span class="float-end">
+            <button type="button" class="btn btn-link ms-4" title="Show Help Doc" v-on:click="send_load_help_doc('Staff Parameters Consumer Prices')">
+                <i class="far fa-question-circle"></i> 
+            </button>
+        </span> 
+                
+    </div>
+    <div class="card-body" >        
+
+        <div class="row justify-content-center">
+            <!-- consumer_price settings -->
+            <div class="col-md-auto text-center">                
+                <div class="table-responsive">
+                    <table class="table table-condensed"> 
+                        <thead>
+                            <tr>
+                                <th scope="col" class = "m-1 p-1">
+                                    Oranges/Apples
+                                </th> 
+                                <th v-for="(p, index) in parameter_set.apple_tray_capacity">
+                                   <span class="badge bg-secondary">[[ p ]]</span>
+                                </th>                                         
+                            </tr>
+                        </thead>
+                        <tbody id="consumer_price_list">
+                            <tr v-for="(o, index) in parameter_set.orange_tray_capacity">
+                                <td>
+                                    <span class="badge bg-secondary">[[ o ]]</span>
+                                </td>
+                                <td v-for="(a, index2) in parameter_set.apple_tray_capacity"
+                                    v-on:click="show_edit_parameter_set_consumer_price(o, a)"
+                                    class="player_table_cell">
+                                    [[get_consumer_price(o, a)]]
+                                </td>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>          
+    </div>                    
+</div> 

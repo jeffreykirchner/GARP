@@ -52,6 +52,7 @@
 {%include "staff/staff_session_parameters/barriers/edit_parameterset_barrier_modal.html"%}
 {%include "staff/staff_session_parameters/grounds/edit_parameterset_ground_modal.html"%}
 {%include "staff/staff_session_parameters/periods/edit_parameterset_period_modal.html"%}
+{%include "staff/staff_session_parameters/consumer_prices/edit_parameterset_consumer_price_modal.html"%}
 {%include "help_modal.html"%}
 
 <!-- cards -->
@@ -87,6 +88,11 @@
         <div class="row justify-content-lg-center mt-4">
             <div class="col-md">
                 {%include "staff/staff_session_parameters/periods/periods_card.html"%}  
+            </div>
+        </div>
+        <div class="row justify-content-lg-center mt-4" v-if="first_load_done">
+            <div class="col-md">
+                {%include "staff/staff_session_parameters/consumer_prices/consumer_prices_card.html"%}  
             </div>
         </div>
     </div> 

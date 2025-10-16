@@ -7,3 +7,4 @@ from .parameter_set_groups import ParameterSetGroupsMixin
 from .parameter_set_barriers import ParameterSetBarriersMixin
 from .parameter_set_grounds import ParameterSetGroundsMixin
 from .parameter_set_periods import ParameterSetPeriodsMixin
+from .parameter_set_consumer_prices import ParameterSetConsumerPricesMixin
