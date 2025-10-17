@@ -270,43 +270,25 @@ take_update_checkout: function take_update_checkout(data)
         }
     }
 
-    let source_location={x:0, y:0};
-    let source_tex = null;
+    let payment = data.payment;
+    let wholesaler_player_id = world_state.session_players_order[0];
+    let wholesaler_player = world_state.session_players[wholesaler_player_id];
+    let retailer_player_id = world_state.session_players_order[1];
+    let retailer_player = world_state.session_players[retailer_player_id];
 
-    if(data.fruit_type == "apple")
-    {
-        let location = app.session.parameter_set.register_location.split(",");
-        source_location.x = parseInt(location[0]);
-        source_location.y = parseInt(location[1]);
-        source_tex = app.pixi_textures['apple_tex'];
-    }
-    else if(data.fruit_type == "orange")
-    {
-        let location = app.session.parameter_set.register_orange_location.split(",");
-        source_location.x = parseInt(location[0]);
-        source_location.y = parseInt(location[1]);
-        source_tex = app.pixi_textures['orange_tex'];
-    }
-    
     let elements = [];
-    let element = {source_change: "",
-                   target_change: "+", 
-                   texture:source_tex,
+    let element = {source_change: "-" + payment,
+                   target_change: "+" + payment, 
+                   texture:app.pixi_textures['cents_symbol_tex'],
                 }
     elements.push(element);
-    app.add_transfer_beam(source_location, 
-                          session_player.current_location,
+    app.add_transfer_beam(retailer_player.current_location, 
+                          wholesaler_player.current_location,
                           elements,
-                          false,
+                          true,
                           true);
 
-    session_player.apples = data.apples;
-    session_player.oranges = data.oranges;
-    world_state.apple_register_inventory = data.apple_register_inventory;
-    world_state.orange_register_inventory = data.orange_register_inventory;
     
-    app.update_player_inventory();
-    app.update_register_labels();
 },
 
 /**

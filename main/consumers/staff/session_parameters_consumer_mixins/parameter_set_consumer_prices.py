@@ -45,7 +45,7 @@ def take_update_parameter_set_consumer_price(data):
         apple = form_data_dict.get("apple")
         consumer_price = form_data_dict.get("consumer_price")
 
-        session.parameter_set.consumer_prices["o" + str(orange) + "a" + str(apple)] = consumer_price
+        session.parameter_set.consumer_prices[f"o{orange}a{apple}"] = consumer_price
         session.parameter_set.save()
         session.parameter_set.update_json_local()
 

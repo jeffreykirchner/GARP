@@ -378,7 +378,7 @@ class SubjectUpdatesMixin():
         # logger.info(f"target_location_update: world state controller {self.controlling_channel} channel name {self.channel_name}")
         
         logger = logging.getLogger(__name__)
-        logger.info(f"tray_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
+        # logger.info(f"tray_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
 
         status = "success"
         error_message = ""
@@ -484,10 +484,68 @@ class SubjectUpdatesMixin():
             return
         
         logger = logging.getLogger(__name__) 
+        # logger.info("checkout")
         
-        event_data =  event["message_text"]
+        status = "success"
+        error_message = ""
+        payment = 0
 
-    
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+
+        #check if retailer is checking out
+        if parameter_set_player["id_label"] != "R":
+            status = "fail"
+            error_message = "Only retailers can checkout."
+        
+        #check if retailer has already checked out
+        if status == "success":
+            if session_player["checkout"]:
+                status = "fail"
+                error_message = "Retailer has already checked out."
+
+        if status == "success":
+            apples = world_state["session_players"][str(player_id)]["apples"]
+            oranges = world_state["session_players"][str(player_id)]["oranges"]
+
+            payment = parameter_set_period["wholesale_apple_price"] * apples + \
+                      parameter_set_period["wholesale_orange_price"] * oranges
+            session_player["budget"] -= payment
+            # session_player["checkout"] = True
+
+            wholesaler_player_id = world_state["session_players_order"][0]
+            wholesaler = world_state["session_players"][str(wholesaler_player_id)]
+            wholesaler["earnings"] += payment
+
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+            
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "payment" : payment,
+                  "retailer_budget" : session_player["budget"],
+                  "retailer_checkout" : session_player["checkout"],
+                  "wholesaler_earnings" : wholesaler["earnings"],
+                  "session_player_id" : player_id}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False, 
+                                    send_to_group=True)
+
     async def update_checkout(self, event):
         '''
         update checkout from subject screen

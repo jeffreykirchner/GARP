@@ -151,6 +151,8 @@ class Session(models.Model):
 
             if parameter_set_player["id_label"] == "W":
                 session_player["earnings"] += parameter_set_period["wholesaler_budget"]
+            elif parameter_set_player["id_label"] == "R":
+                session_player["budget"] = parameter_set_period["retailer_budget"]
 
         self.world_state = world_state
         self.save()
@@ -213,6 +215,7 @@ class Session(models.Model):
             v['apples'] = 0
             v['oranges'] = 0
             v['checkout'] = False
+            v['budget'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             
             self.world_state["session_players"][str(i['id'])] = v

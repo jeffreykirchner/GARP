@@ -29,12 +29,15 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'tree_tex', src:'{% static "tree.png"%}'}); 
     PIXI.Assets.add({alias:'check_mark_tex', src:'{% static "check_mark.png"%}'}); 
     PIXI.Assets.add({alias:'x_mark_tex', src:'{% static "x_mark.png"%}'});
+    PIXI.Assets.add({alias:'dollar_symbol_tex', src:'{% static "dollar_symbol.png"%}'});
+    PIXI.Assets.add({alias:'cents_symbol_tex', src:'{% static "cents_symbol.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
                                                'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
                                                'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
-                                               'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex']);
+                                               'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex', 
+                                               'dollar_symbol_tex', 'cents_symbol_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
