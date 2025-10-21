@@ -1,0 +1,23 @@
+  <table class="table table-condensed"> 
+    <thead>
+        <tr>
+            <th scope="col" class = "m-1 p-1">
+                Oranges/Apples
+            </th> 
+            <th v-for="(p, index) in session.parameter_set.apple_tray_capacity">
+                <span class="badge bg-secondary">[[ p ]]</span>
+            </th>                                         
+        </tr>
+    </thead>
+    <tbody id="consumer_price_list">
+        <tr v-for="(o, index) in session.parameter_set.orange_tray_capacity">
+            <td>
+                <span class="badge bg-secondary">[[ o ]]</span>
+            </td>
+            <td v-for="(a, index2) in session.parameter_set.apple_tray_capacity">                
+                [[get_consumer_price(o, a)]]
+            </td>
+        </tr>
+    </tbody>
+    
+</table>
