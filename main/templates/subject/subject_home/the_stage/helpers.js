@@ -149,3 +149,27 @@ get_consumer_price: function get_consumer_price(orange, apple){
 
     return app.session.parameter_set.consumer_prices[key];
 },
+
+/**
+ * get consumer price style
+ */
+get_consumer_price_style: function get_consumer_price_style(orange, apple){
+    let price = app.get_consumer_price(orange, apple);
+    if(price === null) return "";
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(orange == session_player.oranges && apple < session_player.apples){
+        return "background-color: LightYellow;";
+    }
+
+    if(apple == session_player.apples && orange < session_player.oranges){
+        return "background-color: LightYellow;";
+    }
+
+    if(apple == session_player.apples && orange == session_player.oranges){
+        return "background-color: Yellow; font-weight: bold;";
+    }
+
+    return "";
+},

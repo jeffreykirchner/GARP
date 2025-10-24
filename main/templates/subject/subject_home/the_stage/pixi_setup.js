@@ -69,7 +69,6 @@ setup_pixi: function setup_pixi(){
         {
             // app.setup_pixi_minimap();
             app.setup_subject_status_overlay();
-            app.setup_consumer_prices_overlay();
         }
     });
 
