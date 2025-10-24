@@ -137,3 +137,15 @@ get_current_parameter_set_period: function get_current_parameter_set_period()
     let current_period_id = app.session.parameter_set.parameter_set_periods_order[current_period_index-1];
     return app.session.parameter_set.parameter_set_periods[current_period_id];
 },
+
+/**
+ * get consumer price
+ */
+get_consumer_price: function get_consumer_price(orange, apple){
+    if (typeof app === "undefined" || app === null) return null;
+
+    let key = "o" + orange + "a" + apple;
+    if (!Object.prototype.hasOwnProperty.call(app.session.parameter_set.consumer_prices, key)) return null;
+
+    return app.session.parameter_set.consumer_prices[key];
+},
