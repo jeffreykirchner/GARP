@@ -274,8 +274,8 @@ class ParameterSet(models.Model):
         if not self.consumer_prices:
             self.consumer_prices = {}
     
-        for o in range(1, self.orange_tray_capacity + 1):
-            for a in range(1, self.apple_tray_capacity + 1):
+        for o in range(0, self.orange_tray_capacity + 1):
+            for a in range(0, self.apple_tray_capacity + 1):
 
                 if not self.consumer_prices.get(f"o{o}a{a}", None):
                     self.consumer_prices[f"o{o}a{a}"] = 0

@@ -1,12 +1,12 @@
-  {% load static %}
+{% load static %}
 
-  <div class="row">
+<div class="row">
     <div class="col text-center fw-bold mb-2">        
         Consumer Sales Prices (¢)
     </div>
-  </div>
+</div>
 
-  <div class="row justify-content-center">
+<div class="row justify-content-center">
     <div class="col">
         <table class="table table-condensed d-flex justify-content-center align-items-center table-bordered m-0 p-0"> 
 
@@ -15,18 +15,18 @@
                     <td scope="col" class = "m-0 p-0">
                     
                     </td> 
-                    <td v-for="(p, index) in session.parameter_set.apple_tray_capacity" class="m-0 p-0 pe-1 ps-1 bg-secondary text-nowrap fw-bold">
-                    [[ p ]] <img src="{% static 'apple.png' %}" alt="Apple" width="15" height="15">
+                    <td v-for="(p, index) in session.parameter_set.apple_tray_capacity+1" class="m-0 p-0 pe-1 ps-1 bg-secondary text-nowrap fw-bold">
+                    [[ p-1 ]] <img src="{% static 'apple.png' %}" alt="Apple" width="15" height="15">
                     </td>                                         
                 </tr>
-                <tr v-for="(o, index) in session.parameter_set.orange_tray_capacity" class = "">
+                <tr v-for="(o, index) in session.parameter_set.orange_tray_capacity+1" class = "">
                     <td class="m-0 p-0 ps-1 pe-1 bg-secondary text-nowrap fw-bold text-center">
-                        [[ o ]] <img src="{% static 'orange.png' %}" alt="Orange" width="15" height="15">
+                        [[ o-1 ]] <img src="{% static 'orange.png' %}" alt="Orange" width="15" height="15">
                     </td>
-                    <td v-for="(a, index2) in session.parameter_set.apple_tray_capacity" 
+                    <td v-for="(a, index2) in session.parameter_set.apple_tray_capacity+1" 
                         class="text-center m-0 p-0 text-nowrap"
-                        v-bind:style="get_consumer_price_style(o, a)">                
-                        [[get_consumer_price(o, a)]]
+                        v-bind:style="get_consumer_price_style(o-1, a-1)">                
+                        [[get_consumer_price(o-1, a-1)]]
                     </td>
                 </tr>
             </tbody>
@@ -34,6 +34,18 @@
         </table>
         
     </div>
-  </div>
+</div>
+
+<div class="row justify-content-center mt-2">
+    <div class="col-md-auto">
+        
+        <button class="btn btn-primary btn-sm" 
+                v-on:click="reset_retailer_inventory()" 
+                v-bind:disabled="reconnecting || working"
+                title="Reset your inventory to zero.">
+            Reset Inventory <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+</div>
 
   

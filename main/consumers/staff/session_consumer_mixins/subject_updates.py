@@ -555,4 +555,75 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def reset_retailer_inventory(self, event):
+        '''
+        reset retailer inventory from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("reset_retailer_inventory")
+
+        status = "success"
+        error_message = ""
+        
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+
+        #check if retailer is resetting inventory
+        if parameter_set_player["id_label"] != "R":
+            status = "fail"
+            error_message = "Only retailers can reset inventory."
+        
+        if status == "success":
+            apples = session_player["apples"]
+            oranges = session_player["oranges"]
+            
+            #reset retailer inventory
+            world_state["apple_tray_inventory"] += apples
+            world_state["orange_tray_inventory"] += oranges
+
+            session_player["apples"] = 0
+            session_player["oranges"] = 0
+
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+
+        result = {"status" : status,
+                  "error_message" : error_message,
+                  "session_player_apples" : session_player["apples"],
+                  "session_player_oranges" : session_player["oranges"],
+                  "apple_tray_inventory" : world_state["apple_tray_inventory"],
+                  "orange_tray_inventory" : world_state["orange_tray_inventory"],
+                  "starting_apples" : apples,
+                  "starting_oranges" : oranges,
+                  "session_player_id" : player_id}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True)
+
+    async def update_reset_retailer_inventory(self, event):
+        '''
+        update reset retailer inventory from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
 

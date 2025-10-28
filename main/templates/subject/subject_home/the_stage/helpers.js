@@ -156,6 +156,8 @@ get_consumer_price: function get_consumer_price(orange, apple){
 get_consumer_price_style: function get_consumer_price_style(orange, apple){
     let price = app.get_consumer_price(orange, apple);
     if(price === null) return "";
+    if(!app.first_load_done) return "";
+    if(!app.session.started) return "";
 
     let session_player = app.session.world_state.session_players[app.session_player.id];
 

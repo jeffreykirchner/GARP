@@ -23,20 +23,20 @@
                                 <th scope="col" class = "m-1 p-1">
                                     Oranges/Apples
                                 </th> 
-                                <th v-for="(p, index) in parameter_set.apple_tray_capacity">
-                                   <span class="badge bg-secondary">[[ p ]]</span>
+                                <th v-for="(p, index) in parameter_set.apple_tray_capacity+1">
+                                   <span class="badge bg-secondary">[[ p-1 ]]</span>
                                 </th>                                         
                             </tr>
                         </thead>
                         <tbody id="consumer_price_list">
                             <tr v-for="(o, index) in parameter_set.orange_tray_capacity">
                                 <td>
-                                    <span class="badge bg-secondary">[[ o ]]</span>
+                                    <span class="badge bg-secondary">[[ o-1 ]]</span>
                                 </td>
-                                <td v-for="(a, index2) in parameter_set.apple_tray_capacity"
-                                    v-on:click="show_edit_parameter_set_consumer_price(o, a)"
+                                <td v-for="(a, index2) in parameter_set.apple_tray_capacity+1"
+                                    v-on:click="show_edit_parameter_set_consumer_price(o-1, a-1)"
                                     class="player_table_cell">
-                                    [[get_consumer_price(o, a)]]
+                                    [[get_consumer_price(o-1, a-1)]]
                                 </td>
                             </tr>
                         </tbody>
@@ -44,6 +44,5 @@
                     </table>
                 </div>
             </div>
-        </div>          
-    </div>                    
-</div> 
+        </div>  
+    </div>

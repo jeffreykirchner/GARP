@@ -12,7 +12,6 @@ let pixi_target = null;                        //target sprite for your avatar
 let pixi_mini_map = {container:null};               //mini map container
 let pixi_notices = {container:null, notices:{}};                         //notices
 let pixi_notices_key = 0;
-let pixi_consumer_prices_overlay = {container:null};
 
 let last_location_update = Date.now();          //last time location was updated
 
@@ -179,6 +178,9 @@ let app = Vue.createApp({
                     break;
                 case "update_checkout":
                     app.take_update_checkout(message_data);
+                    break;
+                case "update_reset_retailer_inventory":
+                    app.take_reset_retailer_inventory(message_data);
                     break;
             }
 
