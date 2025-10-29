@@ -67,10 +67,12 @@ setup_pixi_tray_apple: function setup_pixi_tray_apple()
                        rect:null,
                        apples:apples};
 
+    const absolute_position = tray_apple_container.toGlobal(new PIXI.Point(0, 0));
+
     pixi_tray_apple.container = tray_apple_container;
     pixi_tray_apple.label_price = label_price;
-    pixi_tray_apple.rect = {x:tray_apple_container.x - tray_apple_container.width/2, 
-                            y:tray_apple_container.y - tray_apple_container.height/2, 
+    pixi_tray_apple.rect = {x:absolute_position.x, 
+                            y:absolute_position.y, 
                             width:tray_apple_container.width, 
                             height:tray_apple_container.height};
 
@@ -91,8 +93,9 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
     tray_orange_container.position.set(location[0], location[1]);
 
     //add graphic
+    let tray_scale = 0.75;
     let tray = new PIXI.Sprite(app.pixi_textures['tray_tex']);
-    tray.scale.set(0.75);
+    tray.scale.set(tray_scale);
 
     //add label that says double click to harvest
     let style = new PIXI.TextStyle({
@@ -146,10 +149,23 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
                         rect:null,
                         oranges:oranges};
 
+    // let bounding_box = new PIXI.Graphics();
+
+    // bounding_box.rect(0, 0, tray_orange_container.width, 
+    //                   tray_orange_container.height );
+    // bounding_box.stroke(2, "orchid");
+    // // bounding_box.pivot.set(bounding_box.width/2, bounding_box.height/2);
+    // bounding_box.position.set(0, 0);
+    // bounding_box.visible = false;
+
+    // tray_orange_container.addChild(bounding_box);
+
+    const absolute_position = tray_orange_container.toGlobal(new PIXI.Point(0, 0));
+
     pixi_tray_orange.container = tray_orange_container;
     pixi_tray_orange.label_price = label_price;
-    pixi_tray_orange.rect = {x:tray_orange_container.x - tray_orange_container.width/2, 
-                             y:tray_orange_container.y - tray_orange_container.height/2, 
+    pixi_tray_orange.rect = {x:absolute_position.x, 
+                             y:absolute_position.y, 
                              width:tray_orange_container.width, 
                              height:tray_orange_container.height};
 
