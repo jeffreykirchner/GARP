@@ -69,7 +69,10 @@ setup_pixi_tray_apple: function setup_pixi_tray_apple()
 
     pixi_tray_apple.container = tray_apple_container;
     pixi_tray_apple.label_price = label_price;
-    pixi_tray_apple.rect = {x:location[0], y:location[1], width:app.pixi_textures['tray_tex'].width, height:app.pixi_textures['tray_tex'].height};
+    pixi_tray_apple.rect = {x:tray_apple_container.x - tray_apple_container.width/2, 
+                            y:tray_apple_container.y - tray_apple_container.height/2, 
+                            width:tray_apple_container.width, 
+                            height:tray_apple_container.height};
 
     pixi_container_main.addChild(pixi_tray_apple.container);
 
@@ -145,7 +148,10 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
 
     pixi_tray_orange.container = tray_orange_container;
     pixi_tray_orange.label_price = label_price;
-    pixi_tray_orange.rect = {x:location[0], y:location[1], width:app.pixi_textures['tray_tex'].width, height:app.pixi_textures['tray_tex'].height};
+    pixi_tray_orange.rect = {x:tray_orange_container.x - tray_orange_container.width/2, 
+                             y:tray_orange_container.y - tray_orange_container.height/2, 
+                             width:tray_orange_container.width, 
+                             height:tray_orange_container.height};
 
     pixi_container_main.addChild(pixi_tray_orange.container);
 },
@@ -208,6 +214,25 @@ tray_apple_double_click: function tray_apple_double_click()
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
 
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let rect = pixi_tray_apple.rect;
+
+    if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                y:local_player.current_location.y, 
+                                                radius:app.session.parameter_set.interaction_range},
+                                                rect))
+    {
+        app.add_text_emitters("Error: Not in range, move closer.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
     let now = Date.now();
 
     if(pixi_tray_apple.last_click && (now - pixi_tray_apple.last_click) < 400)
@@ -230,6 +255,25 @@ tray_orange_double_click: function tray_orange_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let rect = pixi_tray_orange.rect;
+
+    if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                y:local_player.current_location.y, 
+                                                radius:app.session.parameter_set.interaction_range},
+                                                rect))
+    {
+        app.add_text_emitters("Error: Not in range, move closer.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
 
     let now = Date.now();
 

@@ -64,7 +64,10 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
 
     pixi_orchard_apple.container = orchard_apple_container;
     pixi_orchard_apple.label = label;
-    pixi_orchard_apple.rect = {x:location[0], y:location[1], width:app.pixi_textures['orchard_apple_tex'].width, height:app.pixi_textures['orchard_apple_tex'].height};
+    pixi_orchard_apple.rect = {x:orchard_apple_container.x - orchard_apple_container.width/2, 
+                               y:orchard_apple_container.y - orchard_apple_container.height/2, 
+                               width:orchard_apple_container.width, 
+                               height:orchard_apple_container.height};
 
     pixi_container_main.addChild(pixi_orchard_apple.container);
 
@@ -136,7 +139,10 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
 
     pixi_orchard_orange.container = orchard_orange_container;
     pixi_orchard_orange.label = label;
-    pixi_orchard_orange.rect = {x:location[0], y:location[1], width:app.pixi_textures['orchard_orange_tex'].width, height:app.pixi_textures['orchard_orange_tex'].height};
+    pixi_orchard_orange.rect = {x:orchard_orange_container.x - orchard_orange_container.width/2, 
+                                y:orchard_orange_container.y - orchard_orange_container.height/2, 
+                                width:orchard_orange_container.width, 
+                                height:orchard_orange_container.height};
 
     pixi_container_main.addChild(pixi_orchard_orange.container);
 
@@ -186,6 +192,25 @@ orchard_apple_double_click: function orchard_apple_double_click()
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
 
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let rect = pixi_orchard_apple.rect;
+
+    if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                y:local_player.current_location.y, 
+                                                radius:app.session.parameter_set.interaction_range},
+                                                rect))
+    {
+         app.add_text_emitters("Error: Not in range, move closer.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
     let now = Date.now();
 
     if(pixi_orchard_apple.last_click && (now - pixi_orchard_apple.last_click) < 400)
@@ -207,6 +232,25 @@ orchard_orange_double_click: function orchard_orange_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let rect = pixi_orchard_orange.rect;
+
+    if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                y:local_player.current_location.y, 
+                                                radius:app.session.parameter_set.interaction_range},
+                                                rect))
+    {
+         app.add_text_emitters("Error: Not in range, move closer.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
 
     let now = Date.now();
 

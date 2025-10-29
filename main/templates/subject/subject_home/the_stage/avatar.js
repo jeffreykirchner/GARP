@@ -107,9 +107,8 @@ setup_pixi_subjects: function setup_pixi_subjects(){
         //bounding box with avatar scaller        
         let bounding_box = new PIXI.Graphics();
     
-
         bounding_box.rect(0, 0, avatar_container.width * app.session.parameter_set.avatar_bound_box_percent * app.session.parameter_set.avatar_scale, 
-                                    avatar_container.height * app.session.parameter_set.avatar_bound_box_percent * app.session.parameter_set.avatar_scale);
+                                avatar_container.height * app.session.parameter_set.avatar_bound_box_percent * app.session.parameter_set.avatar_scale);
         bounding_box.stroke(2, "orchid");
         bounding_box.pivot.set(bounding_box.width/2, bounding_box.height/2);
         bounding_box.position.set(0, 0);

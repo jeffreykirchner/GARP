@@ -210,7 +210,7 @@ register_double_click: function register_double_click()
 
         if(!app.is_in_wholesaler_pad(wholesaler_position))
         {
-            app.add_text_emitters("Error: Wholesaler not in pad", 
+            app.add_text_emitters("Error: Wholesaler not on pad", 
                     world_state.session_players[app.session_player.id].current_location.x, 
                     world_state.session_players[app.session_player.id].current_location.y,
                     world_state.session_players[app.session_player.id].current_location.x,
@@ -222,7 +222,7 @@ register_double_click: function register_double_click()
         }
         if(!app.is_in_retailer_pad(retailer_position))
         {
-            app.add_text_emitters("Error: Retailer not in pad", 
+            app.add_text_emitters("Error: You are not on the pad", 
                     world_state.session_players[app.session_player.id].current_location.x, 
                     world_state.session_players[app.session_player.id].current_location.y,
                     world_state.session_players[app.session_player.id].current_location.x,
