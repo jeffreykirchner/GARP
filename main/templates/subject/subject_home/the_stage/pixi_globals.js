@@ -17,3 +17,4 @@ let pixi_orchard_orange = {};             //pixi orange object
 let pixi_tray_apple = {};                 //pixi apple tray object
 let pixi_tray_orange = {};                //pixi orange tray object
 let pixi_register = {};                   //pixi cash register object
+let pixi_consumer = {};                   //pixi consumer object

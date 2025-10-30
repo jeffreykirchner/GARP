@@ -52,6 +52,7 @@ class ParameterSet(models.Model):
     orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
 
     register_location = models.CharField(max_length=100, default="200,250", verbose_name="Register Location", blank=True, null=True)                 #x,y location of register
+    consumer_location = models.CharField(max_length=100, default="250,350", verbose_name="Consumer Location", blank=True, null=True)                #x,y location of consumer
 
     orange_tray_location = models.CharField(max_length=100, default="500,150", verbose_name="Orange Tray Location", blank=True, null=True)           #x,y location of orange tray
     apple_tray_location = models.CharField(max_length=100, default="700,150", verbose_name="Apple Tray Location", blank=True, null=True)             #x,y location of apple tray
@@ -119,6 +120,7 @@ class ParameterSet(models.Model):
             self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
 
             self.register_location = new_ps.get("register_location", "200,250")
+            self.consumer_location = new_ps.get("consumer_location", "250,350")
 
             self.orange_tray_location = new_ps.get("orange_tray_location", "500,150")
             self.apple_tray_location = new_ps.get("apple_tray_location", "700,150")
@@ -319,6 +321,7 @@ class ParameterSet(models.Model):
         self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
 
         self.json_for_session["register_location"] = self.register_location
+        self.json_for_session["consumer_location"] = self.consumer_location
 
         self.json_for_session["orange_tray_location"] = self.orange_tray_location
         self.json_for_session["apple_tray_location"] = self.apple_tray_location

@@ -135,6 +135,11 @@ class ParameterSetForm(forms.ModelForm):
                                         initial="200,250",
                                         widget=forms.TextInput(attrs={"v-model":"parameter_set.register_location",}))
 
+    consumer_location = forms.CharField(label='Consumer Location (x,y)',
+                                        max_length=100,
+                                        initial="250,350",
+                                        widget=forms.TextInput(attrs={"v-model":"parameter_set.consumer_location",}))
+
     orange_tray_location = forms.CharField(label='Orange Tray Location (x,y)',
                                            max_length=100,
                                            initial="500,150",
@@ -184,7 +189,7 @@ class ParameterSetForm(forms.ModelForm):
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
-                 'world_width', 'world_height','orchard_orange_location', 'orchard_apple_location', 'register_location',
+                 'world_width', 'world_height','orchard_orange_location', 'orchard_apple_location', 'register_location', 'consumer_location',
                  'orange_tray_location', 'apple_tray_location',
                  'orange_tray_capacity', 'apple_tray_capacity', 'orange_tray_starting_inventory', 'apple_tray_starting_inventory',
                  'enable_chat', 'test_mode']

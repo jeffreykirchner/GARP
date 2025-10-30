@@ -545,6 +545,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/orchard.js"%}
         {%include "subject/subject_home/the_stage/tray.js"%}
         {%include "subject/subject_home/the_stage/register.js"%}
+        {%include "subject/subject_home/the_stage/consumer.js"%}
         
 
         /** clear form error messages

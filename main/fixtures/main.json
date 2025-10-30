@@ -1011,7 +1011,8 @@
       "apple_tray_capacity": 100,
       "orange_tray_starting_inventory": 0,
       "apple_tray_starting_inventory": 0,
-      "register_location": "200,250"
+      "register_location": "200,250",
+      "consumer_location": "250,350"
     }
   },
   {

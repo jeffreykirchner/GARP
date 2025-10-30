@@ -1,5 +1,5 @@
 /**
- * setup register apple objects
+ * setup register objects
  */
 setup_pixi_register: function setup_pixi_register()
 {

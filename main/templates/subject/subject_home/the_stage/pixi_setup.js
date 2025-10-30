@@ -48,6 +48,7 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_orchard_apple();
         app.setup_pixi_orchard_orange();
         app.setup_pixi_register();
+        app.setup_pixi_consumer();
        
         app.setup_pixi_tray_apple();
         app.setup_pixi_tray_orange();
