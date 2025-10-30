@@ -37,11 +37,18 @@
 </div>
 
 <div class="row justify-content-center mt-2">
+    <div class="col-md-auto fw-bold">        
+        Remaining Budget: [[get_remaining_budget()]]¢
+    </div>
+</div>
+
+<div class="row justify-content-center mt-2">
     <div class="col-md-auto">
         
         <button class="btn btn-primary btn-sm" 
                 v-on:click="reset_retailer_inventory()" 
                 v-bind:disabled="reconnecting || working"
+                v-show="!get_checkout_complete()"
                 title="Reset your inventory to zero.">
             Reset Inventory <i class="fas fa-sync-alt"></i>
         </button>

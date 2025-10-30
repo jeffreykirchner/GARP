@@ -391,11 +391,9 @@ class SubjectUpdatesMixin():
         parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         parameter_set = self.parameter_set_local
-
        
         if parameter_set_player["id_label"] == "W":
             #wholesaler move fruit to tray
-
             if event_data["fruit_type"] == "apple":
                 if session_player["apples"] <= 0:
                     status = "fail"
@@ -421,24 +419,37 @@ class SubjectUpdatesMixin():
                     world_state["orange_tray_inventory"] += 1
         elif parameter_set_player["id_label"] == "R":
             #retailer move fruit from tray to inventory
+            
+            if session_player["checkout"]:
+                status = "fail"
+                error_message = "You have already checked out."
 
-            if event_data["fruit_type"] == "apple":
-                if world_state["apple_tray_inventory"] <= 0:
-                    status = "fail"
-                    error_message = "No apples on tray."
-                
-                if status == "success":
-                    session_player["apples"] += 1
-                    world_state["apple_tray_inventory"] -= 1
+            if status == "success":    
+                if event_data["fruit_type"] == "apple":
+                    if world_state["apple_tray_inventory"] <= 0:
+                        status = "fail"
+                        error_message = "No apples on tray."
+                    elif session_player["budget"] < parameter_set_period["wholesale_apple_price"]:
+                        status = "fail"
+                        error_message = "Insufficient budget."
+                    
+                    if status == "success":
+                        session_player["apples"] += 1
+                        session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
+                        world_state["apple_tray_inventory"] -= 1
 
-            elif event_data["fruit_type"] == "orange":
-                if world_state["orange_tray_inventory"] <= 0:
-                    status = "fail"
-                    error_message = "No oranges on tray."
+                elif event_data["fruit_type"] == "orange":
+                    if world_state["orange_tray_inventory"] <= 0:
+                        status = "fail"
+                        error_message = "No oranges on tray."
+                    elif session_player["budget"] < parameter_set_period["wholesale_orange_price"]:
+                        status = "fail"
+                        error_message = "Insufficient budget."
 
-                if status == "success":
-                    session_player["oranges"] += 1
-                    world_state["orange_tray_inventory"] -= 1
+                    if status == "success":
+                        session_player["oranges"] += 1
+                        session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
+                        world_state["orange_tray_inventory"] -= 1
 
         if status == "success":
             self.session_events.append(SessionEvent(session_id=self.session_id,
@@ -452,6 +463,7 @@ class SubjectUpdatesMixin():
                   "error_message" : error_message,
                   "session_player_apples" : session_player["apples"],
                   "session_player_oranges" : session_player["oranges"],
+                  "session_player_budget" : session_player["budget"],
                   "apple_tray_inventory" : world_state["apple_tray_inventory"],
                   "orange_tray_inventory" : world_state["orange_tray_inventory"],
                   "fruit_type" : event_data["fruit_type"],
@@ -497,6 +509,8 @@ class SubjectUpdatesMixin():
         world_state = self.world_state_local
         parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        wholesaler_player_id = world_state["session_players_order"][0]
+        wholesaler = world_state["session_players"][str(wholesaler_player_id)]
 
         #check if retailer is checking out
         if parameter_set_player["id_label"] != "R":
@@ -507,7 +521,7 @@ class SubjectUpdatesMixin():
         if status == "success":
             if session_player["checkout"]:
                 status = "fail"
-                error_message = "Retailer has already checked out."
+                error_message = "You have checked out."
 
         if status == "success":
             apples = world_state["session_players"][str(player_id)]["apples"]
@@ -515,11 +529,9 @@ class SubjectUpdatesMixin():
 
             payment = parameter_set_period["wholesale_apple_price"] * apples + \
                       parameter_set_period["wholesale_orange_price"] * oranges
-            session_player["budget"] -= payment
-            # session_player["checkout"] = True
-
-            wholesaler_player_id = world_state["session_players_order"][0]
-            wholesaler = world_state["session_players"][str(wholesaler_player_id)]
+            # session_player["budget"] -= payment
+            session_player["checkout"] = True
+           
             wholesaler["earnings"] += payment
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
@@ -573,6 +585,8 @@ class SubjectUpdatesMixin():
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
         parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][self.world_state_local["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         world_state = self.world_state_local
 
         #check if retailer is resetting inventory
@@ -580,16 +594,21 @@ class SubjectUpdatesMixin():
             status = "fail"
             error_message = "Only retailers can reset inventory."
         
-        if status == "success":
-            apples = session_player["apples"]
-            oranges = session_player["oranges"]
-            
+        if session_player["checkout"]:
+            status = "fail"
+            error_message = "You have already checked out."
+        
+        apples = session_player["apples"]
+        oranges = session_player["oranges"]
+        
+        if status == "success":    
             #reset retailer inventory
             world_state["apple_tray_inventory"] += apples
             world_state["orange_tray_inventory"] += oranges
 
             session_player["apples"] = 0
             session_player["oranges"] = 0
+            session_player["budget"] = parameter_set_period["retailer_budget"]
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
@@ -598,10 +617,11 @@ class SubjectUpdatesMixin():
                                                     time_remaining=self.world_state_local["time_remaining"],
                                                     data=event_data))
 
-        result = {"status" : status,
+        result = {"value" : status,
                   "error_message" : error_message,
                   "session_player_apples" : session_player["apples"],
                   "session_player_oranges" : session_player["oranges"],
+                  "session_player_budget" : session_player["budget"],
                   "apple_tray_inventory" : world_state["apple_tray_inventory"],
                   "orange_tray_inventory" : world_state["orange_tray_inventory"],
                   "starting_apples" : apples,

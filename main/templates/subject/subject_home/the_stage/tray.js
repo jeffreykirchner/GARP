@@ -395,6 +395,7 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
     session_player.apples = data.session_player_apples;
     session_player.oranges = data.session_player_oranges;
+    session_player.budget = data.session_player_budget;
 
     world_state.apple_tray_inventory = data.apple_tray_inventory;
     world_state.orange_tray_inventory = data.orange_tray_inventory;
@@ -446,6 +447,7 @@ take_reset_retailer_inventory: function take_reset_retailer_inventory(data)
 
     session_player.apples = data.session_player_apples;
     session_player.oranges = data.session_player_oranges;
+    session_player.budget = data.session_player_budget;
 
     world_state.apple_tray_inventory = data.apple_tray_inventory;
     world_state.orange_tray_inventory = data.orange_tray_inventory;

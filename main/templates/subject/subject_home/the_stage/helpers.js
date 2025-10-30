@@ -236,3 +236,26 @@ get_consumer_price_style: function get_consumer_price_style(orange, apple){
 
     return "";
 },
+
+/**
+ * get remaining budget
+ */
+get_remaining_budget: function get_remaining_budget(){
+    if(!app.first_load_done) return "";
+    if(!app.session.started) return "";
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    return session_player.budget;
+},
+
+/**
+ * get checkout complete
+ */
+get_checkout_complete: function get_checkout_complete(){
+    if(!app.first_load_done) return false;
+    if(!app.session.started) return false;
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+   return session_player.checkout;
+},
