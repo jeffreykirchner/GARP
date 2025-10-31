@@ -148,6 +148,7 @@ class Session(models.Model):
             session_player["apples"] = 0
             session_player["oranges"] = 0
             session_player["checkout"] = False
+            session_player["consumer"] = False
 
             if parameter_set_player["id_label"] == "W":
                 session_player["earnings"] += parameter_set_period["wholesaler_budget"]
@@ -215,6 +216,7 @@ class Session(models.Model):
             v['apples'] = 0
             v['oranges'] = 0
             v['checkout'] = False
+            v['consumer'] = False
             v['budget'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             

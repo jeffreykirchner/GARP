@@ -224,6 +224,9 @@ let app = Vue.createApp({
                 case "update_checkout":
                     app.take_update_checkout(message_data);
                     break;
+                case "sell_to_consumer":
+                    app.update_sell_to_consumer(message_data);
+                    break;
             }
             app.working = false;
             app.process_the_feed(message_type, message_data);

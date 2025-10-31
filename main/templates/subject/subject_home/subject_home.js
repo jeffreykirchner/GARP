@@ -182,6 +182,9 @@ let app = Vue.createApp({
                 case "update_reset_retailer_inventory":
                     app.take_reset_retailer_inventory(message_data);
                     break;
+                case "update_sell_to_consumer":
+                    app.take_update_sell_to_consumer(message_data);
+                    break;
             }
 
             app.first_load_done = true;

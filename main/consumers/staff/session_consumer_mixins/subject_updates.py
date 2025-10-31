@@ -646,4 +646,88 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def sell_to_consumer(self, event):
+        '''
+        sell to consumer from subject screen
+        '''
 
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("reset_retailer_inventory")
+
+        status = "success"
+        error_message = ""
+        
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        
+        parameter_set = self.parameter_set_local
+        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        parameter_set_period_id = parameter_set["parameter_set_periods_order"][self.world_state_local["current_period"]-1]
+        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
+        world_state = self.world_state_local
+
+        #check if subject is a retailer
+        if parameter_set_player["id_label"] != "R":
+            status = "fail"
+            error_message = "Only retailers can sell to consumers."
+
+        #check if subject has has already sold to consumer
+        # if status == "success":
+        #     if session_player["consumer"]:
+        #         status = "fail"
+        #         error_message = "You have already sold to a consumer."
+
+        apples_sold = 0
+        oranges_sold = 0
+        period_earnings = 0
+        if status == "success":
+            apples_sold = session_player["apples"]
+            oranges_sold = session_player["oranges"]
+            period_earnings = parameter_set["consumer_prices"][f"o{oranges_sold}a{apples_sold}"]
+
+            session_player["earnings"] += period_earnings
+
+            session_player["consumer"] = True
+            session_player["apples"] = 0
+            session_player["oranges"] = 0
+
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+            
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "apples_sold" : apples_sold,
+                  "oranges_sold" : oranges_sold,
+                  "period_earnings" : period_earnings,
+                  "session_player_earnings" : session_player["earnings"],
+                  "session_player_oranges" : session_player["oranges"],
+                  "session_player_apples" : session_player["apples"],
+                  "session_player_id" : player_id}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True)
+
+    async def update_sell_to_consumer(self, event):
+        '''
+        sell to consumer from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
