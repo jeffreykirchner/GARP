@@ -276,6 +276,11 @@ take_update_checkout: function take_update_checkout(data)
     let retailer_player_id = world_state.session_players_order[1];
     let retailer_player = world_state.session_players[retailer_player_id];
 
+    retailer_player.budget = data.retailer_budget;
+    retailer_player.checkout = data.retailer_checkout;
+    world_state["barriers"][world_state["checkout_barrier"]]["enabled"] = data.checkout_barrier;
+
+    //add transfer beam
     let elements = [];
     let element = {source_change: "-" + payment,
                    target_change: "+" + payment, 
@@ -288,7 +293,7 @@ take_update_checkout: function take_update_checkout(data)
                           true,
                           true);
 
-    
+    app.update_barriers();
 },
 
 /**

@@ -142,6 +142,7 @@ class Session(models.Model):
         parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
         session_players = world_state["session_players"]
 
+        #session players
         for i in session_players:
             session_player = session_players[i]
             parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
@@ -154,6 +155,16 @@ class Session(models.Model):
                 session_player["earnings"] += parameter_set_period["wholesaler_budget"]
             elif parameter_set_player["id_label"] == "R":
                 session_player["budget"] = parameter_set_period["retailer_budget"]
+        
+        #barriers
+        if world_state["wholesaler_barrier"]:
+            world_state["barriers"][str(world_state["wholesaler_barrier"])]["enabled"] = True
+        
+        if world_state["retailer_barrier"]:
+            world_state["barriers"][str(world_state["retailer_barrier"])]["enabled"] = True
+
+        if world_state["checkout_barrier"]:
+            world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = False
 
         self.world_state = world_state
         self.save()
@@ -188,6 +199,7 @@ class Session(models.Model):
                             "last_store":str(datetime.now()),
                             "session_players":{},
                             "session_players_order":[],
+                            "barriers":{},
                             "current_period":1,
                             "current_experiment_phase":ExperimentPhase.INSTRUCTIONS if self.parameter_set.show_instructions else ExperimentPhase.RUN,
                             "time_remaining":self.parameter_set.period_length,
@@ -195,6 +207,9 @@ class Session(models.Model):
                             "timer_history":[],
                             "started":True,
                             "finished":False,
+                            "wholesaler_barrier":None,
+                            "retailer_barrier":None,
+                            "checkout_barrier":None,
                             "orange_tray_inventory":self.parameter_set.orange_tray_starting_inventory,
                             "apple_tray_inventory":self.parameter_set.apple_tray_starting_inventory,
                             "orange_orchard_inventory":self.parameter_set.orange_tray_capacity - self.parameter_set.orange_tray_starting_inventory,
@@ -222,7 +237,20 @@ class Session(models.Model):
             
             self.world_state["session_players"][str(i['id'])] = v
             self.world_state["session_players_order"].append(i['id'])
-        
+
+        #barriers enabled
+        for i in self.parameter_set.parameter_set_barriers_a.all():  
+           
+            if i.info == 'Wholesaler':
+                self.world_state["wholesaler_barrier"] = i.id
+                self.world_state["barriers"][str(i.id)] = {"enabled":True}
+            elif i.info == 'Retailer':
+                self.world_state["barriers"][str(i.id)] = {"enabled":True}
+                self.world_state["retailer_barrier"] = i.id
+            elif i.info == 'Checkout':
+                self.world_state["checkout_barrier"] = i.id
+                self.world_state["barriers"][str(i.id)] = {"enabled":False}
+
         parameter_set  = self.parameter_set.json_for_session
 
         self.save()

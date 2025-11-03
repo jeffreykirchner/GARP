@@ -72,6 +72,8 @@ setup_pixi_consumer: function setup_pixi_consumer()
 
 update_consumer_label: function update_consumer_label()
 {
+    if(!app.session.started) return;
+
     let world_state = app.session.world_state;
     let retailer_player_id = null;
 
@@ -154,6 +156,8 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     let oranges_sold = data.oranges_sold;
     let period_earnings = data.period_earnings;
     
+    app.session.world_state = data.world_state;
+
     if(app.is_subject && session_player_id == app.session_player.id)
     {
         app.working = false;
@@ -173,12 +177,11 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         }
         else
         {
-            session_player.earnings = data.session_player_earnings;
-            session_player.oranges = data.session_player_oranges;
-            session_player.apples = data.session_player_apples;
-            app.update_subject_status_overlay();
+           
         }
     }
+
+    app.update_subject_status_overlay();
 
     let consumer_location = parameter_set.consumer_location.split(",");
     consumer_location = {x:parseInt(consumer_location[0]), y:parseInt(consumer_location[1])};
@@ -225,4 +228,5 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     }
 
     app.update_player_inventory();
+    app.update_barriers();
 },

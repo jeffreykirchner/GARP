@@ -399,11 +399,15 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
     world_state.apple_tray_inventory = data.apple_tray_inventory;
     world_state.orange_tray_inventory = data.orange_tray_inventory;
-    
-    app.update_orchard_labels();    
+
+    world_state["barriers"][world_state["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
+    world_state["barriers"][world_state["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
+
+    app.update_orchard_labels();
     app.update_player_inventory();
     app.update_tray_labels();
     app.update_register_labels();
+    app.update_barriers();
 },
 
 /**

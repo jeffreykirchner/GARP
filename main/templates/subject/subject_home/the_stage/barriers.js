@@ -74,14 +74,17 @@ setup_pixi_barrier: function setup_pixi_barrier()
  */
 check_barriers_intersection: function check_barriers_intersection(rect1, parameter_set_group, parameter_set_player)
 {
+    if(!app.session.started) return false;
+    
     for(let i in app.session.parameter_set.parameter_set_barriers)
     {        
         let temp_barrier = app.session.parameter_set.parameter_set_barriers[i];
+        let temp_barrier_ws = app.session.world_state.barriers[i];
+        
+        if(!temp_barrier_ws.enabled) continue;
 
         if((temp_barrier.parameter_set_groups.includes(parameter_set_group) ||
-            temp_barrier.parameter_set_players.includes(parameter_set_player)) && 
-           app.session.world_state.current_period >= temp_barrier.period_on &&
-           app.session.world_state.current_period < temp_barrier.period_off)
+            temp_barrier.parameter_set_players.includes(parameter_set_player)) )
         {
             let rect2={x:temp_barrier.start_x,
                        y:temp_barrier.start_y,
@@ -103,19 +106,25 @@ check_barriers_intersection: function check_barriers_intersection(rect1, paramet
  */
 update_barriers: function update_barriers()
 {
-    for(let i in app.session.parameter_set.parameter_set_barriers)
-    {
-        let barrier = app.session.parameter_set.parameter_set_barriers[i];
-        let barrier_container = pixi_barriers[i].barrier_container;
+    if(!app.session.started) return;
+    let world_state = app.session.world_state;
 
-        if(app.session.world_state.current_period >= barrier.period_on &&
-           app.session.world_state.current_period < barrier.period_off)
-        {
-            barrier_container.visible = true;
-        }
-        else
-        {
-            barrier_container.visible = false;
-        }
+    if(world_state.barriers[world_state.retailer_barrier])
+    {
+        let retailer_barrier_container = pixi_barriers[world_state.retailer_barrier].barrier_container;
+        retailer_barrier_container.visible = world_state.barriers[world_state.retailer_barrier].enabled;
     }
+
+    if(world_state.barriers[world_state.wholesaler_barrier])
+    {
+        let wholesaler_barrier_container = pixi_barriers[world_state.wholesaler_barrier].barrier_container;
+        wholesaler_barrier_container.visible = world_state.barriers[world_state.wholesaler_barrier].enabled;
+    }
+
+    if(world_state.barriers[world_state.checkout_barrier])
+    {
+        let checkout_barrier_container = pixi_barriers[world_state.checkout_barrier].barrier_container;
+        checkout_barrier_container.visible = world_state.barriers[world_state.checkout_barrier].enabled;
+    }
+
 },
