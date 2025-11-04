@@ -218,6 +218,15 @@ let app = Vue.createApp({
                 case "update_harvest_fruit":
                     app.take_update_harvest_fruit(message_data);
                     break;
+                case "update_tray_fruit":
+                    app.take_update_tray_fruit(message_data);
+                    break;
+                case "update_checkout":
+                    app.take_update_checkout(message_data);
+                    break;
+                case "sell_to_consumer":
+                    app.update_sell_to_consumer(message_data);
+                    break;
             }
             app.working = false;
             app.process_the_feed(message_type, message_data);
@@ -281,6 +290,7 @@ let app = Vue.createApp({
         do_reload: function do_reload()
         {
             app.setup_pixi_subjects();
+            app.update_orchard_labels();
         },
 
         /** send winsock request to get session info
@@ -450,6 +460,9 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/barriers.js"%}
         {%include "subject/subject_home/the_stage/ground.js"%}        
         {%include "subject/subject_home/the_stage/orchard.js"%}
+        {%include "subject/subject_home/the_stage/tray.js"%}
+        {%include "subject/subject_home/the_stage/register.js"%}
+        {%include "subject/subject_home/the_stage/consumer.js"%}
         {%include "js/help_doc.js"%}
     
         /** clear form error messages

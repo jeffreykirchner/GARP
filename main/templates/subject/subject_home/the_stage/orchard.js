@@ -3,20 +3,19 @@
  */
 setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
 {
-
+    let parameter_set = app.session.parameter_set;
     let orchard_apple_container = new PIXI.Container();
     orchard_apple_container.zIndex = 1;
 
-    let location = app.session.parameter_set.orchard_apple_location.split(",");
+    let location = parameter_set.orchard_apple_location.split(",");
 
     orchard_apple_container.position.set(location[0], location[1]);
 
     //add graphic
-    let graphic = new PIXI.Graphics();
-
-    graphic.rect(0, 0, app.pixi_textures['orchard_apple_tex'].width, app.pixi_textures['orchard_apple_tex'].height);
-    graphic.fill({texture: app.pixi_textures['orchard_apple_tex']});
-
+    let graphic = new PIXI.Sprite(app.pixi_textures['tree_tex']);
+    graphic.anchor.set(0.5);
+    graphic.scale.set(0.35);
+    
     //add label that says double click to harvest
     let style = new PIXI.TextStyle({
         fontFamily: "Arial",
@@ -30,16 +29,28 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
     label.anchor.set(0.5);
 
     //add double click graphic bottom left corner of container
-    let double_click_graphic = new PIXI.Graphics();
-    double_click_graphic.rect(0, 0, app.pixi_textures['double_click_tex'].width, app.pixi_textures['double_click_tex'].height);
-    double_click_graphic.fill({texture: app.pixi_textures['double_click_tex']});
+    let double_click_graphic = new PIXI.Sprite(app.pixi_textures['double_click_tex']);
+    double_click_graphic.anchor.set(0.5);
    
-    orchard_apple_container.addChild(double_click_graphic);
     orchard_apple_container.addChild(graphic);
     orchard_apple_container.addChild(label);
+    orchard_apple_container.addChild(double_click_graphic);
 
-    label.position.set(app.pixi_textures['orchard_apple_tex'].width/2, app.pixi_textures['orchard_apple_tex'].height + label.height/2 + 5);
-    double_click_graphic.position.set(5, orchard_apple_container.height - app.pixi_textures['double_click_tex'].height - 5);
+    label.position.set(0, orchard_apple_container.height/2 + label.height/2 + 5);
+    double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2 + 10, label.y- double_click_graphic.height/2+10);
+
+    //add apples in random positions on the tree
+    let apples = [];
+    for(let i=0; i<parameter_set.apple_tray_capacity; i++)
+    {
+        let apple = new PIXI.Sprite(app.pixi_textures['apple_tex']);
+        apple.scale.set(0.5);
+        apple.anchor.set(0.5);
+        apple.position.set(Math.random() * (orchard_apple_container.width-60) - orchard_apple_container.width/2+30, 
+                           Math.random() * -(orchard_apple_container.height/2-20)+20) ;
+        orchard_apple_container.addChild(apple);
+        apples.push(apple);
+    }
 
     orchard_apple_container.zIndex = 1;
     orchard_apple_container.eventMode = 'static';
@@ -48,11 +59,15 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
     pixi_orchard_apple = {container:null,
                           label:null,
                           last_click:null,
+                          apples:apples,
                           rect:null};
 
     pixi_orchard_apple.container = orchard_apple_container;
     pixi_orchard_apple.label = label;
-    pixi_orchard_apple.rect = {x:location[0], y:location[1], width:app.pixi_textures['orchard_apple_tex'].width, height:app.pixi_textures['orchard_apple_tex'].height};
+    pixi_orchard_apple.rect = {x:orchard_apple_container.x - orchard_apple_container.width/2, 
+                               y:orchard_apple_container.y - orchard_apple_container.height/2, 
+                               width:orchard_apple_container.width, 
+                               height:orchard_apple_container.height};
 
     pixi_container_main.addChild(pixi_orchard_apple.container);
 
@@ -72,10 +87,9 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
     orchard_orange_container.position.set(location[0], location[1]);
 
     //add graphic
-    let graphic = new PIXI.Graphics();
-
-    graphic.rect(0, 0, app.pixi_textures['orchard_orange_tex'].width, app.pixi_textures['orchard_orange_tex'].height);
-    graphic.fill({texture: app.pixi_textures['orchard_orange_tex']});
+    let graphic = new PIXI.Sprite(app.pixi_textures['tree_tex']);
+    graphic.anchor.set(0.5);
+    graphic.scale.set(0.35);
 
     //add label that says double click to harvest
     let style = new PIXI.TextStyle({
@@ -89,17 +103,29 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
     let label = new PIXI.Text({text:"NNN¢ / Orange", style:style});
     label.anchor.set(0.5);
 
-    //add double click graphic to top bottom right of container
-    let double_click_graphic = new PIXI.Graphics();
-    double_click_graphic.rect(0, 0, app.pixi_textures['double_click_tex'].width, app.pixi_textures['double_click_tex'].height);
-    double_click_graphic.fill({texture: app.pixi_textures['double_click_tex']});
+    //add double click graphic bottom left corner of container
+    let double_click_graphic = new PIXI.Sprite(app.pixi_textures['double_click_tex']);
+    double_click_graphic.anchor.set(0.5);
 
-    orchard_orange_container.addChild(double_click_graphic);
     orchard_orange_container.addChild(graphic);
     orchard_orange_container.addChild(label);
+    orchard_orange_container.addChild(double_click_graphic);
 
-    label.position.set(app.pixi_textures['orchard_orange_tex'].width/2, app.pixi_textures['orchard_orange_tex'].height + label.height/2 + 5);
-    double_click_graphic.position.set(orchard_orange_container.width - app.pixi_textures['double_click_tex'].width - 5, orchard_orange_container.height - app.pixi_textures['double_click_tex'].height - 5);
+    label.position.set(0, orchard_orange_container.height/2 + label.height/2 + 5);
+    double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2 + 10, label.y- double_click_graphic.height/2+10);
+
+    //add oranges in random positions on the tree
+    let oranges = [];
+    for(let i=0; i<app.session.parameter_set.orange_tray_capacity; i++)
+    {
+        let orange = new PIXI.Sprite(app.pixi_textures['orange_tex']);
+        orange.scale.set(0.5);
+        orange.anchor.set(0.5);
+        orange.position.set(Math.random() * (orchard_orange_container.width-60) - orchard_orange_container.width/2+30, 
+                           Math.random() * -(orchard_orange_container.height/2-20)+20) ;
+        orchard_orange_container.addChild(orange);
+        oranges.push(orange);
+    }
 
     orchard_orange_container.zIndex = 1;
     orchard_orange_container.eventMode = 'static';
@@ -108,11 +134,15 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
     pixi_orchard_orange = {container:null,
                           label:null,
                           last_click:null,
+                          oranges:oranges,
                           rect:null};
 
     pixi_orchard_orange.container = orchard_orange_container;
     pixi_orchard_orange.label = label;
-    pixi_orchard_orange.rect = {x:location[0], y:location[1], width:app.pixi_textures['orchard_orange_tex'].width, height:app.pixi_textures['orchard_orange_tex'].height};
+    pixi_orchard_orange.rect = {x:orchard_orange_container.x - orchard_orange_container.width/2, 
+                                y:orchard_orange_container.y - orchard_orange_container.height/2, 
+                                width:orchard_orange_container.width, 
+                                height:orchard_orange_container.height};
 
     pixi_container_main.addChild(pixi_orchard_orange.container);
 
@@ -124,15 +154,62 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
 update_orchard_labels: function update_orchard_labels()
 {
     let parameter_set_period = app.get_current_parameter_set_period();
+    let world_state = app.session.world_state;
 
-    pixi_orchard_apple.label.text = parameter_set_period.orchard_apple_price + "¢ / Apple";
-    pixi_orchard_orange.label.text = parameter_set_period.orchard_orange_price + "¢ / Orange";
+    if(!parameter_set_period) return;
+
+    pixi_orchard_apple.label.text = "Buy: " + parameter_set_period.orchard_apple_price + "¢ / Apple";
+    pixi_orchard_orange.label.text = "Buy: " + parameter_set_period.orchard_orange_price + "¢ / Orange";
+
+    //hide fruit if it has been harvested
+    for(let i=0; i<pixi_orchard_apple.apples.length; i++)
+    {
+        if(i < world_state.apple_orchard_inventory)
+        {
+            pixi_orchard_apple.apples[i].visible = true;
+        }
+        else
+        {
+            pixi_orchard_apple.apples[i].visible = false;
+        }
+    }
+
+    for(let i=0; i<pixi_orchard_orange.oranges.length; i++)
+    {
+        if(i < world_state.orange_orchard_inventory)
+        {
+            pixi_orchard_orange.oranges[i].visible = true;
+        }
+        else
+        {
+            pixi_orchard_orange.oranges[i].visible = false;
+        }
+    }
 },
 
 orchard_apple_double_click: function orchard_apple_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let rect = pixi_orchard_apple.rect;
+
+    if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                y:local_player.current_location.y, 
+                                                radius:app.session.parameter_set.interaction_range},
+                                                rect))
+    {
+         app.add_text_emitters("Error: Not in range, move closer.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
 
     let now = Date.now();
 
@@ -156,6 +233,25 @@ orchard_orange_double_click: function orchard_orange_double_click()
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
 
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let rect = pixi_orchard_orange.rect;
+
+    if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
+                                                y:local_player.current_location.y, 
+                                                radius:app.session.parameter_set.interaction_range},
+                                                rect))
+    {
+         app.add_text_emitters("Error: Not in range, move closer.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
+        return;
+    }
+
     let now = Date.now();
 
     if(pixi_orchard_orange.last_click && (now - pixi_orchard_orange.last_click) < 400)
@@ -177,37 +273,52 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
 {
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
-
+    let world_state = app.session.world_state;
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
         app.working = false;
+        if(data.value == "fail")
+        {
+            let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
+
+            app.add_text_emitters("Error: " + data.error_message, 
+                    current_location.x, 
+                    current_location.y,
+                    current_location.x,
+                    current_location.y-100,
+                    0xFFFFFF,
+                    28,
+                    null)
+            return;
+        }
+
+        session_player.earnings = data.earnings;
+        app.update_subject_status_overlay();
     }
 
     let source_location={x:0, y:0};
     let source_tex = null;
-
+   
     if(data.fruit_type == "apple")
     {
         let location = app.session.parameter_set.orchard_apple_location.split(",");
-        source_location.x = parseInt(location[0]) + pixi_orchard_apple['container'].width/2;
-        source_location.y = parseInt(location[1]) + pixi_orchard_apple['container'].height/2;
+        source_location.x = parseInt(location[0]);
+        source_location.y = parseInt(location[1]);
         source_tex = app.pixi_textures['apple_tex'];
     }
     else if(data.fruit_type == "orange")
     {
         let location = app.session.parameter_set.orchard_orange_location.split(",");
-        source_location.x = parseInt(location[0]) + pixi_orchard_orange['container'].width/2;
-        source_location.y = parseInt(location[1]) + pixi_orchard_orange['container'].height/2;
+        source_location.x = parseInt(location[0]);
+        source_location.y = parseInt(location[1]);
         source_tex = app.pixi_textures['orange_tex'];
     }
     
     let elements = [];
-    let element = {source_change: "",
-                   target_change: "+", 
-                   texture:source_tex,
-                }
-    elements.push(element);
+    elements.push({source_change: "",
+                    target_change: "-" + data.fruit_cost + "¢   +", 
+                    texture:source_tex});
     app.add_transfer_beam(source_location, 
                           session_player.current_location,
                           elements,
@@ -216,7 +327,10 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
 
     session_player.apples = data.apples;
     session_player.oranges = data.oranges;
+    world_state.apple_orchard_inventory = data.apple_orchard_inventory;
+    world_state.orange_orchard_inventory = data.orange_orchard_inventory;
     
     app.update_player_inventory();
+    app.update_orchard_labels();
 },
 

@@ -51,10 +51,18 @@ class ParameterSet(models.Model):
     orchard_apple_location = models.CharField(max_length=100, default="100,150", verbose_name="Apple Orchard Location", blank=True, null=True)       #x,y location of apple orchard
     orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
 
+    register_location = models.CharField(max_length=100, default="200,250", verbose_name="Register Location", blank=True, null=True)                 #x,y location of register
+    consumer_location = models.CharField(max_length=100, default="250,350", verbose_name="Consumer Location", blank=True, null=True)                #x,y location of consumer
+
+    orange_tray_location = models.CharField(max_length=100, default="500,150", verbose_name="Orange Tray Location", blank=True, null=True)           #x,y location of orange tray
+    apple_tray_location = models.CharField(max_length=100, default="700,150", verbose_name="Apple Tray Location", blank=True, null=True)             #x,y location of apple tray
+
     orange_tray_capacity = models.IntegerField(verbose_name='Orange Tray Capacity', default=100)           #maximum capacity of orange tray
     apple_tray_capacity = models.IntegerField(verbose_name='Apple Tray Capacity', default=100)             #maximum capacity of apple tray
     orange_tray_starting_inventory = models.IntegerField(verbose_name='Orange Tray Starting Inventory', default=0)  #starting inventory of orange tray
     apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
+    
+    consumer_prices = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                      #json model of consumer prices
 
     enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
     test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                               #if true subject screens will do random auto testing
@@ -111,10 +119,19 @@ class ParameterSet(models.Model):
             self.orchard_apple_location = new_ps.get("orchard_apple_location", "100,150")
             self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
 
+            self.register_location = new_ps.get("register_location", "200,250")
+            self.consumer_location = new_ps.get("consumer_location", "250,350")
+
+            self.orange_tray_location = new_ps.get("orange_tray_location", "500,150")
+            self.apple_tray_location = new_ps.get("apple_tray_location", "700,150")
+
             self.orange_tray_capacity = new_ps.get("orange_tray_capacity", 100)
             self.apple_tray_capacity = new_ps.get("apple_tray_capacity", 100)
+            
             self.orange_tray_starting_inventory = new_ps.get("orange_tray_starting_inventory", 0)
             self.apple_tray_starting_inventory = new_ps.get("apple_tray_starting_inventory", 0)
+
+            self.consumer_prices = new_ps.get("consumer_prices", {})
 
             self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
@@ -211,13 +228,13 @@ class ParameterSet(models.Model):
         for i in self.parameter_set_players.all():
             i.setup()
 
+        self.setup_consumer_prices()
         self.json(update_required=True)
 
     def add_player(self):
         '''
         add a parameterset player
         '''
-
         player = main.models.ParameterSetPlayer()
         player.parameter_set = self
         player.player_number = self.parameter_set_players.count() + 1
@@ -250,7 +267,23 @@ class ParameterSet(models.Model):
             i.player_number = count + 1
             i.update_json_local()
             i.save()
+
+    def setup_consumer_prices(self):
+        '''
+        update consumer based of grid of orange and apple tray capacitys
+        '''
+
+        if not self.consumer_prices:
+            self.consumer_prices = {}
     
+        for o in range(0, self.orange_tray_capacity + 1):
+            for a in range(0, self.apple_tray_capacity + 1):
+
+                if not self.consumer_prices.get(f"o{o}a{a}", None):
+                    self.consumer_prices[f"o{o}a{a}"] = 0
+
+        self.save()
+
     def update_json_local(self):
         '''
         update json model
@@ -287,10 +320,18 @@ class ParameterSet(models.Model):
         self.json_for_session["orchard_apple_location"] = self.orchard_apple_location
         self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
 
+        self.json_for_session["register_location"] = self.register_location
+        self.json_for_session["consumer_location"] = self.consumer_location
+
+        self.json_for_session["orange_tray_location"] = self.orange_tray_location
+        self.json_for_session["apple_tray_location"] = self.apple_tray_location
+
         self.json_for_session["orange_tray_capacity"] = self.orange_tray_capacity
         self.json_for_session["apple_tray_capacity"] = self.apple_tray_capacity
         self.json_for_session["orange_tray_starting_inventory"] = self.orange_tray_starting_inventory
         self.json_for_session["apple_tray_starting_inventory"] = self.apple_tray_starting_inventory
+
+        self.json_for_session["consumer_prices"] = self.consumer_prices if self.consumer_prices else {}
 
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 

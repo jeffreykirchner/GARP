@@ -102,6 +102,67 @@ degrees_to_radians: function degrees_to_radians(degrees)
 },
 
 /**
+ * check for circle and rectangle intersection
+ */
+check_for_circle_rect_intersection: function check_for_circle_rect_intersection(circle, rect)
+{
+    if(app.check_point_in_rectagle({x:circle.x, y:circle.y}, rect)) return true;
+
+    let pt1 = {x:rect.x, y:rect.y};
+    let pt2 = {x:rect.x+rect.width, y:rect.y};
+    let pt3 = {x:rect.x, y:rect.y+rect.height};
+    let pt4 = {x:rect.x+rect.width, y:rect.y+rect.height};
+
+    if(app.check_line_circle_intersection({p1:pt1, p2:pt2}, circle)) return true;
+    if(app.check_line_circle_intersection({p1:pt1, p2:pt3}, circle)) return true;
+    if(app.check_line_circle_intersection({p1:pt2, p2:pt4}, circle)) return true;
+    if(app.check_line_circle_intersection({p1:pt3, p2:pt4}, circle)) return true;
+
+    return false;
+},
+
+/**
+ * check if line intersects circle
+ */
+check_line_circle_intersection: function check_line_circle_intersection(line, circle)
+{
+    let a, b, c, d, u1, u2, ret, retP1, retP2, v1, v2;
+
+    v1 = {};
+    v2 = {};
+    v1.x = line.p2.x - line.p1.x;
+    v1.y = line.p2.y - line.p1.y;
+    v2.x = line.p1.x - circle.x;
+    v2.y = line.p1.y - circle.y;
+    b = (v1.x * v2.x + v1.y * v2.y);
+    c = 2 * (v1.x * v1.x + v1.y * v1.y);
+    b *= -2;
+    d = Math.sqrt(b * b - 2 * c * (v2.x * v2.x + v2.y * v2.y - circle.radius * circle.radius));
+    if(isNaN(d)){ // no intercept
+        return false;
+    }
+    u1 = (b - d) / c;  // these represent the unit distance of point one and two on the line
+    u2 = (b + d) / c;    
+    retP1 = {};   // return points
+    retP2 = {}  
+    ret = []; // return array
+    if(u1 <= 1 && u1 >= 0){  // add point if on the line segment
+        retP1.x = line.p1.x + v1.x * u1;
+        retP1.y = line.p1.y + v1.y * u1;
+        ret[0] = retP1;
+    }
+    if(u2 <= 1 && u2 >= 0){  // second add point if on the line segment
+        retP2.x = line.p1.x + v1.x * u2;
+        retP2.y = line.p1.y + v1.y * u2;
+        ret[ret.length] = retP2;
+    }
+
+    if(ret.length > 0) return true;
+
+    return false;
+},
+
+/**
  * get the parameter set player from the player id
 */
 get_parameter_set_player_from_player_id: function get_parameter_set_player_from_player_id(player_id)
@@ -136,4 +197,65 @@ get_current_parameter_set_period: function get_current_parameter_set_period()
     let current_period_index = app.session.world_state.current_period;
     let current_period_id = app.session.parameter_set.parameter_set_periods_order[current_period_index-1];
     return app.session.parameter_set.parameter_set_periods[current_period_id];
+},
+
+/**
+ * get consumer price
+ */
+get_consumer_price: function get_consumer_price(orange, apple){
+    if (typeof app === "undefined" || app === null) return null;
+
+    let key = "o" + orange + "a" + apple;
+    if (!Object.prototype.hasOwnProperty.call(app.session.parameter_set.consumer_prices, key)) return null;
+
+    return app.session.parameter_set.consumer_prices[key];
+},
+
+/**
+ * get consumer price style
+ */
+get_consumer_price_style: function get_consumer_price_style(orange, apple){
+    let price = app.get_consumer_price(orange, apple);
+    if(price === null) return "";
+    if(!app.first_load_done) return "";
+    if(!app.session.started) return "";
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    if(orange == session_player.oranges && apple < session_player.apples){
+        return "background-color: LightYellow;";
+    }
+
+    if(apple == session_player.apples && orange < session_player.oranges){
+        return "background-color: LightYellow;";
+    }
+
+    if(apple == session_player.apples && orange == session_player.oranges){
+        return "background-color: Yellow; font-weight: bold;";
+    }
+
+    return "";
+},
+
+/**
+ * get remaining budget
+ */
+get_remaining_budget: function get_remaining_budget(){
+    if(!app.first_load_done) return "";
+    if(!app.session.started) return "";
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+
+    return session_player.budget;
+},
+
+/**
+ * get checkout complete
+ */
+get_checkout_complete: function get_checkout_complete(){
+    if(!app.first_load_done) return false;
+    if(!app.session.started) return false;
+
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+   return session_player.checkout;
 },

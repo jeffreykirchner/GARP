@@ -131,6 +131,50 @@ class Session(models.Model):
 
         self.setup_world_state()
         self.setup_summary_data()
+        self.setup_next_period(self.world_state, self.parameter_set.json())
+
+    def setup_next_period(self, world_state, parameter_set):
+        '''
+        setup next period
+        '''
+        current_period = world_state["current_period"]
+        parameter_set_period_id = parameter_set["parameter_set_periods_order"][current_period-1]  #current period is 1 based, list is 0 based
+        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
+        session_players = world_state["session_players"]
+
+        #session players
+        for i in session_players:
+            session_player = session_players[i]
+            parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+            session_player["apples"] = 0
+            session_player["oranges"] = 0
+            session_player["checkout"] = False
+            session_player["consumer"] = False
+
+            if parameter_set_player["id_label"] == "W":
+                session_player["earnings"] += parameter_set_period["wholesaler_budget"]
+            elif parameter_set_player["id_label"] == "R":
+                session_player["budget"] = parameter_set_period["retailer_budget"]
+        
+        #barriers
+        if world_state["wholesaler_barrier"]:
+            world_state["barriers"][str(world_state["wholesaler_barrier"])]["enabled"] = True
+        
+        if world_state["retailer_barrier"]:
+            world_state["barriers"][str(world_state["retailer_barrier"])]["enabled"] = True
+
+        if world_state["checkout_barrier"]:
+            world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = False
+
+        #setup orchard inventory
+        world_state["orange_orchard_inventory"] = parameter_set["orange_tray_capacity"] - world_state["orange_tray_inventory"]
+        world_state["apple_orchard_inventory"] = parameter_set["apple_tray_capacity"] - world_state["apple_tray_inventory"]
+
+        self.world_state = world_state
+        self.save()
+
+        return world_state
+        
 
     def setup_summary_data(self):
         '''
@@ -159,6 +203,7 @@ class Session(models.Model):
                             "last_store":str(datetime.now()),
                             "session_players":{},
                             "session_players_order":[],
+                            "barriers":{},
                             "current_period":1,
                             "current_experiment_phase":ExperimentPhase.INSTRUCTIONS if self.parameter_set.show_instructions else ExperimentPhase.RUN,
                             "time_remaining":self.parameter_set.period_length,
@@ -166,17 +211,16 @@ class Session(models.Model):
                             "timer_history":[],
                             "started":True,
                             "finished":False,
-                            "orange_tray_inventory":0,
-                            "apple_tray_inventory":0,
+                            "wholesaler_barrier":None,
+                            "retailer_barrier":None,
+                            "checkout_barrier":None,
+                            "orange_tray_inventory":self.parameter_set.orange_tray_starting_inventory,
+                            "apple_tray_inventory":self.parameter_set.apple_tray_starting_inventory,
+                            "orange_orchard_inventory":0,
+                            "apple_orchard_inventory":0,
                             "session_periods":{str(i.id) : i.json() for i in self.session_periods.all()},
                             "session_periods_order" : list(self.session_periods.all().values_list('id', flat=True)),
                             }
-        
-        inventory = {str(i):0 for i in list(self.session_periods.all().values_list('id', flat=True))}
-
-        #session periods
-        for i in self.world_state["session_periods"]:
-            self.world_state["session_periods"][i]["consumption_completed"] = False
         
         #session players
         for i in self.session_players.prefetch_related('parameter_set_player').all().values('id', 
@@ -190,11 +234,27 @@ class Session(models.Model):
             v['earnings'] = 0
             v['apples'] = 0
             v['oranges'] = 0
+            v['checkout'] = False
+            v['consumer'] = False
+            v['budget'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             
             self.world_state["session_players"][str(i['id'])] = v
             self.world_state["session_players_order"].append(i['id'])
-        
+
+        #barriers enabled
+        for i in self.parameter_set.parameter_set_barriers_a.all():  
+           
+            if i.info == 'Wholesaler':
+                self.world_state["wholesaler_barrier"] = i.id
+                self.world_state["barriers"][str(i.id)] = {"enabled":True}
+            elif i.info == 'Retailer':
+                self.world_state["barriers"][str(i.id)] = {"enabled":True}
+                self.world_state["retailer_barrier"] = i.id
+            elif i.info == 'Checkout':
+                self.world_state["checkout_barrier"] = i.id
+                self.world_state["barriers"][str(i.id)] = {"enabled":False}
+
         parameter_set  = self.parameter_set.json_for_session
 
         self.save()
@@ -260,7 +320,7 @@ class Session(models.Model):
 
     def user_is_owner(self, user):
         '''
-        return turn is user is owner or an admin
+        return true if user is owner or an admin
         '''
 
         if user.is_staff:

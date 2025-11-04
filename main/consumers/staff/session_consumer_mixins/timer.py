@@ -100,8 +100,6 @@ class TimerMixin():
             last_period_id = self.world_state_local["session_periods_order"][self.world_state_local["current_period"] - 1]
             last_period_id_s = str(last_period_id)
             last_period = self.world_state_local["session_periods"][last_period_id_s]
-
-            last_period["consumption_completed"] = True
             
             for i in self.world_state_local["session_players"]:
                 period_earnings = (self.world_state_local["session_players"][i]["inventory"][last_period_id_s] * 
@@ -162,15 +160,11 @@ class TimerMixin():
                     last_period_id_s = str(last_period_id)
                     last_period = self.world_state_local["session_periods"][last_period_id_s]
 
-                    period_is_over = not last_period["consumption_completed"]
-
                 #check if period over
                 if period_is_over:
 
                     session = await Session.objects.aget(id=self.session_id)
                     current_period = await session.aget_current_session_period()
-
-                    last_period["consumption_completed"] = True
                     
                     for i in self.world_state_local["session_players"]:
 

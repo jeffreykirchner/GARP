@@ -4,10 +4,11 @@ import math
 import json
 
 from datetime import datetime, timedelta
+from asgiref.sync import sync_to_async
 
 from django.utils.html import strip_tags
 
-from main.models import SessionPlayer
+from main.models import SessionPlayer, session
 from main.models import Session
 from main.models import SessionEvent
 
@@ -304,28 +305,58 @@ class SubjectUpdatesMixin():
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
+        world_state = self.world_state_local
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        status = "success"
+        error_message = ""
+        fruit_cost = 0
 
         if event_data["fruit_type"] == "apple":
-            session_player["apples"] += 1
+            if world_state["apple_orchard_inventory"] <= 0:
+                status = "fail"
+                error_message = "No apples left to harvest"
+            else:
+                world_state["apple_orchard_inventory"] -= 1
+                session_player["apples"] += 1
+                session_player["earnings"] -= parameter_set_period["orchard_apple_price"]
+                fruit_cost = parameter_set_period["orchard_apple_price"]
         elif event_data["fruit_type"] == "orange":
-            session_player["oranges"] += 1
-
-        self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                session_player_id=player_id,
-                                                type=event['type'],
-                                                period_number=self.world_state_local["current_period"],
-                                                time_remaining=self.world_state_local["time_remaining"],
-                                                data=event_data))
+            if world_state["orange_orchard_inventory"] <= 0:
+                status = "fail"
+                error_message = "No oranges left to harvest"
+            else:
+                world_state["orange_orchard_inventory"] -= 1
+                session_player["oranges"] += 1
+                session_player["earnings"] -= parameter_set_period["orchard_orange_price"]
+                fruit_cost = parameter_set_period["orchard_orange_price"]
+        if status == "success":
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
         
-        result = {"value" : "success", 
+        result = {"value" : status,
+                  "error_message" : error_message, 
                   "apples" : session_player["apples"], 
                   "oranges" : session_player["oranges"],
+                  "apple_orchard_inventory" : world_state["apple_orchard_inventory"],
+                  "orange_orchard_inventory" : world_state["orange_orchard_inventory"],
                   "fruit_type" : event_data["fruit_type"],
+                  "earnings" : session_player["earnings"],
+                  "fruit_cost" : fruit_cost,
                   "session_player_id" : player_id}
         
-        await self.send_message(message_to_self=None, message_to_group=result,
-                                message_type=event['type'], send_to_client=False, 
-                                send_to_group=True)
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False, 
+                                    send_to_group=True)
 
     async def update_harvest_fruit(self, event):
         '''
@@ -336,9 +367,397 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
-                                      
     
-
-                                
+    async def tray_fruit(self, event):
+        '''
+        move fruit to or from the tray from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
         
+        # logger = logging.getLogger(__name__) 
+        # logger.info(f"target_location_update: world state controller {self.controlling_channel} channel name {self.channel_name}")
+        
+        logger = logging.getLogger(__name__)
+        # logger.info(f"tray_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
 
+        status = "success"
+        error_message = ""
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        parameter_set = self.parameter_set_local
+       
+        if parameter_set_player["id_label"] == "W":
+            #wholesaler move fruit to tray
+            if event_data["fruit_type"] == "apple":
+                if session_player["apples"] <= 0:
+                    status = "fail"
+                    error_message = "No apples to place on tray."
+                elif world_state["apple_tray_inventory"] >= parameter_set["apple_tray_capacity"]:
+                    status = "fail"
+                    error_message = "Apple tray full."
+                
+                if status == "success":
+                    session_player["apples"] -= 1
+                    world_state["apple_tray_inventory"] += 1
+
+            elif event_data["fruit_type"] == "orange":
+                if session_player["oranges"] <= 0:
+                    status = "fail"
+                    error_message = "No oranges to place on tray."
+                elif world_state["orange_tray_inventory"] >= parameter_set["orange_tray_capacity"]:
+                    status = "fail"
+                    error_message = "Orange tray full."
+
+                if status == "success":
+                    session_player["oranges"] -= 1
+                    world_state["orange_tray_inventory"] += 1
+            
+            #check if retailer barrier should go down
+            if world_state["apple_tray_inventory"] == parameter_set["apple_tray_capacity"] and \
+                world_state["orange_tray_inventory"] == parameter_set["orange_tray_capacity"]:
+                world_state["barriers"][str(world_state["retailer_barrier"])]["enabled"] = False
+
+        elif parameter_set_player["id_label"] == "R":
+            #retailer moved fruit from tray to inventory
+            
+            if session_player["checkout"]:
+                status = "fail"
+                error_message = "You have already checked out."
+
+            if status == "success":    
+                if event_data["fruit_type"] == "apple":
+                    if world_state["apple_tray_inventory"] <= 0:
+                        status = "fail"
+                        error_message = "No apples on tray."
+                    elif session_player["budget"] < parameter_set_period["wholesale_apple_price"]:
+                        status = "fail"
+                        error_message = "Insufficient budget."
+                    
+                    if status == "success":
+                        session_player["apples"] += 1
+                        session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
+                        world_state["apple_tray_inventory"] -= 1
+
+                elif event_data["fruit_type"] == "orange":
+                    if world_state["orange_tray_inventory"] <= 0:
+                        status = "fail"
+                        error_message = "No oranges on tray."
+                    elif session_player["budget"] < parameter_set_period["wholesale_orange_price"]:
+                        status = "fail"
+                        error_message = "Insufficient budget."
+
+                    if status == "success":
+                        session_player["oranges"] += 1
+                        session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
+                        world_state["orange_tray_inventory"] -= 1
+                
+                #raise checkout barrier when retailer takes fruit from tray
+                world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = True
+
+        if status == "success":
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                session_player_id=player_id,
+                                                type=event['type'],
+                                                period_number=self.world_state_local["current_period"],
+                                                time_remaining=self.world_state_local["time_remaining"],
+                                                data=event_data))
+
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "session_player_apples" : session_player["apples"],
+                  "session_player_oranges" : session_player["oranges"],
+                  "session_player_budget" : session_player["budget"],
+                  "apple_tray_inventory" : world_state["apple_tray_inventory"],
+                  "orange_tray_inventory" : world_state["orange_tray_inventory"],
+                  "retailer_barrier_up" : world_state["barriers"][str(world_state["retailer_barrier"])]["enabled"],
+                  "checkout_barrier_up" : world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"],
+                  "fruit_type" : event_data["fruit_type"],
+                  "session_player_id" : player_id}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False, 
+                                    send_to_group=True)
+
+    async def update_tray_fruit(self, event):
+        '''
+        update tray fruit from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def checkout(self, event):
+        '''
+        checkout fruit from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("checkout")
+        
+        status = "success"
+        error_message = ""
+        payment = 0
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        wholesaler_player_id = world_state["session_players_order"][0]
+        wholesaler = world_state["session_players"][str(wholesaler_player_id)]
+
+        #check if retailer is checking out
+        if parameter_set_player["id_label"] != "R":
+            status = "fail"
+            error_message = "Only retailers can checkout."
+        
+        #check if retailer has already checked out
+        # if status == "success":
+        #     if session_player["checkout"]:
+        #         status = "fail"
+        #         error_message = "You have checked out."
+
+        if status == "success":
+            apples = world_state["session_players"][str(player_id)]["apples"]
+            oranges = world_state["session_players"][str(player_id)]["oranges"]
+
+            payment = parameter_set_period["wholesale_apple_price"] * apples + \
+                      parameter_set_period["wholesale_orange_price"] * oranges
+            # session_player["budget"] -= payment
+            session_player["checkout"] = True
+           
+            wholesaler["earnings"] += payment
+
+            world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = False
+
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+            
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "payment" : payment,
+                  "retailer_budget" : session_player["budget"],
+                  "retailer_checkout" : session_player["checkout"],
+                  "wholesaler_earnings" : wholesaler["earnings"],
+                  "checkout_barrier" : world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"],
+                  "session_player_id" : player_id}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False, 
+                                    send_to_group=True)
+
+    async def update_checkout(self, event):
+        '''
+        update checkout from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        
+    async def reset_retailer_inventory(self, event):
+        '''
+        reset retailer inventory from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("reset_retailer_inventory")
+
+        status = "success"
+        error_message = ""
+        
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][self.world_state_local["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        world_state = self.world_state_local
+
+        #check if retailer is resetting inventory
+        if parameter_set_player["id_label"] != "R":
+            status = "fail"
+            error_message = "Only retailers can reset inventory."
+        
+        if session_player["checkout"]:
+            status = "fail"
+            error_message = "You have already checked out."
+        
+        apples = session_player["apples"]
+        oranges = session_player["oranges"]
+        
+        if status == "success":    
+            #reset retailer inventory
+            world_state["apple_tray_inventory"] += apples
+            world_state["orange_tray_inventory"] += oranges
+
+            session_player["apples"] = 0
+            session_player["oranges"] = 0
+            session_player["budget"] = parameter_set_period["retailer_budget"]
+
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "session_player_apples" : session_player["apples"],
+                  "session_player_oranges" : session_player["oranges"],
+                  "session_player_budget" : session_player["budget"],
+                  "apple_tray_inventory" : world_state["apple_tray_inventory"],
+                  "orange_tray_inventory" : world_state["orange_tray_inventory"],
+                  "starting_apples" : apples,
+                  "starting_oranges" : oranges,
+                  "session_player_id" : player_id}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True)
+
+    async def update_reset_retailer_inventory(self, event):
+        '''
+        update reset retailer inventory from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def sell_to_consumer(self, event):
+        '''
+        sell to consumer from subject screen
+        '''
+
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("reset_retailer_inventory")
+
+        status = "success"
+        error_message = ""
+
+        session = await Session.objects.aget(id=self.session_id)
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        
+        parameter_set = self.parameter_set_local
+        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        parameter_set_period_id = parameter_set["parameter_set_periods_order"][self.world_state_local["current_period"]-1]
+        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
+        world_state = self.world_state_local
+
+        #check if subject is a retailer
+        if parameter_set_player["id_label"] != "R":
+            status = "fail"
+            error_message = "Only retailers can sell to consumers."
+
+        #check if subject has has already sold to consumer
+        if status == "success":
+            if session_player["consumer"]:
+                status = "fail"
+                error_message = "You have already sold to a consumer."
+
+        #check that subject has fruit to sell
+        if status == "success":
+            if session_player["apples"] == 0 and session_player["oranges"] == 0:
+                status = "fail"
+                error_message = "You have no fruit to sell."
+
+        apples_sold = 0
+        oranges_sold = 0
+        period_earnings = 0
+        if status == "success":
+            apples_sold = session_player["apples"]
+            oranges_sold = session_player["oranges"]
+            period_earnings = parameter_set["consumer_prices"][f"o{oranges_sold}a{apples_sold}"]
+
+            session_player["earnings"] += period_earnings
+
+            session_player["consumer"] = True
+            session_player["apples"] = 0
+            session_player["oranges"] = 0
+
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=self.world_state_local["current_period"],
+                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    data=event_data))
+
+            #setup next period
+            world_state["current_period"] += 1
+            world_state["time_remaining"] = parameter_set["period_length"]
+            world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set)
+            
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "apples_sold" : apples_sold,
+                  "oranges_sold" : oranges_sold,
+                  "period_earnings" : period_earnings,
+                  "session_player_id" : player_id,
+                  "apple_orchard_inventory" : world_state["apple_orchard_inventory"],
+                  "orange_orchard_inventory" : world_state["orange_orchard_inventory"],
+                  "session_players" : world_state["session_players"],
+                  "barriers" : world_state["barriers"],
+                  "current_period" : world_state["current_period"]}
+        
+        if status == "fail":
+            await self.send_message(message_to_self=result, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True)
+
+    async def update_sell_to_consumer(self, event):
+        '''
+        sell to consumer from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
