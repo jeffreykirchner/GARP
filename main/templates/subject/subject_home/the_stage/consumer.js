@@ -151,12 +151,12 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     let session_player = app.session.world_state.session_players[session_player_id];
     let world_state = app.session.world_state;
     let parameter_set = app.session.parameter_set;
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
+    let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
 
     let apples_sold = data.apples_sold;
     let oranges_sold = data.oranges_sold;
     let period_earnings = data.period_earnings;
-    
-    app.session.world_state = data.world_state;
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -179,6 +179,36 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         {
            
         }
+    }
+
+    //show notices
+    if(app.is_subject)
+    {
+        if(parameter_set_player_local.id_label == "R")
+        {
+            app.remove_all_notices();
+            app.add_notice("Please wait.", world_state.current_period+1, 1)
+        }
+    else if(parameter_set_player_local.id_label == "W")
+        {
+            app.remove_all_notices();
+            app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
+        }
+    }
+
+    world_state.apple_orchard_inventory = data.apple_orchard_inventory;
+    world_state.orange_orchard_inventory = data.orange_orchard_inventory;
+    world_state.current_period = data.current_period;
+    world_state.barriers = data.barriers;
+
+    for(let i in world_state.session_players)
+    {
+        world_state.session_players[i].apples = data.session_players[i].apples;
+        world_state.session_players[i].oranges = data.session_players[i].oranges;
+        world_state.session_players[i].earnings = data.session_players[i].earnings;
+        world_state.session_players[i].checkout = data.session_players[i].checkout;
+        world_state.session_players[i].consumer = data.session_players[i].consumer;
+        world_state.session_players[i].budget = data.session_players[i].budget;
     }
 
     app.update_subject_status_overlay();
@@ -229,4 +259,6 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
 
     app.update_player_inventory();
     app.update_barriers();
+    app.update_orchard_labels();
+    app.update_register_labels();
 },

@@ -249,6 +249,8 @@ take_update_checkout: function take_update_checkout(data)
 {
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
+    let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
     let world_state = app.session.world_state;
 
     if(app.is_subject && session_player_id == app.session_player.id)
@@ -267,6 +269,21 @@ take_update_checkout: function take_update_checkout(data)
                     28,
                     null)
             return;
+        }
+    }
+
+    //show notices
+    if(app.is_subject)
+    {
+        if(parameter_set_player_local.id_label == "R")
+        {
+            app.remove_all_notices();
+            app.add_notice("Move to the consumer.", world_state.current_period+1, 1)
+        }
+    else if(parameter_set_player_local.id_label == "W")
+        {
+            app.remove_all_notices();
+            app.add_notice("Please wait.", world_state.current_period+1, 1)
         }
     }
 

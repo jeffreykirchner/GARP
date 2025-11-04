@@ -699,6 +699,12 @@ class SubjectUpdatesMixin():
                 status = "fail"
                 error_message = "You have already sold to a consumer."
 
+        #check that subject has fruit to sell
+        if status == "success":
+            if session_player["apples"] == 0 and session_player["oranges"] == 0:
+                status = "fail"
+                error_message = "You have no fruit to sell."
+
         apples_sold = 0
         oranges_sold = 0
         period_earnings = 0
@@ -731,7 +737,11 @@ class SubjectUpdatesMixin():
                   "oranges_sold" : oranges_sold,
                   "period_earnings" : period_earnings,
                   "session_player_id" : player_id,
-                  "world_state" : world_state}
+                  "apple_orchard_inventory" : world_state["apple_orchard_inventory"],
+                  "orange_orchard_inventory" : world_state["orange_orchard_inventory"],
+                  "session_players" : world_state["session_players"],
+                  "barriers" : world_state["barriers"],
+                  "current_period" : world_state["current_period"]}
         
         if status == "fail":
             await self.send_message(message_to_self=result, message_to_group=result,

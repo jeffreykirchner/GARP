@@ -166,6 +166,10 @@ class Session(models.Model):
         if world_state["checkout_barrier"]:
             world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = False
 
+        #setup orchard inventory
+        world_state["orange_orchard_inventory"] = parameter_set["orange_tray_capacity"] - world_state["orange_tray_inventory"]
+        world_state["apple_orchard_inventory"] = parameter_set["apple_tray_capacity"] - world_state["apple_tray_inventory"]
+
         self.world_state = world_state
         self.save()
 
@@ -212,8 +216,8 @@ class Session(models.Model):
                             "checkout_barrier":None,
                             "orange_tray_inventory":self.parameter_set.orange_tray_starting_inventory,
                             "apple_tray_inventory":self.parameter_set.apple_tray_starting_inventory,
-                            "orange_orchard_inventory":self.parameter_set.orange_tray_capacity - self.parameter_set.orange_tray_starting_inventory,
-                            "apple_orchard_inventory":self.parameter_set.apple_tray_capacity - self.parameter_set.apple_tray_starting_inventory,
+                            "orange_orchard_inventory":0,
+                            "apple_orchard_inventory":0,
                             "session_periods":{str(i.id) : i.json() for i in self.session_periods.all()},
                             "session_periods_order" : list(self.session_periods.all().values_list('id', flat=True)),
                             }
