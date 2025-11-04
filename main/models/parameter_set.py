@@ -207,6 +207,13 @@ class ParameterSet(models.Model):
                 p = main.models.ParameterSetGround.objects.create(parameter_set=self)
                 p.from_dict(new_parameter_set_grounds[i])
 
+            #parameter set periods
+            self.parameter_set_periods.all().delete()
+            new_parameter_set_periods = new_ps.get("parameter_set_periods")
+            for i in new_parameter_set_periods:
+                p = main.models.ParameterSetPeriod.objects.create(parameter_set=self)
+                p.from_dict(new_parameter_set_periods[i])
+
             self.json_for_session = None
             self.save()
             
