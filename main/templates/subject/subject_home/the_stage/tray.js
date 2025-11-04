@@ -373,10 +373,19 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
         source_location = session_player.current_location;
 
-        if(session_player.apples == 0 && session_player.oranges == 0)
+       
+        if(session_player.apples == 0 && 
+           session_player.oranges == 0)
         {
             app.remove_all_notices();
-            app.add_notice("Please wait.", world_state.current_period+1, 1)
+            if(parameter_set_player_local.id_label == "W")
+            {
+                app.add_notice("Please wait.", world_state.current_period+1, 1)
+            }
+            else
+            {
+                app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
+            }            
         }
     }
     else

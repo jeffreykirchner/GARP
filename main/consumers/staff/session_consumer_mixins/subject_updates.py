@@ -530,10 +530,10 @@ class SubjectUpdatesMixin():
             error_message = "Only retailers can checkout."
         
         #check if retailer has already checked out
-        # if status == "success":
-        #     if session_player["checkout"]:
-        #         status = "fail"
-        #         error_message = "You have checked out."
+        if status == "success":
+            if session_player["checkout"]:
+                status = "fail"
+                error_message = "You have checked out."
 
         if status == "success":
             apples = world_state["session_players"][str(player_id)]["apples"]

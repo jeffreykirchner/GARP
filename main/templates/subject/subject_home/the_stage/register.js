@@ -162,7 +162,15 @@ update_register_labels: function update_register_labels()
         let total_oranges = retailer_player.oranges;
         
         let total_cost = parameter_set_period.wholesale_apple_price * total_apples + parameter_set_period.wholesale_orange_price * total_oranges;
-        pixi_register.label.text = "Total: " + total_cost + "¢";
+
+        if(retailer_player.checkout)
+        {
+            pixi_register.label.text = "Checked out";
+        }
+        else
+        {
+            pixi_register.label.text = "Total: " + total_cost + "¢";
+        }
     }
 },
 
@@ -311,6 +319,7 @@ take_update_checkout: function take_update_checkout(data)
                           true);
 
     app.update_barriers();
+    app.update_register_labels();
 },
 
 /**
