@@ -360,12 +360,6 @@ let app = Vue.createApp({
             let period_change = false;
             let period_earnings = 0;
 
-            if (message_data.period_is_over)
-            {
-                period_earnings = message_data.earnings[app.session_player.id].period_earnings;
-                app.session.world_state.session_players[app.session_player.id].earnings = message_data.earnings[app.session_player.id].total_earnings;
-            }
-
             app.session.started = message_data.started;
 
             app.session.world_state.current_period = message_data.current_period;
@@ -443,7 +437,7 @@ let app = Vue.createApp({
             }
 
             //update any notices on screen
-            app.update_notices();
+            //app.update_notices();
 
             //update barriers
             app.update_barriers();

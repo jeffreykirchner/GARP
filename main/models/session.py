@@ -206,7 +206,7 @@ class Session(models.Model):
                             "barriers":{},
                             "current_period":1,
                             "current_experiment_phase":ExperimentPhase.INSTRUCTIONS if self.parameter_set.show_instructions else ExperimentPhase.RUN,
-                            "time_remaining":self.parameter_set.period_length,
+                            "time_remaining":0,
                             "timer_running":False,
                             "timer_history":[],
                             "started":True,

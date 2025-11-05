@@ -728,7 +728,7 @@ class SubjectUpdatesMixin():
 
             #setup next period
             world_state["current_period"] += 1
-            world_state["time_remaining"] = parameter_set["period_length"]
+            world_state["time_remaining"] = 0
             world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set)
             
         result = {"value" : status,

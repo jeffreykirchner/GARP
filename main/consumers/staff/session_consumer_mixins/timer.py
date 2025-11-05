@@ -82,37 +82,6 @@ class TimerMixin():
 
         result = {"earnings":{}}
 
-        #check session over
-        if self.world_state_local["current_period"] > self.parameter_set_local["period_count"] or \
-            (self.world_state_local["current_period"] == self.parameter_set_local["period_count"] and
-             self.world_state_local["time_remaining"] <= 1):
-
-            self.world_state_local["current_period"] = self.parameter_set_local["period_count"]
-            self.world_state_local["time_remaining"] = 0
-            self.world_state_local["timer_running"] = False
-            
-            self.world_state_local["current_experiment_phase"] = ExperimentPhase.NAMES
-            stop_timer = True
-
-            period_is_over = True
-
-            #store final period earnings    
-            last_period_id = self.world_state_local["session_periods_order"][self.world_state_local["current_period"] - 1]
-            last_period_id_s = str(last_period_id)
-            last_period = self.world_state_local["session_periods"][last_period_id_s]
-            
-            for i in self.world_state_local["session_players"]:
-                period_earnings = (self.world_state_local["session_players"][i]["inventory"][last_period_id_s] * 
-                                           Decimal('1.0'))
-                
-                self.world_state_local["session_players"][i]["earnings"] += period_earnings
-
-                result["earnings"][i] = {}
-                result["earnings"][i]["total_earnings"] = self.world_state_local["session_players"][i]["earnings"]/100
-                result["earnings"][i]["period_earnings"] = period_earnings
-            
-            await self.store_world_state(force_store=True)
-           
         if self.world_state_local["current_experiment_phase"] != ExperimentPhase.NAMES:
 
             ts = datetime.now() - datetime.strptime(self.world_state_local["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
@@ -125,61 +94,9 @@ class TimerMixin():
                 ts = datetime.now() - datetime.strptime(self.world_state_local["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
 
                 self.world_state_local["timer_history"][-1]["count"] = math.floor(ts.seconds)
+                self.world_state_local["time_remaining"] += 1
 
-                total_time = 0  #total time elapsed
-                for i in self.world_state_local["timer_history"]:
-                    total_time += i["count"]
 
-                #find current period
-                current_period = 1
-                temp_time = 0          #total of period lengths through current period.
-                for i in range(1, self.parameter_set_local["period_count"]+1):
-                    temp_time += self.parameter_set_local["period_length"]
-
-                    #add break times
-                    if i % self.parameter_set_local["break_frequency"] == 0:
-                        temp_time += self.parameter_set_local["break_length"]
-                    
-                    if temp_time > total_time:
-                        break
-                    else:
-                        current_period += 1
-
-                #time remaining in period
-                time_remaining = temp_time - total_time
-
-                # if current_period == 2 and time_remaining ==10:
-                #     '''test code'''
-                #     pass
-
-                self.world_state_local["time_remaining"] = time_remaining
-                self.world_state_local["current_period"] = current_period
-                
-                if current_period > 1:
-                    last_period_id = self.world_state_local["session_periods_order"][current_period - 2]
-                    last_period_id_s = str(last_period_id)
-                    last_period = self.world_state_local["session_periods"][last_period_id_s]
-
-                #check if period over
-                if period_is_over:
-
-                    session = await Session.objects.aget(id=self.session_id)
-                    current_period = await session.aget_current_session_period()
-                    
-                    for i in self.world_state_local["session_players"]:
-
-                        period_earnings = Decimal(self.world_state_local["session_players"][i]["inventory"][last_period_id_s]) * \
-                                          Decimal('1.0')
-
-                        self.world_state_local["session_players"][i]["earnings"] = Decimal(self.world_state_local["session_players"][i]["earnings"]) + period_earnings
-
-                        result["earnings"][i] = {}
-                        result["earnings"][i]["total_earnings"] = self.world_state_local["session_players"][i]["earnings"]
-                        result["earnings"][i]["period_earnings"] = period_earnings
-                        
-                        current_period.summary_data[i]["earnings"] = result["earnings"][i]["period_earnings"]
-
-                    await current_period.asave()
 
         if send_update:
             #session status
