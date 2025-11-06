@@ -276,6 +276,7 @@ let app = Vue.createApp({
         
             app.update_orchard_labels();
             app.update_tray_labels();
+            app.set_avatar_visibility();
         },
 
         /** send winsock request to get session info
@@ -293,9 +294,12 @@ let app = Vue.createApp({
             app.session = message_data.session;
             app.session_player = message_data.session_player;
 
+            
+
             if(app.session.started)
             {
-               
+                let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+                app.current_group = parameter_set_player.parameter_set_group;                
             }
             else
             {
@@ -318,13 +322,13 @@ let app = Vue.createApp({
             if(!app.first_load_done)
             {
                 Vue.nextTick(() => {
-                    app.do_first_load();
+                    app.do_first_load();                    
                 });
             }
             else
             {
                 Vue.nextTick(() => {
-                    app.do_reload();
+                    app.do_reload();                    
                 });
             }
         },

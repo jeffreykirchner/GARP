@@ -445,3 +445,23 @@ move_player: function move_player(delta)
     }
     
 },
+
+set_avatar_visibility: function set_avatar_visibility()
+{
+    for(const i in app.session.world_state.session_players)
+    {
+        let session_player = app.session.world_state.session_players[i];
+        let parameter_set_player = app.get_parameter_set_player_from_player_id(i);
+        let pixi_avatar = pixi_avatars[i];
+
+        let temp_visible = true;
+
+        if(app.current_group != parameter_set_player.parameter_set_group)
+        {
+            temp_visible = false;
+        }
+
+        pixi_avatar.avatar_container.visible = temp_visible;
+        pixi_avatar.chat.container.visible = temp_visible;
+    }
+},

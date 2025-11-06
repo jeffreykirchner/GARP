@@ -94,6 +94,6 @@ update_subject_status_overlay: function update_subject_status_overlay()
     // subject_status_overlay.container.position.set(pixi_app.screen.width - subject_status_overlay.container.width-20, 20);
 
     subject_status_overlay.current_period_label.text = app.session.world_state.current_period;
-    subject_status_overlay.time_remaining_label.text = app.session.world_state.time_remaining;
+    // subject_status_overlay.time_remaining_label.text = app.session.world_state.time_remaining;
     subject_status_overlay.profit_label.text = app.session.world_state.session_players[app.session_player.id].earnings;
 },

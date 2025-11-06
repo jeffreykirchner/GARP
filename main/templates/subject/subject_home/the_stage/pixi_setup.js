@@ -59,6 +59,7 @@ setup_pixi: function setup_pixi(){
             app.update_tray_labels();
             app.update_orchard_labels();
             app.update_register_labels();
+            app.set_avatar_visibility();
         }
         
         if(app.pixi_mode!="subject")
