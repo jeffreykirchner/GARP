@@ -82,6 +82,9 @@ let app = Vue.createApp({
 
                     //chat gpt
                     chat_gpt_history : [[]],
+
+                    //current group
+                    current_group : null,
                 }},
     methods: {
 

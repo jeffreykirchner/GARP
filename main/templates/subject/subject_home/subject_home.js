@@ -84,6 +84,9 @@ let app = Vue.createApp({
                     chat_gpt_button_text : 'Chat <i class="far fa-comments"></i>',
                     last_scroll_chat_gpt_history_to_bottom : null,
                     chat_gpt_working : false,
+
+                    //current group
+                    current_group : null,
                 }},
     methods: {
 
