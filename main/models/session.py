@@ -220,12 +220,19 @@ class Session(models.Model):
                             "apple_orchard_inventory":0,
                             "session_periods":{str(i.id) : i.json() for i in self.session_periods.all()},
                             "session_periods_order" : list(self.session_periods.all().values_list('id', flat=True)),
+                            "groups":{}
                             }
         
+        #groups
+        for i in self.parameter_set.parameter_set_groups.all():
+            self.world_state["groups"][str(i.id)] = {}
+            self.world_state["groups"][str(i.id)]["members"] = []
+
         #session players
         for i in self.session_players.prefetch_related('parameter_set_player').all().values('id', 
                                                                                             'parameter_set_player__start_x',
                                                                                             'parameter_set_player__start_y',
+                                                                                            'parameter_set_player__parameter_set_group__id',
                                                                                             'parameter_set_player__id' ):
             v = {}
 
@@ -241,6 +248,11 @@ class Session(models.Model):
             
             self.world_state["session_players"][str(i['id'])] = v
             self.world_state["session_players_order"].append(i['id'])
+
+            #add to group
+            if i['parameter_set_player__parameter_set_group__id']:
+                group_id_s = str(i['parameter_set_player__parameter_set_group__id'])
+                self.world_state["groups"][group_id_s]["members"].append(i['id'])
 
         #barriers enabled
         for i in self.parameter_set.parameter_set_barriers_a.all():  

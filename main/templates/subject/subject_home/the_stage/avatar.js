@@ -463,5 +463,12 @@ set_avatar_visibility: function set_avatar_visibility()
 
         pixi_avatar.avatar_container.visible = temp_visible;
         pixi_avatar.chat.container.visible = temp_visible;
+        pixi_avatar.interaction_container.visible = temp_visible;
+
+        if(app.pixi_mode != "subject")
+        {
+            pixi_avatar.view_container.visible = temp_visible;
+        }
+        
     }
 },

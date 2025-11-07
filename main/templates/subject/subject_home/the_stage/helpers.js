@@ -259,3 +259,20 @@ get_checkout_complete: function get_checkout_complete(){
     let session_player = app.session.world_state.session_players[app.session_player.id];
    return session_player.checkout;
 },
+
+/**
+ * player in group
+ */
+is_player_in_group: function is_player_in_group(player_id){
+    if(!app.first_load_done) return false;
+    if(!app.session.started) return false;
+
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    let world_state = app.session.world_state;
+
+    if(world_state.groups[parameter_set_player.parameter_set_group].memebers.includes(player_id)){
+        return true;
+    }
+
+    return false;
+},
