@@ -266,11 +266,11 @@ get_checkout_complete: function get_checkout_complete(){
 is_player_in_group: function is_player_in_group(player_id){
     if(!app.first_load_done) return false;
     if(!app.session.started) return false;
+    if(!app.current_group) return false;
 
-    let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
     let world_state = app.session.world_state;
 
-    if(world_state.groups[parameter_set_player.parameter_set_group].memebers.includes(player_id)){
+    if(world_state.groups[app.current_group].members.includes(parseInt(player_id))){
         return true;
     }
 

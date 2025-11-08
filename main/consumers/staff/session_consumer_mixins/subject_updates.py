@@ -729,7 +729,7 @@ class SubjectUpdatesMixin():
             #setup next period
             world_state["current_period"] += 1
             world_state["time_remaining"] = 0
-            world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set)
+            world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set, parameter_set_player["parameter_set_group"])
             
         result = {"value" : status,
                   "error_message" : error_message,
