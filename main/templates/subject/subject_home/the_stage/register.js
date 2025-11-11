@@ -258,8 +258,13 @@ take_update_checkout: function take_update_checkout(data)
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
-    let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    let parameter_set_player_local = null;
+    if(app.is_subject)
+    {
+        parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    }
     let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -286,25 +291,23 @@ take_update_checkout: function take_update_checkout(data)
         if(parameter_set_player_local.id_label == "R")
         {
             app.remove_all_notices();
-            app.add_notice("Move to the consumer.", world_state.current_period+1, 1)
+            app.add_notice("Move to the consumer.", group.current_period+1, 1)
         }
-    else if(parameter_set_player_local.id_label == "W")
+        else if(parameter_set_player_local.id_label == "W")
         {
             app.remove_all_notices();
-            app.add_notice("Please wait.", world_state.current_period+1, 1)
+            app.add_notice("Please wait.", group.current_period+1, 1)
         }
     }
 
     let payment = data.payment;
-    let wholesaler_player_id = world_state.session_players_order[0];
-    let wholesaler_player = world_state.session_players[wholesaler_player_id];
-    let retailer_player_id = world_state.session_players_order[1];
-    let retailer_player = world_state.session_players[retailer_player_id];
+    
+    let wholesaler_player = app.get_player_by_type("W");
+    let retailer_player = app.get_player_by_type("R");
 
     retailer_player.budget = data.retailer_budget;
     retailer_player.checkout = data.retailer_checkout;
-    world_state["barriers"][world_state["checkout_barrier"]]["enabled"] = data.checkout_barrier;
-
+    group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier;
     //add transfer beam
     let elements = [];
     let element = {source_change: "-" + payment,

@@ -215,6 +215,8 @@ class SubjectUpdatesMixin():
         
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        group = self.world_state_local["groups"][str(parameter_set_player["parameter_set_group"])]
 
         session_player["target_location"] = target_location
         session_player["current_location"] = current_location
@@ -238,8 +240,8 @@ class SubjectUpdatesMixin():
             self.session_events.append(SessionEvent(session_id=self.session_id, 
                                                     session_player_id=player_id,
                                                     type=event['type'],
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
                                                     data=data))
         
         result = {"value" : "success", 
@@ -354,13 +356,13 @@ class SubjectUpdatesMixin():
                   "session_player_id" : player_id}
         
         if status == "fail":
-            await self.send_message(message_to_self=result, message_to_group=result,
+            await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False, 
-                                    send_to_group=True)
+                                    send_to_group=True, target_list=group["members"])
 
     async def update_harvest_fruit(self, event):
         '''
@@ -393,7 +395,8 @@ class SubjectUpdatesMixin():
         session_player = self.world_state_local["session_players"][str(player_id)]
         parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
         world_state = self.world_state_local
-        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         parameter_set = self.parameter_set_local
        
@@ -403,30 +406,30 @@ class SubjectUpdatesMixin():
                 if session_player["apples"] <= 0:
                     status = "fail"
                     error_message = "No apples to place on tray."
-                elif world_state["apple_tray_inventory"] >= parameter_set["apple_tray_capacity"]:
+                elif group["apple_tray_inventory"] >= parameter_set["apple_tray_capacity"]:
                     status = "fail"
                     error_message = "Apple tray full."
                 
                 if status == "success":
                     session_player["apples"] -= 1
-                    world_state["apple_tray_inventory"] += 1
+                    group["apple_tray_inventory"] += 1
 
             elif event_data["fruit_type"] == "orange":
                 if session_player["oranges"] <= 0:
                     status = "fail"
                     error_message = "No oranges to place on tray."
-                elif world_state["orange_tray_inventory"] >= parameter_set["orange_tray_capacity"]:
+                elif group["orange_tray_inventory"] >= parameter_set["orange_tray_capacity"]:
                     status = "fail"
                     error_message = "Orange tray full."
 
                 if status == "success":
                     session_player["oranges"] -= 1
-                    world_state["orange_tray_inventory"] += 1
+                    group["orange_tray_inventory"] += 1
             
             #check if retailer barrier should go down
-            if world_state["apple_tray_inventory"] == parameter_set["apple_tray_capacity"] and \
-                world_state["orange_tray_inventory"] == parameter_set["orange_tray_capacity"]:
-                world_state["barriers"][str(world_state["retailer_barrier"])]["enabled"] = False
+            if group["apple_tray_inventory"] == parameter_set["apple_tray_capacity"] and \
+                group["orange_tray_inventory"] == parameter_set["orange_tray_capacity"]:
+                group["barriers"][str(group["retailer_barrier"])]["enabled"] = False
 
         elif parameter_set_player["id_label"] == "R":
             #retailer moved fruit from tray to inventory
@@ -437,7 +440,7 @@ class SubjectUpdatesMixin():
 
             if status == "success":    
                 if event_data["fruit_type"] == "apple":
-                    if world_state["apple_tray_inventory"] <= 0:
+                    if group["apple_tray_inventory"] <= 0:
                         status = "fail"
                         error_message = "No apples on tray."
                     elif session_player["budget"] < parameter_set_period["wholesale_apple_price"]:
@@ -447,10 +450,10 @@ class SubjectUpdatesMixin():
                     if status == "success":
                         session_player["apples"] += 1
                         session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
-                        world_state["apple_tray_inventory"] -= 1
+                        group["apple_tray_inventory"] -= 1
 
                 elif event_data["fruit_type"] == "orange":
-                    if world_state["orange_tray_inventory"] <= 0:
+                    if group["orange_tray_inventory"] <= 0:
                         status = "fail"
                         error_message = "No oranges on tray."
                     elif session_player["budget"] < parameter_set_period["wholesale_orange_price"]:
@@ -460,17 +463,17 @@ class SubjectUpdatesMixin():
                     if status == "success":
                         session_player["oranges"] += 1
                         session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
-                        world_state["orange_tray_inventory"] -= 1
+                        group["orange_tray_inventory"] -= 1
                 
                 #raise checkout barrier when retailer takes fruit from tray
-                world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = True
+                group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
 
         if status == "success":
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                 session_player_id=player_id,
                                                 type=event['type'],
-                                                period_number=self.world_state_local["current_period"],
-                                                time_remaining=self.world_state_local["time_remaining"],
+                                                period_number=group["current_period"],
+                                                time_remaining=group["time_remaining"],
                                                 data=event_data))
 
         result = {"value" : status,
@@ -478,21 +481,21 @@ class SubjectUpdatesMixin():
                   "session_player_apples" : session_player["apples"],
                   "session_player_oranges" : session_player["oranges"],
                   "session_player_budget" : session_player["budget"],
-                  "apple_tray_inventory" : world_state["apple_tray_inventory"],
-                  "orange_tray_inventory" : world_state["orange_tray_inventory"],
-                  "retailer_barrier_up" : world_state["barriers"][str(world_state["retailer_barrier"])]["enabled"],
-                  "checkout_barrier_up" : world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"],
+                  "apple_tray_inventory" : group["apple_tray_inventory"],
+                  "orange_tray_inventory" : group["orange_tray_inventory"],
+                  "retailer_barrier_up" : group["barriers"][str(group["retailer_barrier"])]["enabled"],
+                  "checkout_barrier_up" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
                   "fruit_type" : event_data["fruit_type"],
                   "session_player_id" : player_id}
         
         if status == "fail":
-            await self.send_message(message_to_self=result, message_to_group=result,
+            await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False, 
-                                    send_to_group=True)
+                                    send_to_group=True, target_list=group["members"])
 
     async def update_tray_fruit(self, event):
         '''
@@ -523,7 +526,8 @@ class SubjectUpdatesMixin():
         session_player = self.world_state_local["session_players"][str(player_id)]
         parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
         world_state = self.world_state_local
-        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         wholesaler_player_id = world_state["session_players_order"][0]
         wholesaler = world_state["session_players"][str(wholesaler_player_id)]
@@ -550,13 +554,13 @@ class SubjectUpdatesMixin():
            
             wholesaler["earnings"] += payment
 
-            world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"] = False
+            group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
                                                     data=event_data))
             
         result = {"value" : status,
@@ -565,17 +569,17 @@ class SubjectUpdatesMixin():
                   "retailer_budget" : session_player["budget"],
                   "retailer_checkout" : session_player["checkout"],
                   "wholesaler_earnings" : wholesaler["earnings"],
-                  "checkout_barrier" : world_state["barriers"][str(world_state["checkout_barrier"])]["enabled"],
+                  "checkout_barrier" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
                   "session_player_id" : player_id}
         
         if status == "fail":
-            await self.send_message(message_to_self=result, message_to_group=result,
+            await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False, 
-                                    send_to_group=True)
+                                    send_to_group=True, target_list=group["members"])
 
     async def update_checkout(self, event):
         '''

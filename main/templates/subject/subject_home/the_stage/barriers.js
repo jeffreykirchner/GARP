@@ -107,26 +107,33 @@ check_barriers_intersection: function check_barriers_intersection(rect1, paramet
 update_barriers: function update_barriers()
 {
     if(!app.session.started) return;
+    if(!app.first_load_done) return;
     let world_state = app.session.world_state;
     let barriers = world_state.groups[app.current_group].barriers;
     let group = app.session.world_state.groups[app.current_group];
 
-    if(group.barriers[group.retailer_barrier])
+    try
     {
-        let retailer_barrier_container = pixi_barriers[group.retailer_barrier].barrier_container;
-        retailer_barrier_container.visible = group.barriers[group.retailer_barrier].enabled;
-    }
+        if(group.barriers[group.retailer_barrier])
+        {
+            let retailer_barrier_container = pixi_barriers[group.retailer_barrier].barrier_container;
+            retailer_barrier_container.visible = group.barriers[group.retailer_barrier].enabled;
+        }
 
-    if(group.barriers[group.wholesaler_barrier])
+        if(group.barriers[group.wholesaler_barrier])
+        {
+            let wholesaler_barrier_container = pixi_barriers[group.wholesaler_barrier].barrier_container;
+            wholesaler_barrier_container.visible = group.barriers[group.wholesaler_barrier].enabled;
+        }
+
+        if(group.barriers[group.checkout_barrier])
+        {
+            let checkout_barrier_container = pixi_barriers[group.checkout_barrier].barrier_container;
+            checkout_barrier_container.visible = group.barriers[group.checkout_barrier].enabled;
+        }
+    }
+    catch(err)
     {
-        let wholesaler_barrier_container = pixi_barriers[group.wholesaler_barrier].barrier_container;
-        wholesaler_barrier_container.visible = group.barriers[group.wholesaler_barrier].enabled;
+        // console.error("Error updating barriers: ", err);
     }
-
-    if(group.barriers[group.checkout_barrier])
-    {
-        let checkout_barrier_container = pixi_barriers[group.checkout_barrier].barrier_container;
-        checkout_barrier_container.visible = group.barriers[group.checkout_barrier].enabled;
-    }
-
 },

@@ -314,9 +314,15 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
-    let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+   
     let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
 
+    let parameter_set_player_local = null;
+    if(app.is_subject)
+    {
+        parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    }
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -339,8 +345,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
     //show notices
     if(app.is_subject && 
-       parameter_set_player.id_label == "R" && 
-       parameter_set_player_local.id_label == "W")
+        parameter_set_player.id_label == "R" && 
+        parameter_set_player_local.id_label == "W")
     {
         app.remove_all_notices();
         app.add_notice("Move to the register for checkout.", world_state.current_period+1, 1)
@@ -375,7 +381,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         source_location = session_player.current_location;
 
        
-        if(session_player.apples == 0 && 
+        if(app.is_subject &&
+           session_player.apples == 0 && 
            session_player.oranges == 0)
         {
             app.remove_all_notices();
@@ -422,11 +429,11 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
                           false,
                           true);
     
-    world_state.apple_tray_inventory = data.apple_tray_inventory;
-    world_state.orange_tray_inventory = data.orange_tray_inventory;
+    group.apple_tray_inventory = data.apple_tray_inventory;
+    group.orange_tray_inventory = data.orange_tray_inventory;
 
-    world_state["barriers"][world_state["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
-    world_state["barriers"][world_state["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
+    group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
+    group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
 
     app.update_orchard_labels();
     app.update_player_inventory();

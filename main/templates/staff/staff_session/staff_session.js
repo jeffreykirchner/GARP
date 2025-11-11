@@ -399,8 +399,9 @@ let app = Vue.createApp({
             if(status == "fail") return;
 
             // app.session.started = result.started;
-            app.session.world_state.current_period = message_data.current_period;
-            app.session.world_state.time_remaining = message_data.time_remaining;
+            // app.session.world_state.current_period = message_data.current_period;
+            // app.session.world_state.time_remaining = message_data.time_remaining;
+            app.session.world_state.groups = message_data.groups;
             app.session.world_state.timer_running = message_data.timer_running;
             app.session.world_state.started = message_data.started;
             app.session.world_state.finished = message_data.finished;
@@ -411,11 +412,11 @@ let app = Vue.createApp({
             app.update_phase_button_text();
 
             //update player earnings and inventory if period has changed
-            if(message_data.period_is_over)
-            {
-                app.update_player_inventory();              
-                app.take_update_earnings(message_data.earnings);  
-            }
+            // if(message_data.period_is_over)
+            // {
+            //     app.update_player_inventory();              
+            //     app.take_update_earnings(message_data.earnings);  
+            // }
 
             //update player status
             for(let p in message_data.session_player_status)

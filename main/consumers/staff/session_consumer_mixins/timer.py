@@ -80,7 +80,7 @@ class TimerMixin():
 
         stop_timer = False
         send_update = True
-        period_is_over = False
+        # period_is_over = False
 
         result = {"earnings":{}}
 
@@ -96,19 +96,23 @@ class TimerMixin():
                 ts = datetime.now() - datetime.strptime(world_state["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
 
                 world_state["timer_history"][-1]["count"] = math.floor(ts.seconds)
-                world_state["time_remaining"] += 1
+
+                for g in world_state["groups"]:
+                    group = world_state["groups"][g]
+                    group["time_remaining"] += 1
 
         if send_update:
             #session status
             result["value"] = "success"
             result["stop_timer"] = stop_timer
-            result["time_remaining"] = world_state["time_remaining"]
-            result["current_period"] = world_state["current_period"]
+            # result["time_remaining"] = world_state["time_remaining"]
+            # result["current_period"] = world_state["current_period"]
+            result["groups"] = world_state["groups"]
             result["timer_running"] = world_state["timer_running"]
             result["started"] = world_state["started"]
             result["finished"] = world_state["finished"]
             result["current_experiment_phase"] = world_state["current_experiment_phase"]
-            result["period_is_over"] = period_is_over
+            # result["period_is_over"] = period_is_over
 
             #locations
             result["current_locations"] = {}
@@ -121,11 +125,14 @@ class TimerMixin():
             
             result["session_player_status"] = session_player_status
 
-            self.session_events.append(SessionEvent(session_id=self.session_id, 
-                                                    type="time",
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
-                                                    data=result))
+            for g in world_state["groups"]:
+                group = world_state["groups"][g]
+                
+                self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                        type="time",
+                                                        period_number=group["current_period"],
+                                                        time_remaining=group["time_remaining"],
+                                                        data=result))
             
             await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
 
