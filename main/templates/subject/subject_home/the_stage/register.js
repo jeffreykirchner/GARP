@@ -357,35 +357,38 @@ update_check_marks: function update_check_marks()
     let retailer_position = {x:0, y:0};
     let world_state = app.session.world_state;
 
-    if(world_state.session_players_order.length > 0)
+    let wholesaler_player = app.get_player_by_type("W");
+    let retailer_player = app.get_player_by_type("R");
+
+    if(wholesaler_player)
     {
-        wholesaler_position = world_state.session_players[world_state.session_players_order[0]].current_location;
+        wholesaler_position = wholesaler_player.current_location;
+
+        if(app.is_in_wholesaler_pad(wholesaler_position))
+        {
+            pixi_register.check_mark_wholesaler_sprite.visible = true;
+            pixi_register.x_mark_wholesaler_sprite.visible = false;
+        }
+        else
+        {
+            pixi_register.check_mark_wholesaler_sprite.visible = false;
+            pixi_register.x_mark_wholesaler_sprite.visible = true;
+        }
     }
 
-    if(world_state.session_players_order.length > 1)
+    if(retailer_player)
     {
-        retailer_position = world_state.session_players[world_state.session_players_order[1]].current_location;
-    }
+        retailer_position = retailer_player.current_location;
 
-    if(app.is_in_wholesaler_pad(wholesaler_position))
-    {
-        pixi_register.check_mark_wholesaler_sprite.visible = true;
-        pixi_register.x_mark_wholesaler_sprite.visible = false;
-    }
-    else
-    {
-        pixi_register.check_mark_wholesaler_sprite.visible = false;
-        pixi_register.x_mark_wholesaler_sprite.visible = true;
-    }
-
-    if(app.is_in_retailer_pad(retailer_position))
-    {
-        pixi_register.check_mark_retailer_sprite.visible = true;
-        pixi_register.x_mark_retailer_sprite.visible = false;
-    }
-    else
-    {
-        pixi_register.check_mark_retailer_sprite.visible = false;
-        pixi_register.x_mark_retailer_sprite.visible = true;
-    }
+        if(app.is_in_retailer_pad(retailer_position))
+        {
+            pixi_register.check_mark_retailer_sprite.visible = true;
+            pixi_register.x_mark_retailer_sprite.visible = false;
+        }
+        else
+        {
+            pixi_register.check_mark_retailer_sprite.visible = false;
+            pixi_register.x_mark_retailer_sprite.visible = true;
+        }
+    }    
 },

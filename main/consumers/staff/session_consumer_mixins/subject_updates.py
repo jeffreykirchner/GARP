@@ -301,32 +301,36 @@ class SubjectUpdatesMixin():
         # logger.info(f"target_location_update: world state controller {self.controlling_channel} channel name {self.channel_name}")
         
         logger = logging.getLogger(__name__)
-        
+        logger.info(f"harvest_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
+
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
         world_state = self.world_state_local
-        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][world_state["current_period"]-1]
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+
         status = "success"
         error_message = ""
         fruit_cost = 0
 
         if event_data["fruit_type"] == "apple":
-            if world_state["apple_orchard_inventory"] <= 0:
+            if group["apple_orchard_inventory"] <= 0:
                 status = "fail"
                 error_message = "No apples left to harvest"
             else:
-                world_state["apple_orchard_inventory"] -= 1
+                group["apple_orchard_inventory"] -= 1
                 session_player["apples"] += 1
                 session_player["earnings"] -= parameter_set_period["orchard_apple_price"]
                 fruit_cost = parameter_set_period["orchard_apple_price"]
         elif event_data["fruit_type"] == "orange":
-            if world_state["orange_orchard_inventory"] <= 0:
+            if group["orange_orchard_inventory"] <= 0:
                 status = "fail"
                 error_message = "No oranges left to harvest"
             else:
-                world_state["orange_orchard_inventory"] -= 1
+                group["orange_orchard_inventory"] -= 1
                 session_player["oranges"] += 1
                 session_player["earnings"] -= parameter_set_period["orchard_orange_price"]
                 fruit_cost = parameter_set_period["orchard_orange_price"]
@@ -334,16 +338,16 @@ class SubjectUpdatesMixin():
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
                                                     data=event_data))
         
         result = {"value" : status,
                   "error_message" : error_message, 
                   "apples" : session_player["apples"], 
                   "oranges" : session_player["oranges"],
-                  "apple_orchard_inventory" : world_state["apple_orchard_inventory"],
-                  "orange_orchard_inventory" : world_state["orange_orchard_inventory"],
+                  "apple_orchard_inventory" : group["apple_orchard_inventory"],
+                  "orange_orchard_inventory" : group["orange_orchard_inventory"],
                   "fruit_type" : event_data["fruit_type"],
                   "earnings" : session_player["earnings"],
                   "fruit_cost" : fruit_cost,

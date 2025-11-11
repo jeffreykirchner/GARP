@@ -194,7 +194,10 @@ get_parameter_set_group_from_player_id: function get_parameter_set_group_from_pl
  */
 get_current_parameter_set_period: function get_current_parameter_set_period()
 {
-    let current_period_index = app.session.world_state.current_period;
+    if(!app.first_load_done) return null;
+    if(!app.session.started) return null;
+    
+    let current_period_index = app.session.world_state.groups[app.current_group].current_period;
     let current_period_id = app.session.parameter_set.parameter_set_periods_order[current_period_index-1];
     return app.session.parameter_set.parameter_set_periods[current_period_id];
 },
@@ -275,4 +278,29 @@ is_player_in_group: function is_player_in_group(player_id){
     }
 
     return false;
+},
+
+/**
+ * get player type
+ */
+get_player_by_type: function get_player_by_type(player_type){
+    if(!app.first_load_done) return null;
+    if(!app.session.started) return null;
+
+    let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
+
+    for(let i in group.members)
+    {
+        let member_id = group.members[i];
+        let member_sp = world_state.session_players[member_id];
+        let member_psp = app.session.parameter_set.parameter_set_players[member_sp.parameter_set_player_id];
+
+        if(member_psp.id_label == player_type)
+        {
+            return member_sp;
+        }
+    }
+
+    return null;
 },

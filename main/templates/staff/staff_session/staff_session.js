@@ -316,7 +316,7 @@ let app = Vue.createApp({
 
             if(app.session.started)
             {
-                
+                app.current_group = app.session.parameter_set.parameter_set_groups_order[0]; 
             }
             else
             {

@@ -150,7 +150,7 @@ class Session(models.Model):
 
         #session players
         for i in group["members"]:
-            session_player = session_players[i]
+            session_player = session_players[str(i)]
             parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
             session_player["apples"] = 0
             session_player["oranges"] = 0
@@ -220,6 +220,7 @@ class Session(models.Model):
         
         #groups
         for i in self.parameter_set.parameter_set_groups.all():
+            self.world_state["groups"][str(i.id)] = {}
             group = self.world_state["groups"][str(i.id)]
             group["members"] = []
             group["orange_orchard_inventory"] = 0

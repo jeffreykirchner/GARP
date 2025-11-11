@@ -67,6 +67,8 @@ class TimerMixin():
         if self.controlling_channel != self.channel_name:
             return
         
+        world_state = self.world_state_local
+
         logger = logging.getLogger(__name__)
         #logger.info(f"continue_timer: start")
 
@@ -82,40 +84,38 @@ class TimerMixin():
 
         result = {"earnings":{}}
 
-        if self.world_state_local["current_experiment_phase"] != ExperimentPhase.NAMES:
+        if world_state["current_experiment_phase"] != ExperimentPhase.NAMES:
 
-            ts = datetime.now() - datetime.strptime(self.world_state_local["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
+            ts = datetime.now() - datetime.strptime(world_state["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
 
             #check if a full second has passed
-            if self.world_state_local["timer_history"][-1]["count"] == math.floor(ts.seconds):
+            if world_state["timer_history"][-1]["count"] == math.floor(ts.seconds):
                 send_update = False
 
             if send_update:
-                ts = datetime.now() - datetime.strptime(self.world_state_local["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
+                ts = datetime.now() - datetime.strptime(world_state["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
 
-                self.world_state_local["timer_history"][-1]["count"] = math.floor(ts.seconds)
-                self.world_state_local["time_remaining"] += 1
-
-
+                world_state["timer_history"][-1]["count"] = math.floor(ts.seconds)
+                world_state["time_remaining"] += 1
 
         if send_update:
             #session status
             result["value"] = "success"
             result["stop_timer"] = stop_timer
-            result["time_remaining"] = self.world_state_local["time_remaining"]
-            result["current_period"] = self.world_state_local["current_period"]
-            result["timer_running"] = self.world_state_local["timer_running"]
-            result["started"] = self.world_state_local["started"]
-            result["finished"] = self.world_state_local["finished"]
-            result["current_experiment_phase"] = self.world_state_local["current_experiment_phase"]
+            result["time_remaining"] = world_state["time_remaining"]
+            result["current_period"] = world_state["current_period"]
+            result["timer_running"] = world_state["timer_running"]
+            result["started"] = world_state["started"]
+            result["finished"] = world_state["finished"]
+            result["current_experiment_phase"] = world_state["current_experiment_phase"]
             result["period_is_over"] = period_is_over
 
             #locations
             result["current_locations"] = {}
             result["target_locations"] = {}
-            for i in self.world_state_local["session_players"]:
-                result["current_locations"][i] = self.world_state_local["session_players"][i]["current_location"]
-                result["target_locations"][i] = self.world_state_local["session_players"][i]["target_location"]
+            for i in world_state["session_players"]:
+                result["current_locations"][i] = world_state["session_players"][i]["current_location"]
+                result["target_locations"][i] = world_state["session_players"][i]["target_location"]
 
             session_player_status = {}                
             

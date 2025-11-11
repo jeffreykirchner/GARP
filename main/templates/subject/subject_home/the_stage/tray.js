@@ -198,9 +198,10 @@ update_tray_labels: function update_tray_labels()
 
     //set alpha of of apple not in tray to 50%
     let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
     for(let i=0; i<pixi_tray_apple.apples.length; i++)
     {
-        if(i < world_state.apple_tray_inventory)
+        if(i < group.apple_tray_inventory)
         {
             pixi_tray_apple.apples[i].alpha = 1.0;
         }
@@ -213,7 +214,7 @@ update_tray_labels: function update_tray_labels()
     //set alpha of of orange not in tray to 50%
     for(let i=0; i<pixi_tray_orange.oranges.length; i++)
     {
-        if(i < world_state.orange_tray_inventory)
+        if(i < group.orange_tray_inventory)
         {
             pixi_tray_orange.oranges[i].alpha = 1.0;
         }
