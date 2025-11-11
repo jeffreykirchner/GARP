@@ -188,11 +188,15 @@ register_double_click: function register_double_click()
 
         let wholesaler_position = null;
         let retailer_position = null;
+
+        let wholesaler = app.get_player_by_type("W");
+        let retailer = app.get_player_by_type("R");
+
         let world_state = app.session.world_state;
         if(world_state.session_players_order.length > 0)
         {
-            wholesaler_position = world_state.session_players[world_state.session_players_order[0]].current_location;
-            if(world_state.session_players_order[0] == app.session_player.id)
+            wholesaler_position = wholesaler.current_location;
+            if(retailer == app.session_player.id)
             {
                 app.add_text_emitters("Error: The retailer must checkout.",
                     world_state.session_players[app.session_player.id].current_location.x,
@@ -206,16 +210,9 @@ register_double_click: function register_double_click()
             }
         }
 
-        if(world_state.session_players_order.length > 1)
-        {
-            retailer_position = world_state.session_players[world_state.session_players_order[1]].current_location;
-        }
 
-        if(!wholesaler_position || !retailer_position)
-        {
-            return;
-        }
-
+        retailer_position = retailer.current_location;
+        
         if(!app.is_in_wholesaler_pad(wholesaler_position))
         {
             app.add_text_emitters("Error: Wholesaler not on pad", 
@@ -228,6 +225,7 @@ register_double_click: function register_double_click()
                     null)
             return;
         }
+        
         if(!app.is_in_retailer_pad(retailer_position))
         {
             app.add_text_emitters("Error: You are not on the pad", 
