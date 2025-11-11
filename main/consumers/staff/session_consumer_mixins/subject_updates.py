@@ -607,10 +607,12 @@ class SubjectUpdatesMixin():
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
-        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
-        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][self.world_state_local["current_period"]-1]
-        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         world_state = self.world_state_local
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+        parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
+        parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
+        
 
         #check if retailer is resetting inventory
         if parameter_set_player["id_label"] != "R":
@@ -626,8 +628,8 @@ class SubjectUpdatesMixin():
         
         if status == "success":    
             #reset retailer inventory
-            world_state["apple_tray_inventory"] += apples
-            world_state["orange_tray_inventory"] += oranges
+            group["apple_tray_inventory"] += apples
+            group["orange_tray_inventory"] += oranges
 
             session_player["apples"] = 0
             session_player["oranges"] = 0
@@ -636,8 +638,8 @@ class SubjectUpdatesMixin():
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
                                                     data=event_data))
 
         result = {"value" : status,
@@ -645,20 +647,20 @@ class SubjectUpdatesMixin():
                   "session_player_apples" : session_player["apples"],
                   "session_player_oranges" : session_player["oranges"],
                   "session_player_budget" : session_player["budget"],
-                  "apple_tray_inventory" : world_state["apple_tray_inventory"],
-                  "orange_tray_inventory" : world_state["orange_tray_inventory"],
+                  "apple_tray_inventory" : group["apple_tray_inventory"],
+                  "orange_tray_inventory" : group["orange_tray_inventory"],
                   "starting_apples" : apples,
                   "starting_oranges" : oranges,
                   "session_player_id" : player_id}
         
         if status == "fail":
-            await self.send_message(message_to_self=result, message_to_group=result,
+            await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
-                                    send_to_group=True)
+                                    send_to_group=True, target_list=group["members"])
 
     async def update_reset_retailer_inventory(self, event):
         '''
@@ -689,12 +691,15 @@ class SubjectUpdatesMixin():
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
-        
         parameter_set = self.parameter_set_local
         parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
-        parameter_set_period_id = parameter_set["parameter_set_periods_order"][self.world_state_local["current_period"]-1]
-        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
+
         world_state = self.world_state_local
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+
+        parameter_set_period_id = parameter_set["parameter_set_periods_order"][group["current_period"]-1]
+        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
+        
 
         #check if subject is a retailer
         if parameter_set_player["id_label"] != "R":
@@ -730,13 +735,13 @@ class SubjectUpdatesMixin():
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
                                                     data=event_data))
 
             #setup next period
-            world_state["current_period"] += 1
-            world_state["time_remaining"] = 0
+            group["current_period"] += 1
+            group["time_remaining"] = 0
             world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set, parameter_set_player["parameter_set_group"])
             
         result = {"value" : status,
@@ -745,20 +750,20 @@ class SubjectUpdatesMixin():
                   "oranges_sold" : oranges_sold,
                   "period_earnings" : period_earnings,
                   "session_player_id" : player_id,
-                  "apple_orchard_inventory" : world_state["apple_orchard_inventory"],
-                  "orange_orchard_inventory" : world_state["orange_orchard_inventory"],
+                  "apple_orchard_inventory" : group["apple_orchard_inventory"],
+                  "orange_orchard_inventory" : group["orange_orchard_inventory"],
                   "session_players" : world_state["session_players"],
-                  "barriers" : world_state["barriers"],
-                  "current_period" : world_state["current_period"]}
+                  "barriers" : group["barriers"],
+                  "current_period" : group["current_period"]}
         
         if status == "fail":
-            await self.send_message(message_to_self=result, message_to_group=result,
+            await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
-                                    send_to_group=True)
+                                    send_to_group=True, target_list=group["members"])
 
     async def update_sell_to_consumer(self, event):
         '''

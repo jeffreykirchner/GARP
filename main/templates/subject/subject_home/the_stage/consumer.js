@@ -152,7 +152,13 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     let world_state = app.session.world_state;
     let parameter_set = app.session.parameter_set;
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
-    let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    let group = world_state.groups[app.current_group];
+
+    let parameter_set_player_local = null;
+    if(app.is_subject)
+    {
+        parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    }
 
     let apples_sold = data.apples_sold;
     let oranges_sold = data.oranges_sold;
@@ -189,17 +195,17 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
             app.remove_all_notices();
             app.add_notice("Please wait.", world_state.current_period+1, 1)
         }
-    else if(parameter_set_player_local.id_label == "W")
+        else if(parameter_set_player_local.id_label == "W")
         {
             app.remove_all_notices();
             app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
         }
     }
 
-    world_state.apple_orchard_inventory = data.apple_orchard_inventory;
-    world_state.orange_orchard_inventory = data.orange_orchard_inventory;
-    world_state.current_period = data.current_period;
-    world_state.barriers = data.barriers;
+    group.apple_orchard_inventory = data.apple_orchard_inventory;
+    group.orange_orchard_inventory = data.orange_orchard_inventory;
+    group.current_period = data.current_period;
+    group.barriers = data.barriers;
 
     for(let i in world_state.session_players)
     {
@@ -251,10 +257,10 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     if(elements2.length > 0)
     {
         app.add_transfer_beam(session_player.current_location, 
-                             consumer_location,
-                             elements2,
-                             false,
-                             true);
+                              consumer_location,
+                              elements2,
+                              false,
+                              true);
     }
 
     app.update_player_inventory();
