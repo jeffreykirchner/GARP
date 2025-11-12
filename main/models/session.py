@@ -176,6 +176,8 @@ class Session(models.Model):
         group["orange_orchard_inventory"] = parameter_set["orange_tray_capacity"] - group["orange_tray_inventory"]
         group["apple_orchard_inventory"] = parameter_set["apple_tray_capacity"] - group["apple_tray_inventory"]
 
+        group["complete"] = False
+
         self.world_state = world_state
         self.save()
 

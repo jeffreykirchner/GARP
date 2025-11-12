@@ -739,23 +739,32 @@ class SubjectUpdatesMixin():
                                                     time_remaining=group["time_remaining"],
                                                     data=event_data))
 
-            #setup next period
-            group["current_period"] += 1
-            group["time_remaining"] = 0
-            world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set, parameter_set_player["parameter_set_group"])
+            
+            experiment_complete = True
+
+            if group["current_period"] < len(self.parameter_set_local["parameter_set_periods_order"]):
+                #setup next period
+                group["current_period"] += 1
+                group["time_remaining"] = 0
+                
+                world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set, parameter_set_player["parameter_set_group"])
+            else:
+                #group complete 
+                group["complete"] = True
             
         result = {"value" : status,
-                  "error_message" : error_message,
-                  "apples_sold" : apples_sold,
-                  "oranges_sold" : oranges_sold,
-                  "period_earnings" : period_earnings,
-                  "session_player_id" : player_id,
-                  "apple_orchard_inventory" : group["apple_orchard_inventory"],
-                  "orange_orchard_inventory" : group["orange_orchard_inventory"],
-                  "session_players" : world_state["session_players"],
-                  "barriers" : group["barriers"],
-                  "current_period" : group["current_period"]}
-        
+                "error_message" : error_message,
+                "apples_sold" : apples_sold,
+                "oranges_sold" : oranges_sold,
+                "period_earnings" : period_earnings,
+                "session_player_id" : player_id,
+                "apple_orchard_inventory" : group["apple_orchard_inventory"],
+                "orange_orchard_inventory" : group["orange_orchard_inventory"],
+                "session_players" : world_state["session_players"],
+                "barriers" : group["barriers"],
+                "complete" : group["complete"],
+                "current_period" : group["current_period"]}
+    
         if status == "fail":
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
@@ -764,6 +773,13 @@ class SubjectUpdatesMixin():
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=group["members"])
+        
+        # if experiment_complete:
+        #     experiment_complete_result = {"current_experiment_phase" :  world_state["current_experiment_phase"]}
+
+        #     await self.send_message(message_to_self=None, message_to_group=experiment_complete_result,
+        #                             message_type=, send_to_client=False,
+        #                             send_to_group=True)
 
     async def update_sell_to_consumer(self, event):
         '''

@@ -9,6 +9,7 @@ from .send_email import send_mass_email_service
 from .sessions import ChatTypes
 from .sessions import ExperimentPhase
 from .sessions import ChatGPTMode
+from .sessions import EndGameChoices
 
 from .validate_input import is_positive_integer
 

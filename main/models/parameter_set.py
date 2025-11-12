@@ -14,6 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from main.models import InstructionSet
 
 from main.globals import ChatGPTMode
+from main.globals.sessions import EndGameChoices
 
 import main
 
@@ -63,6 +64,8 @@ class ParameterSet(models.Model):
     apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
     
     consumer_prices = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                      #json model of consumer prices
+
+    end_game_choice = models.CharField(max_length=20, choices=EndGameChoices.choices, default=EndGameChoices.OFF, verbose_name='End Game Choice')
 
     enable_chat = models.BooleanField(default=False, verbose_name='Enable Chat')                           #if true enable chat functionality
     test_mode = models.BooleanField(default=False, verbose_name='Test Mode')                               #if true subject screens will do random auto testing
@@ -132,6 +135,8 @@ class ParameterSet(models.Model):
             self.apple_tray_starting_inventory = new_ps.get("apple_tray_starting_inventory", 0)
 
             self.consumer_prices = new_ps.get("consumer_prices", {})
+
+            self.end_game_choice = new_ps.get("end_game_choice", EndGameChoices.OFF)
 
             self.enable_chat = True if new_ps.get("enable_chat", False) else False
 
@@ -339,6 +344,8 @@ class ParameterSet(models.Model):
         self.json_for_session["apple_tray_starting_inventory"] = self.apple_tray_starting_inventory
 
         self.json_for_session["consumer_prices"] = self.consumer_prices if self.consumer_prices else {}
+
+        self.json_for_session["end_game_choice"] = self.end_game_choice
 
         self.json_for_session["test_mode"] = 1 if self.test_mode else 0
 

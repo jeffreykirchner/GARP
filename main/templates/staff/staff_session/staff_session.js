@@ -438,6 +438,12 @@ let app = Vue.createApp({
                 }
             }
 
+            //update earnings
+            for(let p in message_data.earnings)
+            {
+                app.session.world_state.session_players[p].earnings = message_data.earnings[p];
+            }
+
             //update barriers
             app.update_barriers();
         },

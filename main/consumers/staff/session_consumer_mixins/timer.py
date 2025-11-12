@@ -84,6 +84,18 @@ class TimerMixin():
 
         result = {"earnings":{}}
 
+        #check if experment is over
+        experiment_complete = True
+        for g in world_state["groups"]:
+            group = world_state["groups"][g]
+            if not group["complete"]:
+                experiment_complete = False
+                break
+        
+        if experiment_complete:
+            stop_timer = True
+            self.world_state_local["current_experiment_phase"] = ExperimentPhase.NAMES
+            
         if world_state["current_experiment_phase"] != ExperimentPhase.NAMES:
 
             ts = datetime.now() - datetime.strptime(world_state["timer_history"][-1]["time"],"%Y-%m-%dT%H:%M:%S.%f")
@@ -117,9 +129,11 @@ class TimerMixin():
             #locations
             result["current_locations"] = {}
             result["target_locations"] = {}
+            result["earnings"] = {}
             for i in world_state["session_players"]:
                 result["current_locations"][i] = world_state["session_players"][i]["current_location"]
                 result["target_locations"][i] = world_state["session_players"][i]["target_location"]
+                result["earnings"][i] = world_state["session_players"][i]["earnings"]
 
             session_player_status = {}                
             

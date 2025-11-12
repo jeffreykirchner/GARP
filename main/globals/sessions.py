@@ -30,3 +30,11 @@ class ChatGPTMode(models.TextChoices):
     OFF = 'Off', _('Off')
     WITH_CONTEXT = 'With Context', _('With Context')
     WITHOUT_CONTEXT = 'Without Context', _('Without Context')
+
+class EndGameChoices(models.TextChoices):
+    '''
+    end game choices
+    '''
+    OFF = 'Off', _('Off')
+    STEAL = 'Steal', _('Steal')
+    NO_PRICE = 'No Price', _('No Price')
