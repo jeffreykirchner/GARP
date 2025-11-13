@@ -322,6 +322,8 @@ move_player: function move_player(delta)
     //move players
     for(let i in app.session.world_state.session_players){
 
+        if(!app.is_player_in_group(i)) continue;
+
         let obj = app.session.world_state.session_players[i];
 
         let avatar_container = pixi_avatars[i].avatar_container;
@@ -371,6 +373,8 @@ move_player: function move_player(delta)
     //find nearest players
     for(let i in app.session.world_state.session_players)
     {
+        if(!app.is_player_in_group(i)) continue;
+
         let obj1 = app.session.world_state.session_players[i];
         obj1.nearest_player = null;
         obj1.nearest_player_distance = null;
@@ -403,11 +407,14 @@ move_player: function move_player(delta)
     //update chat boxes
     for(let i in app.session.world_state.session_players)
     {
+        if(!app.is_player_in_group(i)) continue;
+
         let obj = app.session.world_state.session_players[i];
         let chat_container = pixi_avatars[i].chat.container;
         let chat_bubble_sprite = pixi_avatars[i].chat.bubble_sprite;
         // let avatar_container = obj.pixi.chat_container;
         let offset = {x:chat_container.width*.5, y:chat_container.height*.45};
+        
 
         if(obj.nearest_player && 
            app.session.world_state.session_players[obj.nearest_player].current_location.x < obj.current_location.x)
@@ -430,6 +437,8 @@ move_player: function move_player(delta)
 
     for(let i in app.session.world_state.session_players)
     {
+        if(!app.is_player_in_group(i)) continue;
+
         let obj = app.session.world_state.session_players[i];
 
         //update interaction ranges
@@ -444,4 +453,23 @@ move_player: function move_player(delta)
         }
     }
     
+},
+
+set_avatar_visibility: function set_avatar_visibility()
+{
+    for(const i in app.session.world_state.session_players)
+    {
+        let pixi_avatar = pixi_avatars[i];
+        let temp_visible = app.is_player_in_group(i);
+
+        pixi_avatar.avatar_container.visible = temp_visible;
+        pixi_avatar.chat.container.visible = temp_visible;
+        pixi_avatar.interaction_container.visible = temp_visible;
+
+        if(app.pixi_mode != "subject")
+        {
+            pixi_avatar.view_container.visible = temp_visible;
+        }
+        
+    }
 },

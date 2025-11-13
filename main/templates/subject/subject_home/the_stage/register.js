@@ -188,11 +188,15 @@ register_double_click: function register_double_click()
 
         let wholesaler_position = null;
         let retailer_position = null;
+
+        let wholesaler = app.get_player_by_type("W");
+        let retailer = app.get_player_by_type("R");
+
         let world_state = app.session.world_state;
         if(world_state.session_players_order.length > 0)
         {
-            wholesaler_position = world_state.session_players[world_state.session_players_order[0]].current_location;
-            if(world_state.session_players_order[0] == app.session_player.id)
+            wholesaler_position = wholesaler.current_location;
+            if(retailer == app.session_player.id)
             {
                 app.add_text_emitters("Error: The retailer must checkout.",
                     world_state.session_players[app.session_player.id].current_location.x,
@@ -206,16 +210,9 @@ register_double_click: function register_double_click()
             }
         }
 
-        if(world_state.session_players_order.length > 1)
-        {
-            retailer_position = world_state.session_players[world_state.session_players_order[1]].current_location;
-        }
 
-        if(!wholesaler_position || !retailer_position)
-        {
-            return;
-        }
-
+        retailer_position = retailer.current_location;
+        
         if(!app.is_in_wholesaler_pad(wholesaler_position))
         {
             app.add_text_emitters("Error: Wholesaler not on pad", 
@@ -228,6 +225,7 @@ register_double_click: function register_double_click()
                     null)
             return;
         }
+        
         if(!app.is_in_retailer_pad(retailer_position))
         {
             app.add_text_emitters("Error: You are not on the pad", 
@@ -258,8 +256,13 @@ take_update_checkout: function take_update_checkout(data)
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
-    let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    let parameter_set_player_local = null;
+    if(app.is_subject)
+    {
+        parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    }
     let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -286,25 +289,25 @@ take_update_checkout: function take_update_checkout(data)
         if(parameter_set_player_local.id_label == "R")
         {
             app.remove_all_notices();
-            app.add_notice("Move to the consumer.", world_state.current_period+1, 1)
+            app.add_notice("Move to the consumer.", group.current_period+1, 1)
         }
-    else if(parameter_set_player_local.id_label == "W")
+        else if(parameter_set_player_local.id_label == "W")
         {
             app.remove_all_notices();
-            app.add_notice("Please wait.", world_state.current_period+1, 1)
+            app.add_notice("Please wait.", group.current_period+1, 1)
+            app.session.world_state.session_players[app.session_player.id].earnings = data.wholesaler_earnings;
+            app.update_subject_status_overlay();
         }
     }
 
     let payment = data.payment;
-    let wholesaler_player_id = world_state.session_players_order[0];
-    let wholesaler_player = world_state.session_players[wholesaler_player_id];
-    let retailer_player_id = world_state.session_players_order[1];
-    let retailer_player = world_state.session_players[retailer_player_id];
+    
+    let wholesaler_player = app.get_player_by_type("W");
+    let retailer_player = app.get_player_by_type("R");
 
     retailer_player.budget = data.retailer_budget;
     retailer_player.checkout = data.retailer_checkout;
-    world_state["barriers"][world_state["checkout_barrier"]]["enabled"] = data.checkout_barrier;
-
+    group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier;
     //add transfer beam
     let elements = [];
     let element = {source_change: "-" + payment,
@@ -357,35 +360,38 @@ update_check_marks: function update_check_marks()
     let retailer_position = {x:0, y:0};
     let world_state = app.session.world_state;
 
-    if(world_state.session_players_order.length > 0)
+    let wholesaler_player = app.get_player_by_type("W");
+    let retailer_player = app.get_player_by_type("R");
+
+    if(wholesaler_player)
     {
-        wholesaler_position = world_state.session_players[world_state.session_players_order[0]].current_location;
+        wholesaler_position = wholesaler_player.current_location;
+
+        if(app.is_in_wholesaler_pad(wholesaler_position))
+        {
+            pixi_register.check_mark_wholesaler_sprite.visible = true;
+            pixi_register.x_mark_wholesaler_sprite.visible = false;
+        }
+        else
+        {
+            pixi_register.check_mark_wholesaler_sprite.visible = false;
+            pixi_register.x_mark_wholesaler_sprite.visible = true;
+        }
     }
 
-    if(world_state.session_players_order.length > 1)
+    if(retailer_player)
     {
-        retailer_position = world_state.session_players[world_state.session_players_order[1]].current_location;
-    }
+        retailer_position = retailer_player.current_location;
 
-    if(app.is_in_wholesaler_pad(wholesaler_position))
-    {
-        pixi_register.check_mark_wholesaler_sprite.visible = true;
-        pixi_register.x_mark_wholesaler_sprite.visible = false;
-    }
-    else
-    {
-        pixi_register.check_mark_wholesaler_sprite.visible = false;
-        pixi_register.x_mark_wholesaler_sprite.visible = true;
-    }
-
-    if(app.is_in_retailer_pad(retailer_position))
-    {
-        pixi_register.check_mark_retailer_sprite.visible = true;
-        pixi_register.x_mark_retailer_sprite.visible = false;
-    }
-    else
-    {
-        pixi_register.check_mark_retailer_sprite.visible = false;
-        pixi_register.x_mark_retailer_sprite.visible = true;
-    }
+        if(app.is_in_retailer_pad(retailer_position))
+        {
+            pixi_register.check_mark_retailer_sprite.visible = true;
+            pixi_register.x_mark_retailer_sprite.visible = false;
+        }
+        else
+        {
+            pixi_register.check_mark_retailer_sprite.visible = false;
+            pixi_register.x_mark_retailer_sprite.visible = true;
+        }
+    }    
 },

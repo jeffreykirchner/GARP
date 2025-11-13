@@ -21,6 +21,8 @@ subject_pointer_click: function subject_pointer_click(event)
     //can't move ontop of other players
     for(let i in app.session.world_state.session_players)
     {
+        if(!app.is_player_in_group(i)) continue;
+        
         let obj = app.session.world_state.session_players[i];
     
         if(obj.id == app.session_player.id) continue;

@@ -12,7 +12,7 @@ class ParameterSetPeriodForm(forms.ModelForm):
     parameterset period edit form
     '''
 
-    orchard_apple_price =  forms.IntegerField(label='Factory Apple Price (¢)',
+    orchard_apple_price =  forms.IntegerField(label='Orchard Apple Price (¢)',
                                               min_value=1,
                                               widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_period.orchard_apple_price",
                                                                               "step":"1",
@@ -24,7 +24,7 @@ class ParameterSetPeriodForm(forms.ModelForm):
                                                                                "step":"1",
                                                                                "min":"1"}))
     
-    orchard_orange_price =  forms.IntegerField(label='Factory Orange Price (¢)',
+    orchard_orange_price =  forms.IntegerField(label='Orchard Orange Price (¢)',
                                                min_value=1,
                                                widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_period.orchard_orange_price",
                                                                                "step":"1",

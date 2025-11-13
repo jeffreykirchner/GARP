@@ -46,8 +46,8 @@ class ExperimentControlsMixin():
         if self.controlling_channel == self.channel_name:
             self.session_events.append(SessionEvent(session_id=self.session_id, 
                                                     type="world_state",
-                                                    period_number=self.world_state_local["current_period"],
-                                                    time_remaining=self.world_state_local["time_remaining"],
+                                                    period_number=1,
+                                                    time_remaining=0,
                                                     data=self.world_state_local))
            
         result = await sync_to_async(take_get_session, thread_sensitive=self.thread_sensitive)(self.connection_uuid)

@@ -153,8 +153,12 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
  */
 update_orchard_labels: function update_orchard_labels()
 {
+    if(!app.first_load_done) return;
+    if(!app.session.started) return;
+
     let parameter_set_period = app.get_current_parameter_set_period();
     let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
 
     if(!parameter_set_period) return;
 
@@ -164,7 +168,7 @@ update_orchard_labels: function update_orchard_labels()
     //hide fruit if it has been harvested
     for(let i=0; i<pixi_orchard_apple.apples.length; i++)
     {
-        if(i < world_state.apple_orchard_inventory)
+        if(i < group.apple_orchard_inventory)
         {
             pixi_orchard_apple.apples[i].visible = true;
         }
@@ -176,7 +180,7 @@ update_orchard_labels: function update_orchard_labels()
 
     for(let i=0; i<pixi_orchard_orange.oranges.length; i++)
     {
-        if(i < world_state.orange_orchard_inventory)
+        if(i < group.orange_orchard_inventory)
         {
             pixi_orchard_orange.oranges[i].visible = true;
         }
@@ -274,6 +278,7 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
     let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -327,9 +332,9 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
 
     session_player.apples = data.apples;
     session_player.oranges = data.oranges;
-    world_state.apple_orchard_inventory = data.apple_orchard_inventory;
-    world_state.orange_orchard_inventory = data.orange_orchard_inventory;
-    
+    group.apple_orchard_inventory = data.apple_orchard_inventory;
+    group.orange_orchard_inventory = data.orange_orchard_inventory;
+
     app.update_player_inventory();
     app.update_orchard_labels();
 },

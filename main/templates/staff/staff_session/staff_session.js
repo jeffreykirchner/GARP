@@ -82,6 +82,9 @@ let app = Vue.createApp({
 
                     //chat gpt
                     chat_gpt_history : [[]],
+
+                    //current group
+                    current_group : null,
                 }},
     methods: {
 
@@ -221,6 +224,9 @@ let app = Vue.createApp({
                 case "update_tray_fruit":
                     app.take_update_tray_fruit(message_data);
                     break;
+                case "update_reset_retailer_inventory":
+                    app.take_reset_retailer_inventory(message_data);
+                    break;
                 case "update_checkout":
                     app.take_update_checkout(message_data);
                     break;
@@ -313,7 +319,7 @@ let app = Vue.createApp({
 
             if(app.session.started)
             {
-                
+                app.current_group = app.session.parameter_set.parameter_set_groups_order[0]; 
             }
             else
             {
@@ -396,8 +402,9 @@ let app = Vue.createApp({
             if(status == "fail") return;
 
             // app.session.started = result.started;
-            app.session.world_state.current_period = message_data.current_period;
-            app.session.world_state.time_remaining = message_data.time_remaining;
+            // app.session.world_state.current_period = message_data.current_period;
+            // app.session.world_state.time_remaining = message_data.time_remaining;
+            app.session.world_state.groups = message_data.groups;
             app.session.world_state.timer_running = message_data.timer_running;
             app.session.world_state.started = message_data.started;
             app.session.world_state.finished = message_data.finished;
@@ -408,11 +415,11 @@ let app = Vue.createApp({
             app.update_phase_button_text();
 
             //update player earnings and inventory if period has changed
-            if(message_data.period_is_over)
-            {
-                app.update_player_inventory();              
-                app.take_update_earnings(message_data.earnings);  
-            }
+            // if(message_data.period_is_over)
+            // {
+            //     app.update_player_inventory();              
+            //     app.take_update_earnings(message_data.earnings);  
+            // }
 
             //update player status
             for(let p in message_data.session_player_status)
@@ -429,6 +436,12 @@ let app = Vue.createApp({
                 {
                     app.session.world_state.session_players[p].current_location = server_location;
                 }
+            }
+
+            //update earnings
+            for(let p in message_data.earnings)
+            {
+                app.session.world_state.session_players[p].earnings = message_data.earnings[p];
             }
 
             //update barriers

@@ -34,12 +34,12 @@ setup_subject_status_overlay: function setup_subject_status_overlay()
     temp_y += current_period_text.height+5;
 
     //time remaining
-    let time_remaining_text = new PIXI.Text({text:'Time Remaining:', style:text_style}); 
+    // let time_remaining_text = new PIXI.Text({text:'Time Remaining:', style:text_style}); 
 
-    subject_status_overlay.container.addChild(time_remaining_text);
-    time_remaining_text.position.set(0, temp_y);
+    // subject_status_overlay.container.addChild(time_remaining_text);
+    // time_remaining_text.position.set(0, temp_y);
 
-    temp_y += time_remaining_text.height+5;
+    // temp_y += time_remaining_text.height+5;
 
     //profit
     let profit_text = new PIXI.Text({text:'Total Profit (¢):', style:text_style});
@@ -55,25 +55,25 @@ setup_subject_status_overlay: function setup_subject_status_overlay()
 
     subject_status_overlay.current_period_label = current_period_label;;
     subject_status_overlay.container.addChild(current_period_label);
-    current_period_label.position.set(time_remaining_text.width+10, temp_y);
+    current_period_label.position.set(current_period_text.width+10, temp_y);
 
     temp_y += current_period_text.height+5;
 
     //time remaining 
-    let time_remaining_label = new PIXI.Text({text:'00:00', style:text_style});
+    // let time_remaining_label = new PIXI.Text({text:'00:00', style:text_style});
 
-    subject_status_overlay.time_remaining_label = time_remaining_label;
-    subject_status_overlay.container.addChild(time_remaining_label);
-    time_remaining_label.position.set(time_remaining_text.width+10, temp_y);
+    // subject_status_overlay.time_remaining_label = time_remaining_label;
+    // subject_status_overlay.container.addChild(time_remaining_label);
+    // time_remaining_label.position.set(current_period_text.width+10, temp_y);
 
-    temp_y += time_remaining_text.height+5;
+    // temp_y += time_remaining_text.height+5;
 
     //profit
     let profit_label = new PIXI.Text({text:'0000', style:text_style});
 
     subject_status_overlay.profit_label = profit_label;
     subject_status_overlay.container.addChild(profit_label);
-    profit_label.position.set(time_remaining_text.width+10, temp_y);
+    profit_label.position.set(current_period_text.width+10, temp_y);
 
     subject_status_overlay.container.position.set(pixi_app.screen.width - subject_status_overlay.container.width-20, 20);
     
@@ -93,7 +93,7 @@ update_subject_status_overlay: function update_subject_status_overlay()
     if(!subject_status_overlay.container) return;
     // subject_status_overlay.container.position.set(pixi_app.screen.width - subject_status_overlay.container.width-20, 20);
 
-    subject_status_overlay.current_period_label.text = app.session.world_state.current_period;
-    subject_status_overlay.time_remaining_label.text = app.session.world_state.time_remaining;
+    subject_status_overlay.current_period_label.text = app.session.world_state.groups[app.current_group].current_period;
+    // subject_status_overlay.time_remaining_label.text = app.session.world_state.time_remaining;
     subject_status_overlay.profit_label.text = app.session.world_state.session_players[app.session_player.id].earnings;
 },

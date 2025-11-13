@@ -84,6 +84,9 @@ let app = Vue.createApp({
                     chat_gpt_button_text : 'Chat <i class="far fa-comments"></i>',
                     last_scroll_chat_gpt_history_to_bottom : null,
                     chat_gpt_working : false,
+
+                    //current group
+                    current_group : null,
                 }},
     methods: {
 
@@ -273,6 +276,7 @@ let app = Vue.createApp({
         
             app.update_orchard_labels();
             app.update_tray_labels();
+            app.set_avatar_visibility();
         },
 
         /** send winsock request to get session info
@@ -290,9 +294,12 @@ let app = Vue.createApp({
             app.session = message_data.session;
             app.session_player = message_data.session_player;
 
+            
+
             if(app.session.started)
             {
-               
+                let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+                app.current_group = parameter_set_player.parameter_set_group;                
             }
             else
             {
@@ -315,13 +322,13 @@ let app = Vue.createApp({
             if(!app.first_load_done)
             {
                 Vue.nextTick(() => {
-                    app.do_first_load();
+                    app.do_first_load();                    
                 });
             }
             else
             {
                 Vue.nextTick(() => {
-                    app.do_reload();
+                    app.do_reload();                    
                 });
             }
         },
@@ -360,17 +367,13 @@ let app = Vue.createApp({
             let period_change = false;
             let period_earnings = 0;
 
-            if (message_data.period_is_over)
-            {
-                period_earnings = message_data.earnings[app.session_player.id].period_earnings;
-                app.session.world_state.session_players[app.session_player.id].earnings = message_data.earnings[app.session_player.id].total_earnings;
-            }
-
             app.session.started = message_data.started;
 
             app.session.world_state.current_period = message_data.current_period;
-            app.session.world_state.time_remaining = message_data.time_remaining;
-            app.session.world_state.timer_running = message_data.timer_running;
+            // app.session.world_state.time_remaining = message_data.time_remaining;
+            // app.session.world_state.timer_running = message_data.timer_running;
+            app.session.world_state.groups[app.current_group].time_remaining = message_data.groups[app.current_group].time_remaining;
+            app.session.world_state.groups[app.current_group].current_period = message_data.groups[app.current_group].current_period;
             app.session.world_state.started = message_data.started;
             app.session.world_state.finished = message_data.finished;
             app.session.world_state.current_experiment_phase = message_data.current_experiment_phase;
@@ -389,24 +392,24 @@ let app = Vue.createApp({
 
 
             //period has changed
-            if(message_data.period_is_over)
-            {
-                Vue.nextTick(() => {
-                    let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
+            // if(message_data.period_is_over)
+            // {
+            //     Vue.nextTick(() => {
+            //         let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
 
-                    app.add_text_emitters("+" + period_earnings + "¢", 
-                            current_location.x, 
-                            current_location.y,
-                            current_location.x,
-                            current_location.y-100,
-                            0xFFFFFF,
-                            28,
-                            null)                    
-                });          
+            //         app.add_text_emitters("+" + period_earnings + "¢", 
+            //                 current_location.x, 
+            //                 current_location.y,
+            //                 current_location.x,
+            //                 current_location.y-100,
+            //                 0xFFFFFF,
+            //                 28,
+            //                 null)                    
+            //     });          
                 
-                // app.setup_pixi_minimap();
-                app.update_player_inventory();
-            }
+            //     // app.setup_pixi_minimap();
+            //     app.update_player_inventory();
+            // }
 
             //update player states
             for(let p in message_data.session_player_status)
@@ -443,7 +446,7 @@ let app = Vue.createApp({
             }
 
             //update any notices on screen
-            app.update_notices();
+            //app.update_notices();
 
             //update barriers
             app.update_barriers();

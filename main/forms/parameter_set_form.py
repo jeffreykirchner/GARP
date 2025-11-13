@@ -7,6 +7,7 @@ from django import forms
 from main.models import ParameterSet
 
 from main.globals import ChatGPTMode
+from main.globals.sessions import EndGameChoices
 
 import  main
 
@@ -174,6 +175,10 @@ class ParameterSetForm(forms.ModelForm):
                                                                                        "step":"1",
                                                                                        "min":"0"}))
     
+    end_game_choice = forms.ChoiceField(label='End Game Choice',
+                                        choices=EndGameChoices.choices,
+                                        widget=forms.Select(attrs={"v-model":"parameter_set.end_game_choice",}))
+    
     enable_chat = forms.ChoiceField(label='Enable Chat',
                                     choices=((1, 'Yes'), (0, 'No')),
                                     widget=forms.Select(attrs={"v-model":"parameter_set.enable_chat",}))
@@ -192,7 +197,7 @@ class ParameterSetForm(forms.ModelForm):
                  'world_width', 'world_height','orchard_orange_location', 'orchard_apple_location', 'register_location', 'consumer_location',
                  'orange_tray_location', 'apple_tray_location',
                  'orange_tray_capacity', 'apple_tray_capacity', 'orange_tray_starting_inventory', 'apple_tray_starting_inventory',
-                 'enable_chat', 'test_mode']
+                 'end_game_choice', 'enable_chat', 'test_mode']
 
     def clean_survey_link(self):
         
