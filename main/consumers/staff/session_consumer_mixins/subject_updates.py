@@ -401,31 +401,38 @@ class SubjectUpdatesMixin():
         parameter_set = self.parameter_set_local
        
         if parameter_set_player["id_label"] == "W":
-            #wholesaler move fruit to tray
-            if event_data["fruit_type"] == "apple":
-                if session_player["apples"] <= 0:
-                    status = "fail"
-                    error_message = "No apples to place on tray."
-                elif group["apple_tray_inventory"] >= parameter_set["apple_tray_capacity"]:
-                    status = "fail"
-                    error_message = "Apple tray full."
+            #check if all fruit is harvested from orchard
+            if group["apple_orchard_inventory"] > 0 or \
+               group["orange_orchard_inventory"] > 0:
+                status = "fail"
+                error_message = "All fruit must be harvested first."
+
+            if status == "success":
+                #wholesaler move fruit to tray
+                if event_data["fruit_type"] == "apple":
+                    if session_player["apples"] <= 0:
+                        status = "fail"
+                        error_message = "No apples to place on tray."
+                    elif group["apple_tray_inventory"] >= parameter_set["apple_tray_capacity"]:
+                        status = "fail"
+                        error_message = "Apple tray full."
+                    
+                    if status == "success":
+                        session_player["apples"] -= 1
+                        group["apple_tray_inventory"] += 1
+
+                elif event_data["fruit_type"] == "orange":
+                    if session_player["oranges"] <= 0:
+                        status = "fail"
+                        error_message = "No oranges to place on tray."
+                    elif group["orange_tray_inventory"] >= parameter_set["orange_tray_capacity"]:
+                        status = "fail"
+                        error_message = "Orange tray full."
+
+                    if status == "success":
+                        session_player["oranges"] -= 1
+                        group["orange_tray_inventory"] += 1
                 
-                if status == "success":
-                    session_player["apples"] -= 1
-                    group["apple_tray_inventory"] += 1
-
-            elif event_data["fruit_type"] == "orange":
-                if session_player["oranges"] <= 0:
-                    status = "fail"
-                    error_message = "No oranges to place on tray."
-                elif group["orange_tray_inventory"] >= parameter_set["orange_tray_capacity"]:
-                    status = "fail"
-                    error_message = "Orange tray full."
-
-                if status == "success":
-                    session_player["oranges"] -= 1
-                    group["orange_tray_inventory"] += 1
-            
             #check if retailer barrier should go down
             if group["apple_tray_inventory"] == parameter_set["apple_tray_capacity"] and \
                 group["orange_tray_inventory"] == parameter_set["orange_tray_capacity"]:
@@ -542,6 +549,12 @@ class SubjectUpdatesMixin():
             if session_player["checkout"]:
                 status = "fail"
                 error_message = "You have checked out."
+        
+        #check if retailer has fruit to checkout
+        if status == "success":
+            if session_player["apples"] == 0 and session_player["oranges"] == 0:
+                status = "fail"
+                error_message = "You have no fruit to checkout."
 
         if status == "success":
             apples = world_state["session_players"][str(player_id)]["apples"]
