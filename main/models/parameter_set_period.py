@@ -16,10 +16,10 @@ class ParameterSetPeriod(models.Model):
 
     period_number = models.IntegerField(verbose_name='Period Number', default=1)
 
-    orchard_apple_price = models.IntegerField(verbose_name='Factory Apple Price (¢)', default=50)
+    orchard_apple_price = models.IntegerField(verbose_name='Orchard Apple Price (¢)', default=50)
     wholesale_apple_price = models.IntegerField(verbose_name='Wholesale Apple Price (¢)', default=100)
 
-    orchard_orange_price = models.IntegerField(verbose_name='Factory Orange Price (¢)', default=30)
+    orchard_orange_price = models.IntegerField(verbose_name='Orchard Orange Price (¢)', default=30)
     wholesale_orange_price = models.IntegerField(verbose_name='Wholesale Orange Price (¢)', default=80)
 
     wholesaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)
