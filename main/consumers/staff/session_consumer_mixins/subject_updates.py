@@ -737,7 +737,7 @@ class SubjectUpdatesMixin():
         if status == "success":
             apples_sold = session_player["apples"]
             oranges_sold = session_player["oranges"]
-            period_earnings = parameter_set["consumer_prices"][f"o{oranges_sold}a{apples_sold}"]
+            period_earnings = parameter_set["customer_prices"][f"o{oranges_sold}a{apples_sold}"]
 
             session_player["earnings"] += period_earnings
             session_player["earnings"] += session_player["budget"]

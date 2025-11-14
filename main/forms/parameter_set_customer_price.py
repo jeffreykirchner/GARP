@@ -1,19 +1,19 @@
 '''
-parameterset consumer price form
+parameterset customer price form
 '''
 
 from django import forms
 
 from main.models import ParameterSetPeriod
 
-class ParameterSetConsumerPriceForm(forms.Form):
+class ParameterSetCustomerPriceForm(forms.Form):
     '''
-    parameterset consumer price edit form
+    parameterset Customer price edit form
     '''
 
-    consumer_price =  forms.IntegerField(label='Consumer price (¢)',
+    customer_price =  forms.IntegerField(label='Customer price (¢)',
                                               min_value=1,
-                                              widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_consumer_price.consumer_price",
+                                              widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_customer_price.customer_price",
                                                                               "step":"1",
                                                                               "min":"1"}))
     

@@ -16,7 +16,7 @@ from .parameter_set_group_form import ParameterSetGroupForm
 from .parameter_set_barrier_form import ParameterSetBarrierForm
 from .parameter_set_ground_form import ParameterSetGroundForm
 from .parameter_set_period_form import ParameterSetPeriodForm
-from .parameter_set_consumer_price import ParameterSetConsumerPriceForm 
+from .parameter_set_customer_price import ParameterSetCustomerPriceForm 
 
 from .session_player_name_etc_form import StaffEditNameEtcForm
 

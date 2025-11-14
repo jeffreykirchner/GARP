@@ -1,11 +1,11 @@
 <div class="card">                  
     <div class="card-header fw-bold">                
         <span class="align-middle">
-            Consumer Prices (¢)
+            Customer Prices (¢)
         </span>      
 
         <span class="float-end">
-            <button type="button" class="btn btn-link ms-4" title="Show Help Doc" v-on:click="send_load_help_doc('Staff Parameters Consumer Prices')">
+            <button type="button" class="btn btn-link ms-4" title="Show Help Doc" v-on:click="send_load_help_doc('Staff Parameters Customer Prices')">
                 <i class="far fa-question-circle"></i> 
             </button>
         </span> 
@@ -14,7 +14,7 @@
     <div class="card-body" >        
 
         <div class="row justify-content-center">
-            <!-- consumer_price settings -->
+            <!-- customer_price settings -->
             <div class="col-md-auto text-center">                
                 <div class="table-responsive">
                     <table class="table table-condensed"> 
@@ -28,15 +28,15 @@
                                 </th>                                         
                             </tr>
                         </thead>
-                        <tbody id="consumer_price_list">
+                        <tbody id="customer_price_list">
                             <tr v-for="(o, index) in parameter_set.orange_tray_capacity+1">
                                 <td>
                                     <span class="badge bg-secondary">[[ o-1 ]]</span>
                                 </td>
                                 <td v-for="(a, index2) in parameter_set.apple_tray_capacity+1"
-                                    v-on:click="show_edit_parameter_set_consumer_price(o-1, a-1)"
+                                    v-on:click="show_edit_parameter_set_customer_price(o-1, a-1)"
                                     class="player_table_cell">
-                                    [[get_consumer_price(o-1, a-1)]]
+                                    [[get_customer_price(o-1, a-1)]]
                                 </td>
                             </tr>
                         </tbody>
