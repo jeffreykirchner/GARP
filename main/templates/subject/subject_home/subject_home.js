@@ -267,7 +267,7 @@ let app = Vue.createApp({
          */
         do_reload: function do_reload()
         {
-            app.setup_pixi_ground();
+            // app.setup_pixi_ground();
             app.setup_pixi_subjects();
             app.update_player_inventory();
             app.setup_pixi_wall();

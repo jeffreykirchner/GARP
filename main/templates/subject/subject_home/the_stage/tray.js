@@ -180,6 +180,8 @@ update_tray_labels: function update_tray_labels()
     let parameter_set_period = app.get_current_parameter_set_period();
     let buy_sell_text = "";
 
+    if(!parameter_set_period) return;
+
     if(app.is_subject)
     {
         let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);

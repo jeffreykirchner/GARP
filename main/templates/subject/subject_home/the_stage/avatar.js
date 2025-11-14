@@ -275,6 +275,9 @@ update_player_inventory: function update_player_inventory()
  */
 target_location_update: function target_location_update()
 {
+    //check if session_players key exists in world state
+    if(!app.session.world_state.session_players) return;
+
     if(app.session.world_state.current_experiment_phase == 'Instructions')
     {
         if(app.session_player.current_instruction == app.instructions.action_page_1)
