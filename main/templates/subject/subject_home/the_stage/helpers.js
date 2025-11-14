@@ -203,22 +203,21 @@ get_current_parameter_set_period: function get_current_parameter_set_period()
 },
 
 /**
- * get consumer price
+ * get customer price
  */
-get_consumer_price: function get_consumer_price(orange, apple){
+get_customer_price: function get_customer_price(orange, apple){
     if (typeof app === "undefined" || app === null) return null;
 
     let key = "o" + orange + "a" + apple;
-    if (!Object.prototype.hasOwnProperty.call(app.session.parameter_set.consumer_prices, key)) return null;
-
-    return app.session.parameter_set.consumer_prices[key];
+    if (!Object.prototype.hasOwnProperty.call(app.session.parameter_set.customer_prices, key)) return null;
+    return app.session.parameter_set.customer_prices[key];
 },
 
 /**
- * get consumer price style
+ * get customer price style
  */
-get_consumer_price_style: function get_consumer_price_style(orange, apple){
-    let price = app.get_consumer_price(orange, apple);
+get_customer_price_style: function get_customer_price_style(orange, apple){
+    let price = app.get_customer_price(orange, apple);
     if(price === null) return "";
     if(!app.first_load_done) return "";
     if(!app.session.started) return "";

@@ -93,7 +93,7 @@ update_consumer_label: function update_consumer_label()
     let oranges = retail_player.oranges;
     let apples = retail_player.apples;
 
-    pixi_consumer.label.text = "Sale Price: " + app.get_consumer_price(oranges, apples) + "¢";
+    pixi_consumer.label.text = "Sale Price: " + app.get_customer_price(oranges, apples) + "¢";
 },
 
 /**

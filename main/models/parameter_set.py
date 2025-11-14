@@ -62,8 +62,8 @@ class ParameterSet(models.Model):
     apple_tray_capacity = models.IntegerField(verbose_name='Apple Tray Capacity', default=100)             #maximum capacity of apple tray
     orange_tray_starting_inventory = models.IntegerField(verbose_name='Orange Tray Starting Inventory', default=0)  #starting inventory of orange tray
     apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
-    
-    consumer_prices = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                      #json model of consumer prices
+
+    customer_prices = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                      #json model of customer prices
 
     end_game_choice = models.CharField(max_length=20, choices=EndGameChoices.choices, default=EndGameChoices.OFF, verbose_name='End Game Choice')
 
@@ -134,7 +134,7 @@ class ParameterSet(models.Model):
             self.orange_tray_starting_inventory = new_ps.get("orange_tray_starting_inventory", 0)
             self.apple_tray_starting_inventory = new_ps.get("apple_tray_starting_inventory", 0)
 
-            self.consumer_prices = new_ps.get("consumer_prices", {})
+            self.customer_prices = new_ps.get("customer_prices", {})
 
             self.end_game_choice = new_ps.get("end_game_choice", EndGameChoices.OFF)
 
@@ -240,7 +240,7 @@ class ParameterSet(models.Model):
         for i in self.parameter_set_players.all():
             i.setup()
 
-        self.setup_consumer_prices()
+        self.setup_customer_prices()
         self.json(update_required=True)
 
     def add_player(self):
@@ -280,19 +280,19 @@ class ParameterSet(models.Model):
             i.update_json_local()
             i.save()
 
-    def setup_consumer_prices(self):
+    def setup_customer_prices(self):
         '''
         update consumer based of grid of orange and apple tray capacitys
         '''
 
-        if not self.consumer_prices:
-            self.consumer_prices = {}
+        if not self.customer_prices:
+            self.customer_prices = {}
     
         for o in range(0, self.orange_tray_capacity + 1):
             for a in range(0, self.apple_tray_capacity + 1):
 
-                if not self.consumer_prices.get(f"o{o}a{a}", None):
-                    self.consumer_prices[f"o{o}a{a}"] = 0
+                if not self.customer_prices.get(f"o{o}a{a}", None):
+                    self.customer_prices[f"o{o}a{a}"] = 0
 
         self.save()
 
@@ -343,7 +343,7 @@ class ParameterSet(models.Model):
         self.json_for_session["orange_tray_starting_inventory"] = self.orange_tray_starting_inventory
         self.json_for_session["apple_tray_starting_inventory"] = self.apple_tray_starting_inventory
 
-        self.json_for_session["consumer_prices"] = self.consumer_prices if self.consumer_prices else {}
+        self.json_for_session["customer_prices"] = self.customer_prices if self.customer_prices else {}
 
         self.json_for_session["end_game_choice"] = self.end_game_choice
 
