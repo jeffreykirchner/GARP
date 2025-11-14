@@ -297,6 +297,9 @@ let app = Vue.createApp({
         {
             app.setup_pixi_subjects();
             app.update_orchard_labels();
+            app.update_orchard_labels();
+            app.update_tray_labels();
+            app.set_avatar_visibility();
         },
 
         /** send winsock request to get session info
