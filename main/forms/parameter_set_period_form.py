@@ -37,10 +37,10 @@ class ParameterSetPeriodForm(forms.ModelForm):
                                                                                 "min":"1"}))
     
     wholesaler_budget = forms.IntegerField(label='Wholesaler Budget (¢)',
-                                           min_value=1,
+                                           min_value=0,
                                            widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_period.wholesaler_budget",
                                                                            "step":"1",
-                                                                           "min":"1"}))
+                                                                           "min":"0"}))
     
     retailer_budget = forms.IntegerField(label='Retailer Budget (¢)',
                                          min_value=1,
