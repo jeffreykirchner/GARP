@@ -740,6 +740,7 @@ class SubjectUpdatesMixin():
             period_earnings = parameter_set["consumer_prices"][f"o{oranges_sold}a{apples_sold}"]
 
             session_player["earnings"] += period_earnings
+            session_player["earnings"] += session_player["budget"]
 
             session_player["consumer"] = True
             session_player["apples"] = 0
