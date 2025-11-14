@@ -18,7 +18,6 @@ from django.contrib.postgres.aggregates import ArrayAgg
 from .. import SocketConsumerMixin
 from .send_message_mixin import SendMessageMixin
 
-
 import main
 
 from main.models import Session
