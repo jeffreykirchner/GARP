@@ -77,19 +77,8 @@ update_consumer_label: function update_consumer_label()
     let world_state = app.session.world_state;
     let retailer_player_id = null;
 
-    if(world_state.session_players_order.length > 1)
-    {
-        retailer_player_id = world_state.session_players_order[1];
-    }
-
-    if(!retailer_player_id)
-    {
-        pixi_consumer.label.text = "Sale Price: ---";
-        return;
-    }
-
-    let retail_player = world_state.session_players[retailer_player_id];
-    let parameter_set_player = app.get_parameter_set_player_from_player_id(retailer_player_id);
+    let retail_player = app.get_player_by_type("R");
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(retail_player.id);
     let oranges = retail_player.oranges;
     let apples = retail_player.apples;
 

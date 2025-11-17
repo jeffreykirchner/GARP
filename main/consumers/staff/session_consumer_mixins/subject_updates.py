@@ -536,8 +536,8 @@ class SubjectUpdatesMixin():
         group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
         parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
-        wholesaler_player_id = world_state["session_players_order"][0]
-        wholesaler = world_state["session_players"][str(wholesaler_player_id)]
+
+        wholesaler = await get_player_by_type(world_state, "W", group)
 
         #check if retailer is checking out
         if parameter_set_player["id_label"] != "R":
@@ -802,3 +802,16 @@ class SubjectUpdatesMixin():
 
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+
+async def get_player_by_type(world_state, player_type, group):
+    '''
+    get player by type
+    '''
+    for player_id in group['members']:
+        player = world_state["session_players"][str(player_id)]
+        if player_type == "W" and not player["consumer"]:
+            return player
+        elif player_type == "R" and not player["consumer"]:
+            return player
+        
+    return None
