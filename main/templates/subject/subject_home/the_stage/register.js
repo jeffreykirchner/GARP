@@ -58,9 +58,10 @@ setup_pixi_register: function setup_pixi_register()
     let x_mark_wholesaler_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
 
     let wholesaler_outline_fill_color = 0xFFFFFF;
+    let wholesaler = app.get_player_by_type("W");
     if(world_state.session_players_order && world_state.session_players_order.length > 0)
     {
-        wholesaler_outline_fill_color = app.get_parameter_set_player_from_player_id(world_state.session_players_order[0]).hex_color;
+        wholesaler_outline_fill_color = app.get_parameter_set_player_from_player_id(wholesaler.id).hex_color;
     }
     wholesaler_outline_dash.rect(0, 0, 400, 300);
     wholesaler_outline_dash.fill({color:wholesaler_outline_fill_color, alpha:0.25});
@@ -92,10 +93,10 @@ setup_pixi_register: function setup_pixi_register()
 
     retailer_outline_dash.rect(0, 0, 400, 300);
     let retailer_outline_fill_color = 0xFFFFFF;
-    if(world_state.session_players_order && world_state.session_players_order.length > 1)
-    {
-        retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(world_state.session_players_order[1]).hex_color;
-    }
+    let retailer = app.get_player_by_type("R");
+ 
+    retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(retailer.id).hex_color;
+    
     retailer_outline_dash.fill({color:retailer_outline_fill_color, alpha:0.5});
     retailer_outline_dash.anchor = 0.5;
 
@@ -156,8 +157,7 @@ update_register_labels: function update_register_labels()
 
     if(world_state.session_players_order && world_state.session_players_order.length > 1)
     {
-        let retailer_player_id = world_state.session_players_order[1];
-        let retailer_player = world_state.session_players[retailer_player_id];
+        let retailer_player = app.get_player_by_type("R");
         let total_apples = retailer_player.apples;
         let total_oranges = retailer_player.oranges;
         
@@ -193,24 +193,21 @@ register_double_click: function register_double_click()
         let retailer = app.get_player_by_type("R");
 
         let world_state = app.session.world_state;
-        if(world_state.session_players_order.length > 0)
+
+        wholesaler_position = wholesaler.current_location;
+        if(wholesaler.id == app.session_player.id)
         {
-            wholesaler_position = wholesaler.current_location;
-            if(retailer == app.session_player.id)
-            {
-                app.add_text_emitters("Error: The retailer must checkout.",
-                    world_state.session_players[app.session_player.id].current_location.x,
-                    world_state.session_players[app.session_player.id].current_location.y,
-                    world_state.session_players[app.session_player.id].current_location.x,
-                    world_state.session_players[app.session_player.id].current_location.y-100,
-                    0xFFFFFF,
-                    28,
-                    null);
-                return;
-            }
+            app.add_text_emitters("Error: The retailer must checkout.",
+                world_state.session_players[app.session_player.id].current_location.x,
+                world_state.session_players[app.session_player.id].current_location.y,
+                world_state.session_players[app.session_player.id].current_location.x,
+                world_state.session_players[app.session_player.id].current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+            return;
         }
-
-
+        
         retailer_position = retailer.current_location;
         
         if(!app.is_in_wholesaler_pad(wholesaler_position))

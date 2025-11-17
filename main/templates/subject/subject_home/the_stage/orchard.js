@@ -199,6 +199,9 @@ orchard_apple_double_click: function orchard_apple_double_click()
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_orchard_apple.rect;
 
+    let group = app.session.world_state.groups[app.current_group];
+    if(group.complete) return;
+
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                 y:local_player.current_location.y, 
                                                 radius:app.session.parameter_set.interaction_range},
@@ -239,6 +242,9 @@ orchard_orange_double_click: function orchard_orange_double_click()
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_orchard_orange.rect;
+
+    let group = app.session.world_state.groups[app.current_group];
+    if(group.complete) return;
 
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                 y:local_player.current_location.y, 
