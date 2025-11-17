@@ -193,24 +193,21 @@ register_double_click: function register_double_click()
         let retailer = app.get_player_by_type("R");
 
         let world_state = app.session.world_state;
-        if(world_state.session_players_order.length > 0)
+
+        wholesaler_position = wholesaler.current_location;
+        if(wholesaler.id == app.session_player.id)
         {
-            wholesaler_position = wholesaler.current_location;
-            if(retailer == app.session_player.id)
-            {
-                app.add_text_emitters("Error: The retailer must checkout.",
-                    world_state.session_players[app.session_player.id].current_location.x,
-                    world_state.session_players[app.session_player.id].current_location.y,
-                    world_state.session_players[app.session_player.id].current_location.x,
-                    world_state.session_players[app.session_player.id].current_location.y-100,
-                    0xFFFFFF,
-                    28,
-                    null);
-                return;
-            }
+            app.add_text_emitters("Error: The retailer must checkout.",
+                world_state.session_players[app.session_player.id].current_location.x,
+                world_state.session_players[app.session_player.id].current_location.y,
+                world_state.session_players[app.session_player.id].current_location.x,
+                world_state.session_players[app.session_player.id].current_location.y-100,
+                0xFFFFFF,
+                28,
+                null);
+            return;
         }
-
-
+        
         retailer_position = retailer.current_location;
         
         if(!app.is_in_wholesaler_pad(wholesaler_position))

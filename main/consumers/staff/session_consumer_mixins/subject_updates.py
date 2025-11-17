@@ -753,8 +753,6 @@ class SubjectUpdatesMixin():
                                                     time_remaining=group["time_remaining"],
                                                     data=event_data))
 
-            
-            experiment_complete = True
 
             if group["current_period"] < len(self.parameter_set_local["parameter_set_periods_order"]):
                 #setup next period

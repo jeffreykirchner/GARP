@@ -105,6 +105,9 @@ consumer_double_click: function consumer_double_click()
     if(app.working) return;
     if(!app.session.started) return;
 
+    let group = app.session.world_state.groups[app.current_group];
+    if(group.complete) return;
+
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_consumer.rect;
 
@@ -187,25 +190,11 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         }
     }
 
-    //show notices
-    if(app.is_subject)
-    {
-        if(parameter_set_player_local.id_label == "R")
-        {
-            app.remove_all_notices();
-            app.add_notice("Please wait.", world_state.current_period+1, 1)
-        }
-        else if(parameter_set_player_local.id_label == "W")
-        {
-            app.remove_all_notices();
-            app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
-        }
-    }
-
     group.apple_orchard_inventory = data.apple_orchard_inventory;
     group.orange_orchard_inventory = data.orange_orchard_inventory;
     group.current_period = data.current_period;
     group.barriers = data.barriers;
+    group.complete = data.complete;
 
     for(let i in world_state.session_players)
     {
@@ -215,6 +204,29 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         world_state.session_players[i].checkout = data.session_players[i].checkout;
         world_state.session_players[i].consumer = data.session_players[i].consumer;
         world_state.session_players[i].budget = data.session_players[i].budget;
+    }
+
+    //show notices
+    if(app.is_subject)
+    {
+        app.remove_all_notices();
+
+        if(group.complete)
+        {
+            //the experiment is complete
+            app.add_notice("The experiment is complete, please wait.", world_state.current_period+1, 1)
+        }
+        else
+        {
+            if(parameter_set_player_local.id_label == "R")
+            { 
+                app.add_notice("Please wait.", world_state.current_period+1, 1)
+            }
+            else if(parameter_set_player_local.id_label == "W")
+            {
+                app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
+            }
+        }
     }
 
     app.update_subject_status_overlay();

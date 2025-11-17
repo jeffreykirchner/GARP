@@ -18,6 +18,21 @@ subject_pointer_click: function subject_pointer_click(event)
     let local_pos = event.data.getLocalPosition(event.currentTarget);
     let local_player = app.session.world_state.session_players[app.session_player.id];
 
+    let group = app.session.world_state.groups[app.current_group];
+
+    if(group.complete)
+    {
+        app.add_text_emitters("The experiment is complete, please wait", 
+                local_pos.x, 
+                local_pos.y,
+                local_pos.x,
+                local_pos.y-100,
+                0xFFFFFF,
+                28,
+                null)
+        return;
+    }
+
     //can't move ontop of other players
     for(let i in app.session.world_state.session_players)
     {
