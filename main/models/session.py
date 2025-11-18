@@ -188,17 +188,8 @@ class Session(models.Model):
         setup summary data
         '''
 
-        session_players = self.session_players.values('id','parameter_set_player__id').all()
-
-        summary_data = {}
-        
-        for i in session_players:
-            i_s = str(i["id"])
-            summary_data[i_s] = {}
-
-            summary_data_player = summary_data[i_s]
-            summary_data_player["earnings"] = 0
-            summary_data_player["cherries_harvested"] = 0
+        summary_data = {"session_players":{},
+                        "groups":{}}
                 
         self.session_periods.all().update(summary_data=summary_data)
 
@@ -235,6 +226,12 @@ class Session(models.Model):
             group["time_remaining"] = 0
             group["current_period"] = 1
             group["barriers"] = {}
+            group["results"] = {"orange_harvested":0,
+                                "apple_harvested":0,
+                                "orange_sold":0,
+                                "apple_sold":0,
+                                "wholesaler_earnings":0,
+                                "retailer_earnings":0,}
 
         #session players
         for i in self.session_players.prefetch_related('parameter_set_player').all().values('id', 

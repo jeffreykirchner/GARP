@@ -337,6 +337,10 @@ class SubjectUpdatesMixin():
                 session_player["earnings"] -= parameter_set_period["orchard_orange_price"]
                 fruit_cost = parameter_set_period["orchard_orange_price"]
         if status == "success":
+
+            group["results"]["orange_harvested"] = session_player["oranges"]
+            group["results"]["apple_harvested"] = session_player["apples"]
+
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
@@ -567,6 +571,10 @@ class SubjectUpdatesMixin():
            
             wholesaler["earnings"] += payment
 
+            group["results"]["orange_sold"] += oranges
+            group["results"]["apple_sold"] += apples
+            group["results"]["wholesaler_earnings"] += payment
+
             group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
@@ -742,9 +750,21 @@ class SubjectUpdatesMixin():
             session_player["earnings"] += period_earnings
             session_player["earnings"] += session_player["budget"]
 
+            group["results"]["retailer_earnings"] += period_earnings +  session_player["budget"]
+
             session_player["consumer"] = True
-            session_player["apples"] = 0
-            session_player["oranges"] = 0
+            
+            session_period = await session.session_periods.aget(period_number=group["current_period"])
+            period_summary_data = session_period.summary_data
+
+            #store session players in summary data
+            for player_id in group["members"]:
+                period_summary_data["session_players"][str(player_id)] = world_state["session_players"][str(player_id)]
+
+            #store group data in summary data
+            period_summary_data["groups"][str(parameter_set_player["parameter_set_group"])] = group
+
+            await session_period.asave(update_fields=["summary_data"])
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
@@ -753,6 +773,9 @@ class SubjectUpdatesMixin():
                                                     time_remaining=group["time_remaining"],
                                                     data=event_data))
 
+            #reset for next period
+            session_player["apples"] = 0
+            session_player["oranges"] = 0
 
             if group["current_period"] < len(self.parameter_set_local["parameter_set_periods_order"]):
                 #setup next period
