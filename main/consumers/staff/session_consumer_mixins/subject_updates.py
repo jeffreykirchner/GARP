@@ -325,7 +325,6 @@ class SubjectUpdatesMixin():
             else:
                 group["apple_orchard_inventory"] -= 1
                 session_player["apples"] += 1
-                session_player["earnings"] -= parameter_set_period["orchard_apple_price"]
                 fruit_cost = parameter_set_period["orchard_apple_price"]
         elif event_data["fruit_type"] == "orange":
             if group["orange_orchard_inventory"] <= 0:
@@ -333,10 +332,13 @@ class SubjectUpdatesMixin():
                 error_message = "No oranges left to harvest"
             else:
                 group["orange_orchard_inventory"] -= 1
-                session_player["oranges"] += 1
-                session_player["earnings"] -= parameter_set_period["orchard_orange_price"]
+                session_player["oranges"] += 1                
                 fruit_cost = parameter_set_period["orchard_orange_price"]
+                
         if status == "success":
+
+            session_player["earnings"] -= fruit_cost
+            group["results"]["wholesaler_earnings"] -= fruit_cost
 
             group["results"]["orange_harvested"] = session_player["oranges"]
             group["results"]["apple_harvested"] = session_player["apples"]
@@ -541,7 +543,7 @@ class SubjectUpdatesMixin():
         parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
 
-        wholesaler = await get_player_by_type(world_state, "W", group)
+        wholesaler = await get_player_by_type(world_state, self.parameter_set_local, "W", group)
 
         #check if retailer is checking out
         if parameter_set_player["id_label"] != "R":
@@ -570,7 +572,7 @@ class SubjectUpdatesMixin():
             session_player["checkout"] = True
            
             wholesaler["earnings"] += payment
-
+            
             group["results"]["orange_sold"] += oranges
             group["results"]["apple_sold"] += apples
             group["results"]["wholesaler_earnings"] += payment
@@ -826,15 +828,14 @@ class SubjectUpdatesMixin():
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
 
-async def get_player_by_type(world_state, player_type, group):
+async def get_player_by_type(world_state, parameter_set, player_type, group):
     '''
     get player by type
     '''
     for player_id in group['members']:
         player = world_state["session_players"][str(player_id)]
-        if player_type == "W" and not player["consumer"]:
+        parameter_set_player = parameter_set["parameter_set_players"][str(player["parameter_set_player_id"])]
+
+        if player_type == parameter_set_player["id_label"]:
             return player
-        elif player_type == "R" and not player["consumer"]:
-            return player
-        
     return None
