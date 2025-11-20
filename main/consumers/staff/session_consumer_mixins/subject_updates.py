@@ -377,8 +377,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
     
     async def tray_fruit(self, event):
         '''
@@ -517,8 +518,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
         
     async def checkout(self, event):
         '''
@@ -615,8 +617,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
         
     async def reset_retailer_inventory(self, event):
         '''
@@ -833,8 +836,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
 
 async def get_player_by_type(world_state, parameter_set, player_type, group):
     '''

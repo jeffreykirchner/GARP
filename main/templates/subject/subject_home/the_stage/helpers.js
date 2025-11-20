@@ -280,6 +280,18 @@ is_player_in_group: function is_player_in_group(player_id){
 },
 
 /**
+ * get players group id
+ */
+get_players_group_id: function get_players_group_id(player_id){
+    if(!app.first_load_done) return null;
+    if(!app.session.started) return null;
+
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(player_id);
+
+    return parameter_set_player.parameter_set_group;
+},
+
+/**
  * get player type
  */
 get_player_by_type: function get_player_by_type(player_type){

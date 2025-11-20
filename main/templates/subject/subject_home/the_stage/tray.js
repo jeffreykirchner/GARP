@@ -318,7 +318,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
    
     let world_state = app.session.world_state;
-    let group = world_state.groups[app.current_group];
+    let group_id = app.get_players_group_id(session_player_id);
+    let group = world_state.groups[group_id];
 
     let parameter_set_player_local = null;
     if(app.is_subject)
@@ -419,17 +420,20 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         target_location = session_player.current_location;
     }
 
-    let elements = [];
-    let element = {source_change: "-",
-                   target_change: "+", 
-                   texture:source_tex,
-                }
-    elements.push(element);
-    app.add_transfer_beam(source_location, 
-                          target_location,
-                          elements,
-                          false,
-                          true);
+    if(app.is_player_in_group(session_player_id))
+    {
+        let elements = [];
+        let element = {source_change: "-",
+                    target_change: "+", 
+                    texture:source_tex,
+                    }
+        elements.push(element);
+        app.add_transfer_beam(source_location, 
+                            target_location,
+                            elements,
+                            false,
+                            true);
+    }
     
     group.apple_tray_inventory = data.apple_tray_inventory;
     group.orange_tray_inventory = data.orange_tray_inventory;
@@ -437,11 +441,14 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
     group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
     group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
 
-    app.update_orchard_labels();
-    app.update_player_inventory();
-    app.update_tray_labels();
-    app.update_register_labels();
-    app.update_barriers();
+    if(app.is_player_in_group(session_player_id))
+    {
+        app.update_orchard_labels();
+        app.update_player_inventory();
+        app.update_tray_labels();
+        app.update_register_labels();
+        app.update_barriers();
+    }
 },
 
 /**
@@ -463,7 +470,8 @@ take_reset_retailer_inventory: function take_reset_retailer_inventory(data)
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
     let world_state = app.session.world_state;
-    let group = world_state.groups[app.current_group];
+    let group_id = app.get_players_group_id(session_player_id);
+    let group = world_state.groups[group_id];
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -495,57 +503,60 @@ take_reset_retailer_inventory: function take_reset_retailer_inventory(data)
     let apples = data.starting_apples;
 
     //apples transfer beam
-    
-    if(apples > 0)
+    if(app.is_player_in_group(session_player_id))
     {
+        if(apples > 0)
+        {
 
-        let target_location={x:0, y:0};
-        let source_tex = app.pixi_textures['apple_tex'];
+            let target_location={x:0, y:0};
+            let source_tex = app.pixi_textures['apple_tex'];
 
-        let location = app.session.parameter_set.apple_tray_location.split(",");
-        target_location.x = parseInt(location[0]) + pixi_tray_apple['container'].width/2;
-        target_location.y = parseInt(location[1]) + pixi_tray_apple['container'].height/2;
+            let location = app.session.parameter_set.apple_tray_location.split(",");
+            target_location.x = parseInt(location[0]) + pixi_tray_apple['container'].width/2;
+            target_location.y = parseInt(location[1]) + pixi_tray_apple['container'].height/2;
 
-        let elements = [];
-        let element = {source_change: "-" + apples,
-                       target_change: "+" + apples, 
-                       texture:source_tex,
-                    }
-        elements.push(element);
-        app.add_transfer_beam(session_player.current_location, 
-                              target_location,
-                              elements,
-                              true,
-                              true);
+            let elements = [];
+            let element = {source_change: "-" + apples,
+                        target_change: "+" + apples, 
+                        texture:source_tex,
+                        }
+            elements.push(element);
+            app.add_transfer_beam(session_player.current_location, 
+                                target_location,
+                                elements,
+                                true,
+                                true);
+        }
+
+        //oranges transfer beam
+        if(oranges > 0)
+        {
+            let target_location={x:0, y:0};
+            let source_tex = app.pixi_textures['orange_tex'];
+
+            let location = app.session.parameter_set.orange_tray_location.split(",");
+            target_location.x = parseInt(location[0]) + pixi_tray_orange['container'].width/2;
+            target_location.y = parseInt(location[1]) + pixi_tray_orange['container'].height/2;
+
+            let elements = [];
+            let element = {source_change: "-" + oranges,
+                        target_change: "+" + oranges, 
+                        texture:source_tex,
+                        }
+            elements.push(element);
+            app.add_transfer_beam(session_player.current_location, 
+                                target_location,
+                                elements,
+                                true,
+                                true);
+        }
+
+        app.update_orchard_labels();
+        app.update_player_inventory();
+        app.update_tray_labels();
+        app.update_register_labels();
     }
 
-    //oranges transfer beam
-    if(oranges > 0)
-    {
-        let target_location={x:0, y:0};
-        let source_tex = app.pixi_textures['orange_tex'];
 
-        let location = app.session.parameter_set.orange_tray_location.split(",");
-        target_location.x = parseInt(location[0]) + pixi_tray_orange['container'].width/2;
-        target_location.y = parseInt(location[1]) + pixi_tray_orange['container'].height/2;
-
-        let elements = [];
-        let element = {source_change: "-" + oranges,
-                       target_change: "+" + oranges, 
-                       texture:source_tex,
-                    }
-        elements.push(element);
-        app.add_transfer_beam(session_player.current_location, 
-                              target_location,
-                              elements,
-                              true,
-                              true);
-    }
-
-    app.update_orchard_labels();
-
-    app.update_player_inventory();
-    app.update_tray_labels();
-    app.update_register_labels();
 },
 
