@@ -442,7 +442,7 @@ class Session(models.Model):
 
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
-            writer.writerow(["Session ID", "Period", "Time", "Client #", "Label", "Action","Info (Plain)", "Info (JSON)", "Timestamp"])
+            writer.writerow(["Session ID", "Period", "Time", "Client #", "Role", "Action","Info (Plain)", "Info (JSON)", "Timestamp"])
 
             # session_events =  main.models.SessionEvent.objects.filter(session__id=self.id).prefetch_related('period_number', 'time_remaining', 'type', 'data', 'timestamp')
             # session_events = session_events.select_related('session_player')
@@ -456,12 +456,12 @@ class Session(models.Model):
             for i in self.session_players.all().values('id','player_number','parameter_set_player__id_label'):
                 session_players[str(i['id'])] = i
 
-            for p in self.session_events.exclude(type="time").exclude(type="world_state").exclude(type='target_locations'):
+            for p in self.session_events.exclude(type="time").exclude(type="world_state").exclude(type='target_location_update'):
                 writer.writerow([self.id,
                                 p.period_number, 
                                 p.time_remaining, 
                                 parameter_set_players[str(p.session_player_id)]["player_number"], 
-                                parameter_set_players[str(p.session_player_id)]["parameter_set_player__id_label"], 
+                                "Wholesaler" if parameter_set_players[str(p.session_player_id)]["parameter_set_player__id_label"] == "W" else "Retailer",
                                 p.type, 
                                 self.action_data_parse(p.type, p.data, session_players),
                                 p.data, 
@@ -488,6 +488,10 @@ class Session(models.Model):
             return f'{temp_s} @  {nearby_text}'
         elif type == "chat_gpt_prompt":
             return f'{data["prompt"]} | {strip_tags(data["response"])}'
+        elif type == "harvest_fruit" or type == "tray_fruit":
+            return data["fruit_type"]
+        elif type == "checkout" or type == "sell_to_consumer":
+            return f'Apples: {data["apples"]}, Oranges: {data["oranges"]}, Payment: {data["payment"]}'
         elif type == "help_doc":
             return data
 

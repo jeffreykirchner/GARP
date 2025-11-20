@@ -193,15 +193,16 @@ register_double_click: function register_double_click()
         let retailer = app.get_player_by_type("R");
 
         let world_state = app.session.world_state;
+        let session_player = world_state.session_players[app.session_player.id];
 
         wholesaler_position = wholesaler.current_location;
         if(wholesaler.id == app.session_player.id)
         {
             app.add_text_emitters("Error: The retailer must checkout.",
-                world_state.session_players[app.session_player.id].current_location.x,
-                world_state.session_players[app.session_player.id].current_location.y,
-                world_state.session_players[app.session_player.id].current_location.x,
-                world_state.session_players[app.session_player.id].current_location.y-100,
+                session_player.current_location.x,
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
                 0xFFFFFF,
                 28,
                 null);
@@ -213,10 +214,10 @@ register_double_click: function register_double_click()
         if(!app.is_in_wholesaler_pad(wholesaler_position))
         {
             app.add_text_emitters("Error: Wholesaler not on pad", 
-                    world_state.session_players[app.session_player.id].current_location.x, 
-                    world_state.session_players[app.session_player.id].current_location.y,
-                    world_state.session_players[app.session_player.id].current_location.x,
-                    world_state.session_players[app.session_player.id].current_location.y-100,
+                    session_player.current_location.x, 
+                    session_player.current_location.y,
+                    session_player.current_location.x,
+                    session_player.current_location.y-100,
                     0xFFFFFF,
                     28,
                     null)
@@ -226,10 +227,10 @@ register_double_click: function register_double_click()
         if(!app.is_in_retailer_pad(retailer_position))
         {
             app.add_text_emitters("Error: You are not on the pad", 
-                    world_state.session_players[app.session_player.id].current_location.x, 
-                    world_state.session_players[app.session_player.id].current_location.y,
-                    world_state.session_players[app.session_player.id].current_location.x,
-                    world_state.session_players[app.session_player.id].current_location.y-100,
+                    session_player.current_location.x, 
+                    session_player.current_location.y,
+                    session_player.current_location.x,
+                    session_player.current_location.y-100,
                     0xFFFFFF,
                     28,
                     null)

@@ -237,12 +237,12 @@ class SubjectUpdatesMixin():
             
             data = {"target_locations" : target_locations, "current_locations" : current_locations}
 
-            self.session_events.append(SessionEvent(session_id=self.session_id, 
-                                                    session_player_id=player_id,
-                                                    type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
-                                                    data=data))
+            # self.session_events.append(SessionEvent(session_id=self.session_id, 
+            #                                         session_player_id=player_id,
+            #                                         type=event['type'],
+            #                                         period_number=group["current_period"],
+            #                                         time_remaining=group["time_remaining"],
+            #                                         data=data))
         
         result = {"value" : "success", 
                   "target_location" : target_location, 
@@ -334,7 +334,7 @@ class SubjectUpdatesMixin():
                 group["orange_orchard_inventory"] -= 1
                 session_player["oranges"] += 1                
                 fruit_cost = parameter_set_period["orchard_orange_price"]
-                
+
         if status == "success":
 
             session_player["earnings"] -= fruit_cost
@@ -579,6 +579,10 @@ class SubjectUpdatesMixin():
 
             group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
 
+            event_data["apples"] = apples
+            event_data["oranges"] = oranges
+            event_data["payment"] = payment
+
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
@@ -767,6 +771,10 @@ class SubjectUpdatesMixin():
             period_summary_data["groups"][str(parameter_set_player["parameter_set_group"])] = group
 
             await session_period.asave(update_fields=["summary_data"])
+
+            event_data["apples"] = apples_sold
+            event_data["oranges"] = oranges_sold
+            event_data["payment"] = period_earnings
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
