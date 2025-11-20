@@ -178,6 +178,14 @@ class Session(models.Model):
 
         group["complete"] = False
 
+        #reset results
+        group["results"] = {"orange_harvested":0,
+                            "apple_harvested":0,
+                            "orange_sold":0,
+                            "apple_sold":0,
+                            "wholesaler_earnings":parameter_set_period["wholesaler_budget"],
+                            "retailer_earnings":0,}
+
         self.world_state = world_state
         self.save()
 
@@ -188,17 +196,13 @@ class Session(models.Model):
         setup summary data
         '''
 
-        session_players = self.session_players.values('id','parameter_set_player__id').all()
+        parameter_set = self.parameter_set.json()
 
-        summary_data = {}
-        
-        for i in session_players:
-            i_s = str(i["id"])
-            summary_data[i_s] = {}
+        session_players_order = parameter_set["parameter_set_players_order"]
+        parameter_set_groups_order = parameter_set["parameter_set_groups_order"]
 
-            summary_data_player = summary_data[i_s]
-            summary_data_player["earnings"] = 0
-            summary_data_player["cherries_harvested"] = 0
+        summary_data = {"session_players":{str(i):{} for i in session_players_order},
+                        "groups":{str(i):{} for i in parameter_set_groups_order}}
                 
         self.session_periods.all().update(summary_data=summary_data)
 
@@ -235,6 +239,7 @@ class Session(models.Model):
             group["time_remaining"] = 0
             group["current_period"] = 1
             group["barriers"] = {}
+            group["results"] = {}
 
         #session players
         for i in self.session_players.prefetch_related('parameter_set_player').all().values('id', 
@@ -382,40 +387,47 @@ class Session(models.Model):
 
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
-            session_players_list = self.session_players.all().values('id','parameter_set_player__id_label')
-           
-            top_row = ["Session ID", "Period", "Client #", "Label", "Earnings ¢"]
-            for i in session_players_list:
-
-                top_row.append(f'Cherries I Sent To {i["parameter_set_player__id_label"]}')
-                top_row.append(f'Cherries I Took From {i["parameter_set_player__id_label"]}')
-
-                top_row.append(f'Cherries {i["parameter_set_player__id_label"]} Sent To Me')
-                top_row.append(f'Cherries {i["parameter_set_player__id_label"]} Took From Me')
-
+            top_row = ["Session ID", "Period", "Group", "Wholesaler ID", "Retailer ID", 
+                       "Orange Harvested", "Apples Harvested", "Oranges Sold", "Apples Sold", 
+                       "Wholesaler Earnings", "Retailer Earnings"]
+            
             writer.writerow(top_row)
 
             world_state = self.world_state
-            parameter_set_players = {}
-            for i in self.session_players.all().values('id','parameter_set_player__id_label'):
-                parameter_set_players[str(i['id'])] = i
+            parameter_set = self.parameter_set.json()
+            
+            for p in self.session_periods.all().order_by('period_number'):
+                summary_data = p.summary_data
 
-            # logger.info(parameter_set_players)
+                for g_id in summary_data["groups"]:
+                    g = summary_data["groups"][g_id]
+                    wholesaler_id = ""
+                    retailer_id = ""
 
-            for period_number, period in enumerate(world_state["session_periods"]):
-                summary_data = self.session_periods.get(id=period).summary_data
+                    if not g.get("members", None):
+                        continue
 
-                for player_number, player in enumerate(world_state["session_players"]):
-                    player_s = str(player)
-                    summary_data_player = summary_data[player_s]
-                    temp_row = [self.id, 
-                                period_number+1, 
-                                player_number+1,
-                                parameter_set_players[player_s]["parameter_set_player__id_label"],
-                                summary_data_player["earnings"],
-                                ]
-                    
-                    writer.writerow(temp_row)
+                    for m_id in g["members"]:
+                        session_player = world_state["session_players"][str(m_id)]
+                        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+                        
+                        if parameter_set_player["id_label"] == "W":
+                            wholesaler_id = parameter_set_player["player_number"]
+                        elif parameter_set_player["id_label"] == "R":
+                            retailer_id = parameter_set_player["player_number"]
+
+                    writer.writerow([self.id,
+                                     p.period_number,
+                                     parameter_set["parameter_set_groups"][str(g_id)]["name"],
+                                     wholesaler_id,
+                                     retailer_id,
+                                     g["results"]["orange_harvested"],
+                                     g["results"]["apple_harvested"],
+                                     g["results"]["orange_sold"],
+                                     g["results"]["apple_sold"],
+                                     g["results"]["wholesaler_earnings"],
+                                     g["results"]["retailer_earnings"]])
+
                     
             v = output.getvalue()
             output.close()
@@ -430,7 +442,7 @@ class Session(models.Model):
 
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
-            writer.writerow(["Session ID", "Period", "Time", "Client #", "Label", "Action","Info (Plain)", "Info (JSON)", "Timestamp"])
+            writer.writerow(["Session ID", "Period", "Time", "Client #", "Role", "Action","Info (Plain)", "Info (JSON)", "Timestamp"])
 
             # session_events =  main.models.SessionEvent.objects.filter(session__id=self.id).prefetch_related('period_number', 'time_remaining', 'type', 'data', 'timestamp')
             # session_events = session_events.select_related('session_player')
@@ -444,12 +456,12 @@ class Session(models.Model):
             for i in self.session_players.all().values('id','player_number','parameter_set_player__id_label'):
                 session_players[str(i['id'])] = i
 
-            for p in self.session_events.exclude(type="time").exclude(type="world_state").exclude(type='target_locations'):
+            for p in self.session_events.exclude(type="time").exclude(type="world_state").exclude(type='target_location_update'):
                 writer.writerow([self.id,
                                 p.period_number, 
                                 p.time_remaining, 
                                 parameter_set_players[str(p.session_player_id)]["player_number"], 
-                                parameter_set_players[str(p.session_player_id)]["parameter_set_player__id_label"], 
+                                "Wholesaler" if parameter_set_players[str(p.session_player_id)]["parameter_set_player__id_label"] == "W" else "Retailer",
                                 p.type, 
                                 self.action_data_parse(p.type, p.data, session_players),
                                 p.data, 
@@ -476,6 +488,10 @@ class Session(models.Model):
             return f'{temp_s} @  {nearby_text}'
         elif type == "chat_gpt_prompt":
             return f'{data["prompt"]} | {strip_tags(data["response"])}'
+        elif type == "harvest_fruit" or type == "tray_fruit":
+            return data["fruit_type"]
+        elif type == "checkout" or type == "sell_to_consumer":
+            return f'Apples: {data["apples"]}, Oranges: {data["oranges"]}, Payment: {data["payment"]}'
         elif type == "help_doc":
             return data
 
