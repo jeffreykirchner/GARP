@@ -119,7 +119,7 @@ class Session(models.Model):
         
         session_periods = []
 
-        for i in range(self.parameter_set.period_count):
+        for i in range(self.parameter_set.parameter_set_periods.count()):
             session_periods.append(main.models.SessionPeriod(session=self, period_number=i+1))
         
         main.models.SessionPeriod.objects.bulk_create(session_periods)

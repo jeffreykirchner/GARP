@@ -15,30 +15,6 @@ class ParameterSetForm(forms.ModelForm):
     '''
     Parameterset edit form
     '''
-    period_count = forms.IntegerField(label='Number of Periods',
-                                      min_value=1,
-                                      widget=forms.NumberInput(attrs={"v-model":"parameter_set.period_count",
-                                                                      "step":"1",
-                                                                      "min":"1"}))
-
-    period_length = forms.IntegerField(label='Period Length (seconds)',
-                                       min_value=1,
-                                       widget=forms.NumberInput(attrs={"v-model":"parameter_set.period_length",
-                                                                       "step":"1",
-                                                                       "min":"1"}))
-    
-    break_frequency = forms.IntegerField(label='Break Frequency (periods)',
-                                         min_value=1,
-                                         widget=forms.NumberInput(attrs={"v-model":"parameter_set.break_frequency",
-                                                                         "step":"1",
-                                                                         "min":"1"}))
-    
-    break_length = forms.IntegerField(label='Break Length (seconds)',
-                                      min_value=1,
-                                      widget=forms.NumberInput(attrs={"v-model":"parameter_set.break_length",
-                                                                      "step":"1",
-                                                                      "min":"1"}))
-    
     chat_gpt_mode = forms.ChoiceField(label='ChatGPT Mode',
                                       choices=ChatGPTMode.choices,
                                       widget=forms.Select(attrs={"v-model":"parameter_set.chat_gpt_mode",}))
@@ -189,8 +165,7 @@ class ParameterSetForm(forms.ModelForm):
 
     class Meta:
         model=ParameterSet
-        fields =['period_count', 'period_length', 'break_frequency', 'break_length',
-                 'chat_gpt_mode', 'show_instructions', 
+        fields =['chat_gpt_mode', 'show_instructions', 
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
                  'interaction_range',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',

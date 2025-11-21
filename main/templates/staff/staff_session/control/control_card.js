@@ -159,7 +159,8 @@ end_early: async function end_early(){
  * @param message_data {json}
 */
 take_end_early: function take_end_early(message_data){
-   app.session.parameter_set.period_count = message_data.result;
+   // period_count field removed
+   // app.session.parameter_set.period_count = message_data.result;
 },
 
 /** send invitations

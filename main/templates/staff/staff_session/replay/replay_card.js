@@ -21,7 +21,7 @@ take_load_session_events(message_data)
         app.session_events = message_data.session_events;
 
         app.replay_current_period = 1;
-        app.replay_time_remaining = app.session.parameter_set.period_length;
+        app.replay_time_remaining = 60;  // default period length
 
         app.replay_load_world_state();
     }
@@ -76,7 +76,7 @@ replay_mode_play: function replay_mode_play()
     {
         app.replay_time_remaining--;
     }
-    else if(app.replay_current_period == app.session.parameter_set.period_count)
+    else if(app.replay_current_period == app.session.parameter_set.parameter_set_periods_order.length)
     {
         //end of the session
         return;
@@ -85,12 +85,13 @@ replay_mode_play: function replay_mode_play()
     {
         app.replay_current_period++;
 
-        app.replay_time_remaining = app.session.parameter_set.period_length;
+        app.replay_time_remaining = 60;  // default period length
 
-        if(app.replay_current_period % app.session.parameter_set.break_frequency == 0)
-        {
-            app.replay_time_remaining += app.session.parameter_set.break_length;
-        }
+        // break_frequency and break_length fields removed
+        // if(app.replay_current_period % app.session.parameter_set.break_frequency == 0)
+        // {
+        //     app.replay_time_remaining += app.session.parameter_set.break_length;
+        // }
     }
 
     app.replay_timeout = setTimeout(app.replay_mode_play, 1000);
@@ -105,7 +106,7 @@ reset_replay: function reset_replay()
     if (app.replay_timeout) clearTimeout(app.replay_timeout);
 
     app.replay_current_period = 1;
-    app.replay_time_remaining = app.session.parameter_set.period_length;
+    app.replay_time_remaining = 60;  // default period length
 
     app.replay_load_world_state();
     app.the_feed = [];
@@ -174,7 +175,7 @@ advance_period: function advance_period(direction)
 {
     if(direction == 1)
     {
-        if(app.replay_current_period < app.session.parameter_set.period_count)
+        if(app.replay_current_period < app.session.parameter_set.parameter_set_periods_order.length)
         {
             app.replay_current_period++;
         }
@@ -187,12 +188,13 @@ advance_period: function advance_period(direction)
         }
     }
 
-    app.replay_time_remaining = app.session.parameter_set.period_length;
+    app.replay_time_remaining = 60;  // default period length
 
-    if(app.replay_current_period % app.session.parameter_set.break_frequency == 0)
-    {
-        app.replay_time_remaining += app.session.parameter_set.break_length;
-    }
+    // break_frequency and break_length fields removed
+    // if(app.replay_current_period % app.session.parameter_set.break_frequency == 0)
+    // {
+    //     app.replay_time_remaining += app.session.parameter_set.break_length;
+    // }
 
     app.process_replay_events(true);
 },

@@ -235,12 +235,12 @@ game_loop: function game_loop(delta)
  */
 check_for_collisions: function check_for_collisions(delta)
 {
-    //no harvesting during breaks
-    if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
-        app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-    {
-        return;
-    }
+    //no harvesting during breaks - period_length and break_frequency fields removed
+    // if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
+    //     app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
+    // {
+    //     return;
+    // }
 
     if(Date.now() - app.last_collision_check < 100) return;
     app.last_collision_check = Date.now();
