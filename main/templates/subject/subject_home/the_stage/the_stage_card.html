@@ -44,16 +44,25 @@
         <!-- the pixi stage -->
         <div class="row">
             <div class="col">       
-                <div id="customer_prices_overlay" v-if="is_subject && 
-                                                        get_parameter_set_player_from_player_id(session_player.id).id_label=='R'">
+                <div id="customer_prices_overlay" 
+                      v-if="is_subject && 
+                            get_parameter_set_player_from_player_id(session_player.id).id_label=='R'">
                     {%include "subject/subject_home/the_stage/customer_prices_overlay.html"%}
+                </div>
+
+                <div id="end_game_steal_overlay" 
+                     class="end_game_overlay"
+                     v-if="is_subject && 
+                           show_end_game_steal_overlay()">
+                    {%include "subject/subject_home/the_stage/end_game_steal_overlay.html"%}
                 </div>
 
                 <canvas class="field" 
                         key="sd_graph" 
                         id="sd_graph_id" 
                         style="border-style: solid;border-width: 1px;"
-                        oncontextmenu="return false;"></canvas>                
+                        oncontextmenu="return false;">
+                </canvas>                
             </div>
         </div>
 

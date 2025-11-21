@@ -57,6 +57,20 @@
         opacity: 0.9;
         padding: 5px;
     }
+
+    .end_game_overlay{
+        position: absolute;   
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 10px;
+        width: 40%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px;
+        box-shadow: 5px 5px 10px grey;
+        z-index: 1000;
+    }
 </style>
 
 {%endblock head%}
@@ -109,7 +123,5 @@
         <i class="fas fa-cog fa-spin fa-2x"></i>
     </div>
 </div>
-
-
 
 {% endblock %}
