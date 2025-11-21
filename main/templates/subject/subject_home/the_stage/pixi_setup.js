@@ -204,7 +204,6 @@ game_loop: function game_loop(delta)
     {   
         app.update_offsets_player(delta.deltaTime);
         app.update_mini_map(delta.deltaTime);
-        app.check_for_collisions();
     }
     
     if(app.pixi_mode=="staff")
@@ -226,28 +225,6 @@ game_loop: function game_loop(delta)
         else
             app.pixi_tick_tock.value = "tick";
     }
-},
-
-
-
-/**
- * check for collisions between local player and other objects
- */
-check_for_collisions: function check_for_collisions(delta)
-{
-    //no harvesting during breaks - period_length and break_frequency fields removed
-    // if(app.session.world_state.time_remaining > app.session.parameter_set.period_length &&
-    //     app.session.world_state.current_period % app.session.parameter_set.break_frequency == 0)
-    // {
-    //     return;
-    // }
-
-    if(Date.now() - app.last_collision_check < 100) return;
-    app.last_collision_check = Date.now();
-
-    const obj = app.session.world_state.session_players[app.session_player.id];
-    let collision_found = false;
-
 },
 
 /**

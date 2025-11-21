@@ -252,6 +252,17 @@ get_remaining_budget: function get_remaining_budget(){
 },
 
 /**
+ * get max fruit
+ */
+get_max_fruit: function get_max_fruit(){
+    if(!app.first_load_done) return "---";
+    if(!app.session.started) return "---";
+
+    let parameter_set_period = app.get_current_parameter_set_period();
+    return parameter_set_period.max_fruit;
+},
+
+/**
  * get checkout complete
  */
 get_checkout_complete: function get_checkout_complete(){

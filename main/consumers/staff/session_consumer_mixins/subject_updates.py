@@ -448,9 +448,16 @@ class SubjectUpdatesMixin():
         elif parameter_set_player["id_label"] == "R":
             #retailer moved fruit from tray to inventory
             
+            #check if retailer already checked out
             if session_player["checkout"]:
                 status = "fail"
                 error_message = "You have already checked out."
+            
+            #check if retailer is already at max fruit
+            if status == "success": 
+                if session_player["apples"] + session_player["oranges"] >= parameter_set_period["max_fruit"]:
+                    status = "fail"
+                    error_message = "You have reached the maximum fruit limit."
 
             if status == "success":    
                 if event_data["fruit_type"] == "apple":
