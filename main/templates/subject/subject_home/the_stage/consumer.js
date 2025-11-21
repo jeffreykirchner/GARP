@@ -144,7 +144,8 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     let world_state = app.session.world_state;
     let parameter_set = app.session.parameter_set;
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player_id);
-    let group = world_state.groups[app.current_group];
+    let group_id = app.get_players_group_id(session_player_id);
+    let group = world_state.groups[group_id];
 
     let parameter_set_player_local = null;
     if(app.is_subject)
@@ -216,56 +217,59 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
                 app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
             }
         }
+
+        app.update_subject_status_overlay();
     }
-
-    app.update_subject_status_overlay();
-
-    let consumer_location = parameter_set.consumer_location.split(",");
-    consumer_location = {x:parseInt(consumer_location[0]), y:parseInt(consumer_location[1])};
-
-    //transfer beam to retailer
-    let elements = [];
-    let element = {source_change: "-" + period_earnings,
-                   target_change: "+" + period_earnings, 
-                   texture:app.pixi_textures['cents_symbol_tex'],
-                }
-    elements.push(element);
-    app.add_transfer_beam(consumer_location, 
-                          session_player.current_location,
-                          elements,
-                          false,
-                          true);
-
-    //transfer to consumer
-    let elements2 = [];
-    if(apples_sold > 0)
+    
+    if(app.is_player_in_group(session_player_id))
     {
-        let element2 = {source_change: "-" + apples_sold,
-                        target_change: "+" + apples_sold, 
-                        texture:app.pixi_textures['apple_tex'],
+        let consumer_location = parameter_set.consumer_location.split(",");
+        consumer_location = {x:parseInt(consumer_location[0]), y:parseInt(consumer_location[1])};
+
+        //transfer beam to retailer
+        let elements = [];
+        let element = {source_change: "-" + period_earnings,
+                    target_change: "+" + period_earnings, 
+                    texture:app.pixi_textures['cents_symbol_tex'],
                     }
-        elements2.push(element2);
-    }
-    if(oranges_sold > 0)
-    {
-        let element3 = {source_change: "-" + oranges_sold,
-                        target_change: "+" + oranges_sold, 
-                        texture:app.pixi_textures['orange_tex'],
-                    }
-        elements2.push(element3);
-    }
+        elements.push(element);
+        app.add_transfer_beam(consumer_location, 
+                            session_player.current_location,
+                            elements,
+                            false,
+                            true);
 
-    if(elements2.length > 0)
-    {
-        app.add_transfer_beam(session_player.current_location, 
-                              consumer_location,
-                              elements2,
-                              false,
-                              true);
-    }
+        //transfer to consumer
+        let elements2 = [];
+        if(apples_sold > 0)
+        {
+            let element2 = {source_change: "-" + apples_sold,
+                            target_change: "+" + apples_sold, 
+                            texture:app.pixi_textures['apple_tex'],
+                        }
+            elements2.push(element2);
+        }
+        if(oranges_sold > 0)
+        {
+            let element3 = {source_change: "-" + oranges_sold,
+                            target_change: "+" + oranges_sold, 
+                            texture:app.pixi_textures['orange_tex'],
+                        }
+            elements2.push(element3);
+        }
 
-    app.update_player_inventory();
-    app.update_barriers();
-    app.update_orchard_labels();
-    app.update_register_labels();
+        if(elements2.length > 0)
+        {
+            app.add_transfer_beam(session_player.current_location, 
+                                consumer_location,
+                                elements2,
+                                false,
+                                true);
+        }
+
+        app.update_player_inventory();
+        app.update_barriers();
+        app.update_orchard_labels();
+        app.update_register_labels();
+    }
 },

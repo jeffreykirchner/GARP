@@ -325,7 +325,7 @@ move_player: function move_player(delta)
     //move players
     for(let i in app.session.world_state.session_players){
 
-        if(!app.is_player_in_group(i)) continue;
+        // if(!app.is_player_in_group(i)) continue;
 
         let obj = app.session.world_state.session_players[i];
 

@@ -95,7 +95,10 @@ setup_pixi_register: function setup_pixi_register()
     let retailer_outline_fill_color = 0xFFFFFF;
     let retailer = app.get_player_by_type("R");
  
-    retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(retailer.id).hex_color;
+    if(retailer)
+    {
+        retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(retailer.id).hex_color;
+    }
     
     retailer_outline_dash.fill({color:retailer_outline_fill_color, alpha:0.5});
     retailer_outline_dash.anchor = 0.5;
@@ -260,7 +263,8 @@ take_update_checkout: function take_update_checkout(data)
         parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
     }
     let world_state = app.session.world_state;
-    let group = world_state.groups[app.current_group];
+    let group_id = app.get_players_group_id(session_player_id);
+    let group = world_state.groups[group_id];
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
@@ -307,20 +311,23 @@ take_update_checkout: function take_update_checkout(data)
     retailer_player.checkout = data.retailer_checkout;
     group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier;
     //add transfer beam
-    let elements = [];
-    let element = {source_change: "-" + payment,
-                   target_change: "+" + payment, 
-                   texture:app.pixi_textures['cents_symbol_tex'],
-                }
-    elements.push(element);
-    app.add_transfer_beam(retailer_player.current_location, 
-                          wholesaler_player.current_location,
-                          elements,
-                          true,
-                          true);
+    if(app.is_player_in_group(session_player_id))
+    {
+        let elements = [];
+        let element = {source_change: "-" + payment,
+                       target_change: "+" + payment, 
+                       texture:app.pixi_textures['cents_symbol_tex'],
+                      }
+        elements.push(element);
+        app.add_transfer_beam(retailer_player.current_location, 
+                            wholesaler_player.current_location,
+                            elements,
+                            true,
+                            true);
 
-    app.update_barriers();
-    app.update_register_labels();
+        app.update_barriers();
+        app.update_register_labels();
+    }
 },
 
 /**

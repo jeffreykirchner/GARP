@@ -48,7 +48,14 @@ class ParameterSetPeriodForm(forms.ModelForm):
                                                                          "step":"1",
                                                                          "min":"1"}))
     
+    max_fruit = forms.IntegerField(label='Max Fruit',
+                                   min_value=0,
+                                   widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_period.max_fruit",
+                                                                   "step":"1",
+                                                                   "min":"0"}))
+    
     class Meta:
         model=ParameterSetPeriod
-        fields =['orchard_apple_price', 'wholesale_apple_price', 'orchard_orange_price', 'wholesale_orange_price', 'wholesaler_budget', 'retailer_budget']
+        fields =['orchard_apple_price', 'wholesale_apple_price', 'orchard_orange_price', 
+                 'wholesale_orange_price', 'wholesaler_budget', 'retailer_budget', 'max_fruit']
     

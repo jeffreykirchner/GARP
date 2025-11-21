@@ -23,7 +23,7 @@
             </div>
             <div class="col text-start ps-1">
                 <span v-if="session.world_state.hasOwnProperty('started')">
-                    [[session.world_state.current_period]] of [[session.parameter_set.period_count]]    
+                    [[get_current_period()]] of [[session.parameter_set.parameter_set_periods_order.length]]    
                 </span>
                 <span v-else>
                    ---
@@ -39,11 +39,32 @@
                     Complete
                 </span>
                 <span v-else-if="session.world_state.hasOwnProperty('started')">
-                    [[session.world_state.time_remaining]]    
-                </span>         
+                    [[get_time()]]    
+                </span>              
+            </div>
+        </div>
+        <div class="row">
+            <div class="col text-end pe-1">
+                Group:
+            </div>
+            <div class="col text-start ps-1">
+                <span v-if="!session.started">
+                    ---
+                </span>
                 <span v-else>
-                   --- 
-                </span>      
+                    <select v-model="current_group"
+                            placeholder="Group"
+                            class="form-select form-select-sm text-center"
+                            id="id_current_group"
+                            v-on:change="update_current_group()"
+                            >
+                        <option v-for="(value, key) in session.world_state.groups" 
+                            :key="key"
+                            :value="key">
+                        [[session.parameter_set.parameter_set_groups[key].name]]
+                        </option>
+                    </select>
+                </span>
             </div>
         </div>
     </div>                    

@@ -25,6 +25,8 @@ class ParameterSetPeriod(models.Model):
     wholesaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)
     retailer_budget = models.IntegerField(verbose_name='Retailer Budget (¢)', default=1000)
 
+    max_fruit = models.IntegerField(verbose_name='Max Fruit', default=10)
+
     timestamp = models.DateTimeField(auto_now_add=True)
     updated= models.DateTimeField(auto_now=True)
 
@@ -51,6 +53,8 @@ class ParameterSetPeriod(models.Model):
 
         self.wholesaler_budget = new_ps.get("wholesaler_budget")
         self.retailer_budget = new_ps.get("retailer_budget")
+
+        self.max_fruit = new_ps.get("max_fruit")
 
         self.save()
         
@@ -92,6 +96,8 @@ class ParameterSetPeriod(models.Model):
 
             "wholesaler_budget" : self.wholesaler_budget,
             "retailer_budget" : self.retailer_budget,
+
+            "max_fruit" : self.max_fruit,
         }
     
     def get_json_for_subject(self, update_required=False):

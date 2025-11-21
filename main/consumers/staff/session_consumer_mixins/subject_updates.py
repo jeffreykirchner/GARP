@@ -377,8 +377,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
     
     async def tray_fruit(self, event):
         '''
@@ -447,9 +448,16 @@ class SubjectUpdatesMixin():
         elif parameter_set_player["id_label"] == "R":
             #retailer moved fruit from tray to inventory
             
+            #check if retailer already checked out
             if session_player["checkout"]:
                 status = "fail"
                 error_message = "You have already checked out."
+            
+            #check if retailer is already at max fruit
+            if status == "success": 
+                if session_player["apples"] + session_player["oranges"] >= parameter_set_period["max_fruit"]:
+                    status = "fail"
+                    error_message = "You have reached the maximum fruit limit."
 
             if status == "success":    
                 if event_data["fruit_type"] == "apple":
@@ -517,8 +525,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
         
     async def checkout(self, event):
         '''
@@ -615,8 +624,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
         
     async def reset_retailer_inventory(self, event):
         '''
@@ -833,8 +843,9 @@ class SubjectUpdatesMixin():
 
         event_data = json.loads(event["group_data"])
 
-        await self.send_message(message_to_self=event_data, message_to_group=None,
-                                message_type=event['type'], send_to_client=True, send_to_group=False)
+        if event_data["value"] == "success":
+            await self.send_message(message_to_self=event_data, message_to_group=None,
+                                    message_type=event['type'], send_to_client=True, send_to_group=False)
 
 async def get_player_by_type(world_state, parameter_set, player_type, group):
     '''
