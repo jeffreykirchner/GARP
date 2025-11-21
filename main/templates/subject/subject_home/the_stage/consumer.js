@@ -217,10 +217,10 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
                 app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
             }
         }
+
+        app.update_subject_status_overlay();
     }
-
-    app.update_subject_status_overlay();
-
+    
     if(app.is_player_in_group(session_player_id))
     {
         let consumer_location = parameter_set.consumer_location.split(",");

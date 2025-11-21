@@ -95,7 +95,10 @@ setup_pixi_register: function setup_pixi_register()
     let retailer_outline_fill_color = 0xFFFFFF;
     let retailer = app.get_player_by_type("R");
  
-    retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(retailer.id).hex_color;
+    if(retailer)
+    {
+        retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(retailer.id).hex_color;
+    }
     
     retailer_outline_dash.fill({color:retailer_outline_fill_color, alpha:0.5});
     retailer_outline_dash.anchor = 0.5;
