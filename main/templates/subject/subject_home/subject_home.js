@@ -87,6 +87,7 @@ let app = Vue.createApp({
 
                     //current group
                     current_group : null,
+                    
                 }},
     methods: {
 

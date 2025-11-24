@@ -13,6 +13,7 @@ from main.models import Session
 from main.models import SessionEvent
 
 from main.globals import ExperimentPhase
+from main.globals import EndGameChoices
 
 import main
 
@@ -459,7 +460,21 @@ class SubjectUpdatesMixin():
                     status = "fail"
                     error_message = "You have reached the maximum fruit limit."
 
-            if status == "success":    
+            #check if retailer has needs to answer end game questions
+            if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
+                if parameter_set["end_game_choice"] == EndGameChoices.STEAL:
+                    if group["show_end_game_choice_steal"] == False and \
+                       group["end_game_choice_steal_part_1"] is None:
+
+                        group["show_end_game_choice_steal"] = True
+
+                elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                    if group["show_end_game_choice_no_price"] == False and \
+                       group["end_game_choice_no_price_part_1"] is None:
+
+                        group["show_end_game_choice_no_price"] = True
+
+            if status == "success" and not group["show_end_game_choice_steal"]:    
                 if event_data["fruit_type"] == "apple":
                     if group["apple_tray_inventory"] <= 0:
                         status = "fail"
@@ -507,6 +522,8 @@ class SubjectUpdatesMixin():
                   "retailer_barrier_up" : group["barriers"][str(group["retailer_barrier"])]["enabled"],
                   "checkout_barrier_up" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
                   "fruit_type" : event_data["fruit_type"],
+                  "show_end_game_choice_steal" : group["show_end_game_choice_steal"],
+                  "show_end_game_choice_no_price" : group["show_end_game_choice_no_price"],
                   "session_player_id" : player_id}
         
         if status == "fail":

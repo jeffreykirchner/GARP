@@ -239,6 +239,11 @@ class Session(models.Model):
             group["time_remaining"] = 0
             group["current_period"] = 1
             group["barriers"] = {}
+            group["show_end_game_choice_steal"] = False
+            group["end_game_choice_steal_part_1"] = None
+            group["end_game_choice_steal_part_2"] = None
+            group["show_end_game_choice_no_price"] = False
+            group["end_game_choice_no_price_part_1"] = None
             group["results"] = {}
 
         #session players

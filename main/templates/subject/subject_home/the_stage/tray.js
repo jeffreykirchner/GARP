@@ -233,6 +233,10 @@ tray_apple_double_click: function tray_apple_double_click()
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
 
+    //check if end game overlay is showing
+    if(app.showing_end_game_steal_overlay) return;
+    if(app.showing_end_game_no_price_overlay) return;
+
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_tray_apple.rect;
 
@@ -274,6 +278,10 @@ tray_orange_double_click: function tray_orange_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+
+    //check if end game overlay is showing
+    if(app.show_end_game_steal_overlay()) return;
+    if(app.show_end_game_no_price_overlay()) return;
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_tray_orange.rect;
@@ -440,6 +448,9 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
     group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
     group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
+
+    group["show_end_game_choice_steal"] = data.show_end_game_choice_steal;
+    group["show_end_game_choice_no_price"] = data.show_end_game_choice_no_price;
 
     if(app.is_player_in_group(session_player_id))
     {

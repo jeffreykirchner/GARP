@@ -275,6 +275,7 @@ update_player_inventory: function update_player_inventory()
  */
 target_location_update: function target_location_update()
 {
+
     //check if session_players key exists in world state
     if(!app.session.world_state.session_players) return;
 

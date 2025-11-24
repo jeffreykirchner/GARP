@@ -14,6 +14,10 @@ get_offset:function get_offset()
 */
 subject_pointer_click: function subject_pointer_click(event)
 {
+    //check if end game overlay is showing
+    if(app.show_end_game_steal_overlay()) return;
+    if(app.show_end_game_no_price_overlay()) return;
+
     if(!app.session.world_state.hasOwnProperty('started')) return;
     let local_pos = event.data.getLocalPosition(event.currentTarget);
     let local_player = app.session.world_state.session_players[app.session_player.id];
