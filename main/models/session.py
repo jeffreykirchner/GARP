@@ -34,6 +34,7 @@ from main.models import ParameterSet
 
 from main.globals import ExperimentPhase
 from main.globals import round_up
+from main.globals import EndGameChoices
 
 #experiment sessoin
 class Session(models.Model):
@@ -240,10 +241,10 @@ class Session(models.Model):
             group["current_period"] = 1
             group["barriers"] = {}
             group["show_end_game_choice_steal"] = False
-            group["end_game_choice_steal_part_1"] = None
-            group["end_game_choice_steal_part_2"] = None
+            group["end_game_choice_part_1"] = None
+            group["end_game_choice_part_2"] = None
             group["show_end_game_choice_no_price"] = False
-            group["end_game_choice_no_price_part_1"] = None
+            group["end_game_mode"] = EndGameChoices.OFF
             group["results"] = {}
 
         #session players

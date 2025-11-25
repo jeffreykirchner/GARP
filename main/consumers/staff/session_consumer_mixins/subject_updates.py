@@ -464,13 +464,13 @@ class SubjectUpdatesMixin():
             if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
                 if parameter_set["end_game_choice"] == EndGameChoices.STEAL:
                     if group["show_end_game_choice_steal"] == False and \
-                       group["end_game_choice_steal_part_1"] is None:
+                       group["end_game_choice_part_1"] is None:
 
                         group["show_end_game_choice_steal"] = True
 
                 elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
                     if group["show_end_game_choice_no_price"] == False and \
-                       group["end_game_choice_no_price_part_1"] is None:
+                       group["end_game_choice_no_part_1"] is None:
 
                         group["show_end_game_choice_no_price"] = True
 
@@ -863,6 +863,50 @@ class SubjectUpdatesMixin():
         if event_data["value"] == "success":
             await self.send_message(message_to_self=event_data, message_to_group=None,
                                     message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def end_game_choice(self, event):
+        '''
+        end game choice by retailer from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("end_game_steal_choice")
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set = self.parameter_set_local
+        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+
+        group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
+        group["end_game_choice_part_2"] = event_data["end_game_choice_part_2"]
+
+        group["show_end_game_choice_steal"] = False
+        group["show_end_game_choice_no_price"] = False
+
+        if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
+           if group["end_game_choice_part_2"]:
+               group["end_game_mode"] = EndGameChoices.STEAL
+
+        elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+            if group["end_game_choice_part_1"]:
+                group["end_game_mode"] = EndGameChoices.NO_PRICE
+
+
+    
+    async def update_end_game_choice(self, event):
+        '''
+        update end game choice by retailer from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
 
 async def get_player_by_type(world_state, parameter_set, player_type, group):
     '''
