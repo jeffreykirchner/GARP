@@ -874,6 +874,9 @@ class SubjectUpdatesMixin():
         logger = logging.getLogger(__name__) 
         # logger.info("end_game_steal_choice")
 
+        status = "success"
+        error_message = ""
+
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
         session_player = self.world_state_local["session_players"][str(player_id)]
@@ -895,6 +898,34 @@ class SubjectUpdatesMixin():
         elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
             if group["end_game_choice_part_1"]:
                 group["end_game_mode"] = EndGameChoices.NO_PRICE
+
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "show_end_game_choice_steal" : group["show_end_game_choice_steal"],
+                  "show_end_game_choice_no_price" : group["show_end_game_choice_no_price"],
+                  "end_game_choice_part_1" : group["end_game_choice_part_1"],
+                  "end_game_choice_part_2" : group["end_game_choice_part_2"],
+                  "end_game_mode" : group["end_game_mode"],
+                  "session_player_id" : player_id}
+
+        
+        if status == "success":
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=event_data))
+
+        
+        if status == "fail":
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=group["members"])
 
 
     

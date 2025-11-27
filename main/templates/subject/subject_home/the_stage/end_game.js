@@ -111,3 +111,24 @@ end_game_no_price_no: function end_game_no_price_no()
 {
 
 },
+
+/**
+ * take result of end game choice
+ */
+take_end_game_choice_result: function take_end_game_choice_result(data)
+{
+
+    if(data.status == "fail")
+    {
+        app.working = false;
+        app.show_alert("Error", result.error_message);
+        return;
+    }
+
+    let group = app.session.world_state.groups[app.current_group];
+
+    group.end_game_choice_part_1 = data.end_game_choice_part_1;
+    group.end_game_choice_part_2 = data.end_game_choice_part_2;
+
+    app.working = false;
+}
