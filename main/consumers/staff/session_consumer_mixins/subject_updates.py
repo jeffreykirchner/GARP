@@ -485,7 +485,8 @@ class SubjectUpdatesMixin():
                     
                     if status == "success":
                         session_player["apples"] += 1
-                        session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
+                        if group["end_game_mode"] == EndGameChoices.OFF:
+                            session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
                         group["apple_tray_inventory"] -= 1
 
                 elif event_data["fruit_type"] == "orange":
@@ -498,7 +499,8 @@ class SubjectUpdatesMixin():
 
                     if status == "success":
                         session_player["oranges"] += 1
-                        session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
+                        if group["end_game_mode"] == EndGameChoices.OFF:
+                            session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
                         group["orange_tray_inventory"] -= 1
                 
                 #raise checkout barrier when retailer takes fruit from tray

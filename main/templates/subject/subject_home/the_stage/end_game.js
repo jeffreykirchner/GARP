@@ -56,14 +56,13 @@ end_game_steal_yes: function end_game_steal_yes()
     
     let group = app.session.world_state.groups[app.current_group];
 
-    if(!group.end_game_choice_steal_part_1)
+    if(!group.end_game_choice_part_1)
     {
-        group.end_game_choice_steal_part_1 = true;
+        group.end_game_choice_part_1 = true;
     }
     else
     {
-        group.end_game_choice_steal_part_2 = true;
-
+        group.end_game_choice_part_2 = true;
         app.working = true;
         app.send_message("end_game_choice", 
                         {"end_game_choice_part_1" : group.end_game_choice_part_1, 
@@ -79,13 +78,13 @@ end_game_steal_yes: function end_game_steal_yes()
  */
 end_game_steal_no: function end_game_steal_no()
 {
-    if(!group.end_game_choice_steal_part_1)
+    if(!group.end_game_choice_part_1)
     {
-        group.end_game_choice_steal_part_1 = false;
+        group.end_game_choice_part_1 = false;
     }
     else
     {
-        group.end_game_choice_steal_part_2 = false;
+        group.end_game_choice_part_2 = false;
     }
 
     app.working = true;
@@ -115,7 +114,7 @@ end_game_no_price_no: function end_game_no_price_no()
 /**
  * take result of end game choice
  */
-take_end_game_choice_result: function take_end_game_choice_result(data)
+take_update_end_game_choice : function take_update_end_game_choice (data)
 {
 
     if(data.status == "fail")
@@ -130,5 +129,10 @@ take_end_game_choice_result: function take_end_game_choice_result(data)
     group.end_game_choice_part_1 = data.end_game_choice_part_1;
     group.end_game_choice_part_2 = data.end_game_choice_part_2;
 
+    group.show_end_game_choice_no_price = data.show_end_game_choice_no_price;
+    group.show_end_game_choice_steal = data.show_end_game_choice_steal;
+
+    group.end_game_mode = data.end_game_mode;
+
     app.working = false;
-}
+},
