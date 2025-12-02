@@ -25,7 +25,23 @@ show_end_game_steal_part_1: function show_end_game_steal_part_1()
 
     let group = app.session.world_state.groups[app.current_group];
 
-    if(group["end_game_choice_part_1"] === null)
+    if(group.end_game_choice_part_1 === null)
+        return true;
+
+    return false;
+},
+
+/**
+ * show end game steal part 2 information
+ */
+show_end_game_steal_part_2_info: function show_end_game_steal_part_2_info()
+{
+    if(!app.session) return false;
+    if(!app.session.started) return false;
+
+    let group = app.session.world_state.groups[app.current_group];
+
+    if(group.end_game_choice_part_1)
         return true;
 
     return false;
@@ -78,21 +94,23 @@ end_game_steal_yes: function end_game_steal_yes()
  */
 end_game_steal_no: function end_game_steal_no()
 {
-    if(!group.end_game_choice_part_1)
+    let group = app.session.world_state.groups[app.current_group];
+
+    if(group.end_game_choice_part_1 === null)
     {
         group.end_game_choice_part_1 = false;
     }
     else
     {
         group.end_game_choice_part_2 = false;
+    
+        app.working = true;
+        app.send_message("end_game_choice", 
+                        {"end_game_choice_part_1" : group.end_game_choice_part_1, 
+                        "end_game_choice_part_2" : group.end_game_choice_part_2
+                        },
+                        "group");
     }
-
-    app.working = true;
-    app.send_message("end_game_choice", 
-                    {"end_game_choice_part_1" : group.end_game_choice_part_1, 
-                     "end_game_choice_part_2" : group.end_game_choice_part_2
-                    },
-                    "group");
 },
 
 /**
@@ -116,15 +134,27 @@ end_game_no_price_no: function end_game_no_price_no()
  */
 take_update_end_game_choice : function take_update_end_game_choice (data)
 {
+    let session_player_id = data.session_player_id;
+    let group = app.session.world_state.groups[app.current_group];
 
-    if(data.status == "fail")
+    if(app.is_subject && session_player_id == app.session_player.id)
     {
         app.working = false;
-        app.show_alert("Error", result.error_message);
-        return;
-    }
+        if(data.value == "fail")
+        {
+            let current_location = app.session.world_state.session_players[app.session_player.id].current_location;
 
-    let group = app.session.world_state.groups[app.current_group];
+            app.add_text_emitters("Error: " + data.error_message, 
+                    current_location.x, 
+                    current_location.y,
+                    current_location.x,
+                    current_location.y-100,
+                    0xFFFFFF,
+                    28,
+                    null)
+            return;
+        }
+    }
 
     group.end_game_choice_part_1 = data.end_game_choice_part_1;
     group.end_game_choice_part_2 = data.end_game_choice_part_2;
@@ -133,6 +163,10 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
     group.show_end_game_choice_steal = data.show_end_game_choice_steal;
 
     group.end_game_mode = data.end_game_mode;
+    group.barriers[group.exit_barrier].enabled = data.exit_barrier_enabled;
 
-    app.working = false;
+    if(app.is_player_in_group(session_player_id))
+    {
+        app.update_barriers();
+    }
 },

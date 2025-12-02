@@ -289,6 +289,9 @@ class Session(models.Model):
                 elif i.info == 'Checkout':
                     group["checkout_barrier"] = i.id
                     group["barriers"][str(i.id)] = {"enabled":False}
+                elif i.info == 'Exit':
+                    group["exit_barrier"] = i.id
+                    group["barriers"][str(i.id)] = {"enabled":False}
 
         parameter_set  = self.parameter_set.json_for_session
 

@@ -12,9 +12,11 @@
             Are you interested learning about how to take fruit without paying for it?
         </div>       
         <div v-else>
-            If you wish to enable this, you can pick up [[get_max_fruit()]] pieces of fruit without paying for them.
-            <br><br>
-            Would you like to do this?
+            <span v-if="show_end_game_steal_part_2_info()">
+                You can pick up [[get_max_fruit()]] pieces of fruit and proceed directly to consumer without paying for them.
+                <br><br>
+            </span>
+            Would you like to steal?
         </div>        
     </div>
 </div>

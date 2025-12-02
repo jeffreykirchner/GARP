@@ -198,6 +198,21 @@ register_double_click: function register_double_click()
         let world_state = app.session.world_state;
         let session_player = world_state.session_players[app.session_player.id];
 
+        let group = world_state.groups[app.current_group];
+
+        if(group.end_game_mode == "Steal")
+        {
+            app.add_text_emitters("Error: Pick up fruit and proceed directly to the consumer.",
+                            session_player.current_location.x,
+                            session_player.current_location.y,
+                            session_player.current_location.x,
+                            session_player.current_location.y-100,
+                            0xFFFFFF,
+                            28,
+                            null);
+            return;
+        }
+
         wholesaler_position = wholesaler.current_location;
         if(wholesaler.id == app.session_player.id)
         {
