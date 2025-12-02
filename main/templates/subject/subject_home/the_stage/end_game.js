@@ -107,7 +107,7 @@ end_game_steal_no: function end_game_steal_no()
         app.working = true;
         app.send_message("end_game_choice", 
                         {"end_game_choice_part_1" : group.end_game_choice_part_1, 
-                        "end_game_choice_part_2" : group.end_game_choice_part_2
+                         "end_game_choice_part_2" : group.end_game_choice_part_2
                         },
                         "group");
     }
