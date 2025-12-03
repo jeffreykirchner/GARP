@@ -244,7 +244,13 @@ class Session(models.Model):
             group["end_game_choice_part_1"] = None
             group["end_game_choice_part_2"] = None
             group["show_end_game_choice_no_price"] = False
-            group["end_game_mode"] = EndGameChoices.OFF
+
+            if self.parameter_set.end_game_choice == EndGameChoices.NO_PRICE and \
+               self.parameter_set.parameter_set_periods.count() == 1:
+                group["end_game_mode"] = EndGameChoices.NO_PRICE
+            else:
+                group["end_game_mode"] = EndGameChoices.OFF
+
             group["results"] = {}
 
         #session players

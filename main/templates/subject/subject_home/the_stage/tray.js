@@ -195,8 +195,16 @@ update_tray_labels: function update_tray_labels()
         }
     }
 
-    pixi_tray_apple.label_price.text = buy_sell_text + parameter_set_period.wholesale_apple_price + "¢ / Apple";
-    pixi_tray_orange.label_price.text = buy_sell_text + parameter_set_period.wholesale_orange_price + "¢ / Orange";
+    if(app.get_end_game_mode() === "No Price")
+    {
+        pixi_tray_apple.label_price.text = buy_sell_text + "??? / Apple";
+        pixi_tray_orange.label_price.text = buy_sell_text + "??? / Orange";
+    }
+    else
+    {
+        pixi_tray_apple.label_price.text = buy_sell_text + parameter_set_period.wholesale_apple_price + "¢ / Apple";
+        pixi_tray_orange.label_price.text = buy_sell_text + parameter_set_period.wholesale_orange_price + "¢ / Orange";
+    }
 
     //set alpha of of apple not in tray to 50%
     let world_state = app.session.world_state;

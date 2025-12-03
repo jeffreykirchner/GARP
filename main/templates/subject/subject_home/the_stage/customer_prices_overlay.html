@@ -38,7 +38,10 @@
 
 <div class="row justify-content-center mt-2">
     <div class="col-md-auto fw-bold">        
-        Remaining Budget: [[get_remaining_budget()]]¢
+        Remaining Budget: 
+        <span v-if="get_end_game_mode() === 'No Price'">???</span>
+        <span v-else>[[get_remaining_budget()]]¢</span>
+        
     </div>
 </div>
 

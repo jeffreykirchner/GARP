@@ -172,7 +172,14 @@ update_register_labels: function update_register_labels()
         }
         else
         {
-            pixi_register.label.text = "Total: " + total_cost + "¢";
+            if(app.get_end_game_mode() === "No Price")
+            {
+                pixi_register.label.text = "Total: ???";
+            }
+            else
+            {
+                pixi_register.label.text = "Total: " + total_cost + "¢";
+            }
         }
     }
 },

@@ -470,7 +470,7 @@ class SubjectUpdatesMixin():
 
                 elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
                     if group["show_end_game_choice_no_price"] == False and \
-                       group["end_game_choice_no_part_1"] is None:
+                       group["end_game_choice_part_1"] is None:
 
                         group["show_end_game_choice_no_price"] = True
 
@@ -821,6 +821,11 @@ class SubjectUpdatesMixin():
                 #setup next period
                 group["current_period"] += 1
                 group["time_remaining"] = 0
+
+                #check if last period and no price end game choice
+                if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
+                    if parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                        group["end_game_mode"] = EndGameChoices.NO_PRICE
                 
                 world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set, parameter_set_player["parameter_set_group"])
             else:
@@ -838,6 +843,7 @@ class SubjectUpdatesMixin():
                 "session_players" : world_state["session_players"],
                 "barriers" : group["barriers"],
                 "complete" : group["complete"],
+                "end_game_mode" : group["end_game_mode"],
                 "current_period" : group["current_period"]}
     
         if status == "fail":
