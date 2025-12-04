@@ -118,7 +118,16 @@ end_game_steal_no: function end_game_steal_no()
  */
 end_game_no_price_yes: function end_game_no_price_yes()
 {
+    let group = app.session.world_state.groups[app.current_group];
 
+    group.end_game_choice_part_1 = true;
+
+    app.working = true;
+    app.send_message("end_game_choice", 
+                    {"end_game_choice_part_1" : group.end_game_choice_part_1, 
+                     "end_game_choice_part_2" : group.end_game_choice_part_2
+                    },
+                    "group");
 },
 
 /**
@@ -126,7 +135,16 @@ end_game_no_price_yes: function end_game_no_price_yes()
  */
 end_game_no_price_no: function end_game_no_price_no()
 {
+    let group = app.session.world_state.groups[app.current_group];
+    
+    group.end_game_choice_part_1 = false;
 
+    app.working = true;
+    app.send_message("end_game_choice", 
+                    {"end_game_choice_part_1" : group.end_game_choice_part_1, 
+                     "end_game_choice_part_2" : group.end_game_choice_part_2
+                    },
+                    "group");
 },
 
 /**
@@ -168,5 +186,7 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
     if(app.is_player_in_group(session_player_id))
     {
         app.update_barriers();
+        app.update_tray_labels();
+        app.update_register_labels();
     }
 },

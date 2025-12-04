@@ -473,39 +473,39 @@ class SubjectUpdatesMixin():
                        group["end_game_choice_part_1"] is None:
 
                         group["show_end_game_choice_no_price"] = True
+            else:
+                if status == "success" and not group["show_end_game_choice_steal"]:    
+                    if event_data["fruit_type"] == "apple":
+                        if group["apple_tray_inventory"] <= 0:
+                            status = "fail"
+                            error_message = "No apples on tray."
+                        elif session_player["budget"] < parameter_set_period["wholesale_apple_price"]:
+                            status = "fail"
+                            error_message = "Insufficient budget."
+                        
+                        if status == "success":
+                            session_player["apples"] += 1
+                            if group["end_game_mode"] == EndGameChoices.OFF:
+                                session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
+                            group["apple_tray_inventory"] -= 1
 
-            if status == "success" and not group["show_end_game_choice_steal"]:    
-                if event_data["fruit_type"] == "apple":
-                    if group["apple_tray_inventory"] <= 0:
-                        status = "fail"
-                        error_message = "No apples on tray."
-                    elif session_player["budget"] < parameter_set_period["wholesale_apple_price"]:
-                        status = "fail"
-                        error_message = "Insufficient budget."
+                    elif event_data["fruit_type"] == "orange":
+                        if group["orange_tray_inventory"] <= 0:
+                            status = "fail"
+                            error_message = "No oranges on tray."
+                        elif session_player["budget"] < parameter_set_period["wholesale_orange_price"]:
+                            status = "fail"
+                            error_message = "Insufficient budget."
+
+                        if status == "success":
+                            session_player["oranges"] += 1
+                            if group["end_game_mode"] == EndGameChoices.OFF:
+                                session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
+                            group["orange_tray_inventory"] -= 1
                     
-                    if status == "success":
-                        session_player["apples"] += 1
-                        if group["end_game_mode"] == EndGameChoices.OFF:
-                            session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
-                        group["apple_tray_inventory"] -= 1
-
-                elif event_data["fruit_type"] == "orange":
-                    if group["orange_tray_inventory"] <= 0:
-                        status = "fail"
-                        error_message = "No oranges on tray."
-                    elif session_player["budget"] < parameter_set_period["wholesale_orange_price"]:
-                        status = "fail"
-                        error_message = "Insufficient budget."
-
-                    if status == "success":
-                        session_player["oranges"] += 1
-                        if group["end_game_mode"] == EndGameChoices.OFF:
-                            session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
-                        group["orange_tray_inventory"] -= 1
-                
-                #raise checkout barrier when retailer takes fruit from tray
-                if group["end_game_mode"] != EndGameChoices.STEAL:
-                    group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
+                    #raise checkout barrier when retailer takes fruit from tray
+                    if group["end_game_mode"] != EndGameChoices.STEAL:
+                        group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
 
         if status == "success":
             self.session_events.append(SessionEvent(session_id=self.session_id,
@@ -907,7 +907,7 @@ class SubjectUpdatesMixin():
 
         elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
             if group["end_game_choice_part_1"]:
-                group["end_game_mode"] = EndGameChoices.NO_PRICE
+                group["end_game_mode"] = EndGameChoices.OFF
 
         result = {"value" : status,
                   "error_message" : error_message,
