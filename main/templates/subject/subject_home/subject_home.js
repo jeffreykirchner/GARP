@@ -87,6 +87,7 @@ let app = Vue.createApp({
 
                     //current group
                     current_group : null,
+                    
                 }},
     methods: {
 
@@ -187,6 +188,9 @@ let app = Vue.createApp({
                     break;
                 case "update_sell_to_consumer":
                     app.take_update_sell_to_consumer(message_data);
+                    break;
+                case "update_end_game_choice":
+                    app.take_update_end_game_choice(message_data);
                     break;
             }
 
@@ -552,6 +556,8 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/tray.js"%}
         {%include "subject/subject_home/the_stage/register.js"%}
         {%include "subject/subject_home/the_stage/consumer.js"%}
+        {%include "subject/subject_home/the_stage/end_game.js"%}
+        
         
 
         /** clear form error messages

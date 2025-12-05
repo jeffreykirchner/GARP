@@ -326,3 +326,14 @@ get_player_by_type: function get_player_by_type(player_type){
 
     return null;
 },
+
+/**
+ * get end game mode
+ */
+get_end_game_mode: function get_end_game_mode(){
+    if(!app.first_load_done) return null;
+    if(!app.session.started) return null;
+
+    let group = app.session.world_state.groups[app.current_group];
+    return group.end_game_mode;
+},

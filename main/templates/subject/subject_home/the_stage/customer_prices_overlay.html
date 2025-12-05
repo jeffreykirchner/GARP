@@ -38,15 +38,18 @@
 
 <div class="row justify-content-center mt-2">
     <div class="col-md-auto fw-bold">        
-        Remaining Budget: [[get_remaining_budget()]]¢
+        Remaining Budget: 
+        <span v-if="get_end_game_mode() === 'No Price'">???</span>
+        <span v-else>[[get_remaining_budget()]]¢</span>
+        
     </div>
 </div>
 
-<div class="row justify-content-center mt-1">
+<!-- <div class="row justify-content-center mt-1">
     <div class="col-md-auto fw-bold">        
         Max Total Fruit: [[get_max_fruit()]]
     </div>
-</div>
+</div> -->
 
 <div class="row justify-content-center mt-2">
     <div class="col-md-auto">

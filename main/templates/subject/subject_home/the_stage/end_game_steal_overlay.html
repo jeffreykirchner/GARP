@@ -1,0 +1,43 @@
+{% load static %}
+
+<div class="row">
+    <div class="col text-center fw-bold mb-2 fs-4">        
+        Please answer the following question
+    </div>
+</div>
+
+<div class="row justify-content-center mb-3">
+    <div class="col text-center fs-5"> 
+        <div v-if="show_end_game_steal_part_1()">
+            Are you interested learning about how to take fruit without paying for it?
+        </div>       
+        <div v-else>
+            <span v-if="show_end_game_steal_part_2_info()">
+                You can pick up [[get_max_fruit()]] pieces of fruit and proceed directly to consumer without paying for them.
+                <br><br>
+            </span>
+            Would you like to steal?
+        </div>        
+    </div>
+</div>
+
+<div class="row justify-content-center mt-2">
+    <div class="col-md-auto">
+        
+        <button class="btn btn-success me-4 btn-lg" 
+                v-on:click="end_game_steal_yes()" 
+                v-bind:disabled="reconnecting || working"                
+                title="Would you like to steal? Yes.">
+            Yes <i class="fas fa-check"></i>
+        </button>
+
+        <button class="btn btn-danger btn-lg" 
+                v-on:click="end_game_steal_no()" 
+                v-bind:disabled="reconnecting || working"               
+                title="Would you like to steal? No.">
+            No <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+  

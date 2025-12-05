@@ -185,6 +185,7 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     group.current_period = data.current_period;
     group.barriers = data.barriers;
     group.complete = data.complete;
+    group.end_game_mode = data.end_game_mode;
 
     for(let i in world_state.session_players)
     {

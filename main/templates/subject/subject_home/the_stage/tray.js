@@ -195,8 +195,16 @@ update_tray_labels: function update_tray_labels()
         }
     }
 
-    pixi_tray_apple.label_price.text = buy_sell_text + parameter_set_period.wholesale_apple_price + "¢ / Apple";
-    pixi_tray_orange.label_price.text = buy_sell_text + parameter_set_period.wholesale_orange_price + "¢ / Orange";
+    if(app.get_end_game_mode() === "No Price")
+    {
+        pixi_tray_apple.label_price.text = buy_sell_text + "??? / Apple";
+        pixi_tray_orange.label_price.text = buy_sell_text + "??? / Orange";
+    }
+    else
+    {
+        pixi_tray_apple.label_price.text = buy_sell_text + parameter_set_period.wholesale_apple_price + "¢ / Apple";
+        pixi_tray_orange.label_price.text = buy_sell_text + parameter_set_period.wholesale_orange_price + "¢ / Orange";
+    }
 
     //set alpha of of apple not in tray to 50%
     let world_state = app.session.world_state;
@@ -232,6 +240,10 @@ tray_apple_double_click: function tray_apple_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+
+    //check if end game overlay is showing
+    if(app.showing_end_game_steal_overlay) return;
+    if(app.showing_end_game_no_price_overlay) return;
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_tray_apple.rect;
@@ -274,6 +286,10 @@ tray_orange_double_click: function tray_orange_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
+
+    //check if end game overlay is showing
+    if(app.show_end_game_steal_overlay()) return;
+    if(app.show_end_game_no_price_overlay()) return;
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_tray_orange.rect;
@@ -346,100 +362,108 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         }
     }
 
-    //show notices
-    if(app.is_subject && 
-        parameter_set_player.id_label == "R" && 
-        parameter_set_player_local.id_label == "W")
+    group["show_end_game_choice_steal"] = data.show_end_game_choice_steal;
+    group["show_end_game_choice_no_price"] = data.show_end_game_choice_no_price;
+
+    if(!group["show_end_game_choice_steal"] &&
+       !group["show_end_game_choice_no_price"])
     {
-        app.remove_all_notices();
-        app.add_notice("Move to the register for checkout.", world_state.current_period+1, 1)
-    }
-
-    session_player.apples = data.session_player_apples;
-    session_player.oranges = data.session_player_oranges;
-    session_player.budget = data.session_player_budget;
-
-    let source_location={x:0, y:0};
-    let target_location={x:0, y:0};
-    let source_tex = null;
-
-    if(parameter_set_player.id_label == "W")
-    {
-        //wholesaler move fruit to tray
-        if(data.fruit_type == "apple")
-        {
-            let location = app.session.parameter_set.apple_tray_location.split(",");
-            target_location.x = parseInt(location[0]) + pixi_tray_apple['container'].width/2;
-            target_location.y = parseInt(location[1]) + pixi_tray_apple['container'].height/2;
-            source_tex = app.pixi_textures['apple_tex'];
-        }
-        else if(data.fruit_type == "orange")
-        {
-            let location = app.session.parameter_set.orange_tray_location.split(",");
-            target_location.x = parseInt(location[0]) + pixi_tray_orange['container'].width/2;
-            target_location.y = parseInt(location[1]) + pixi_tray_orange['container'].height/2;
-            source_tex = app.pixi_textures['orange_tex'];
-        }
-
-        source_location = session_player.current_location;
-
        
-        if(app.is_subject &&
-           session_player.apples == 0 && 
-           session_player.oranges == 0)
+        //show notices
+        if(app.is_subject && 
+            parameter_set_player.id_label == "R" && 
+            parameter_set_player_local.id_label == "W")
         {
             app.remove_all_notices();
-            if(parameter_set_player_local.id_label == "W")
+            app.add_notice("Move to the register for checkout.", world_state.current_period+1, 1)
+        }
+
+        session_player.apples = data.session_player_apples;
+        session_player.oranges = data.session_player_oranges;
+        session_player.budget = data.session_player_budget;
+
+        let source_location={x:0, y:0};
+        let target_location={x:0, y:0};
+        let source_tex = null;
+
+        if(parameter_set_player.id_label == "W")
+        {
+            //wholesaler move fruit to tray
+            if(data.fruit_type == "apple")
             {
-                app.add_notice("Please wait.", world_state.current_period+1, 1)
+                let location = app.session.parameter_set.apple_tray_location.split(",");
+                target_location.x = parseInt(location[0]) + pixi_tray_apple['container'].width/2;
+                target_location.y = parseInt(location[1]) + pixi_tray_apple['container'].height/2;
+                source_tex = app.pixi_textures['apple_tex'];
             }
-            else
+            else if(data.fruit_type == "orange")
             {
-                app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
-            }            
+                let location = app.session.parameter_set.orange_tray_location.split(",");
+                target_location.x = parseInt(location[0]) + pixi_tray_orange['container'].width/2;
+                target_location.y = parseInt(location[1]) + pixi_tray_orange['container'].height/2;
+                source_tex = app.pixi_textures['orange_tex'];
+            }
+
+            source_location = session_player.current_location;
+
+        
+            if(app.is_subject &&
+            session_player.apples == 0 && 
+            session_player.oranges == 0)
+            {
+                app.remove_all_notices();
+                if(parameter_set_player_local.id_label == "W")
+                {
+                    app.add_notice("Please wait.", world_state.current_period+1, 1)
+                }
+                else
+                {
+                    app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
+                }            
+            }
         }
-    }
-    else
-    {
-        //retailer move fruit from tray
-        if(data.fruit_type == "apple")
+        else
         {
-            let location = app.session.parameter_set.apple_tray_location.split(",");
-            source_location.x = parseInt(location[0]) + pixi_tray_apple['container'].width/2;
-            source_location.y = parseInt(location[1]) + pixi_tray_apple['container'].height/2;
-            source_tex = app.pixi_textures['apple_tex'];
+            //retailer move fruit from tray
+            if(data.fruit_type == "apple")
+            {
+                let location = app.session.parameter_set.apple_tray_location.split(",");
+                source_location.x = parseInt(location[0]) + pixi_tray_apple['container'].width/2;
+                source_location.y = parseInt(location[1]) + pixi_tray_apple['container'].height/2;
+                source_tex = app.pixi_textures['apple_tex'];
+            }
+            else if(data.fruit_type == "orange")
+            {
+                let location = app.session.parameter_set.orange_tray_location.split(",");
+                source_location.x = parseInt(location[0]) + pixi_tray_orange['container'].width/2;
+                source_location.y = parseInt(location[1]) + pixi_tray_orange['container'].height/2;
+                source_tex = app.pixi_textures['orange_tex'];
+            }
+
+            target_location = session_player.current_location;
         }
-        else if(data.fruit_type == "orange")
+
+        if(app.is_player_in_group(session_player_id))
         {
-            let location = app.session.parameter_set.orange_tray_location.split(",");
-            source_location.x = parseInt(location[0]) + pixi_tray_orange['container'].width/2;
-            source_location.y = parseInt(location[1]) + pixi_tray_orange['container'].height/2;
-            source_tex = app.pixi_textures['orange_tex'];
+            let elements = [];
+            let element = {source_change: "-",
+                        target_change: "+", 
+                        texture:source_tex,
+                        }
+            elements.push(element);
+            app.add_transfer_beam(source_location, 
+                                target_location,
+                                elements,
+                                false,
+                                true);
         }
+        
+        group.apple_tray_inventory = data.apple_tray_inventory;
+        group.orange_tray_inventory = data.orange_tray_inventory;
 
-        target_location = session_player.current_location;
+        group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
+        group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
     }
-
-    if(app.is_player_in_group(session_player_id))
-    {
-        let elements = [];
-        let element = {source_change: "-",
-                    target_change: "+", 
-                    texture:source_tex,
-                    }
-        elements.push(element);
-        app.add_transfer_beam(source_location, 
-                            target_location,
-                            elements,
-                            false,
-                            true);
-    }
-    
-    group.apple_tray_inventory = data.apple_tray_inventory;
-    group.orange_tray_inventory = data.orange_tray_inventory;
-
-    group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
-    group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
 
     if(app.is_player_in_group(session_player_id))
     {

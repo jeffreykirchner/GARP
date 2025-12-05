@@ -13,6 +13,7 @@ from main.models import Session
 from main.models import SessionEvent
 
 from main.globals import ExperimentPhase
+from main.globals import EndGameChoices
 
 import main
 
@@ -459,7 +460,24 @@ class SubjectUpdatesMixin():
                     status = "fail"
                     error_message = "You have reached the maximum fruit limit."
 
-            if status == "success":    
+            #check if retailer has needs to answer end game questions
+            if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
+                if parameter_set["end_game_choice"] == EndGameChoices.STEAL:
+                    if group["show_end_game_choice_steal"] == False and \
+                       group["end_game_choice_part_1"] is None:
+
+                        group["show_end_game_choice_steal"] = True
+
+                elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                    if group["show_end_game_choice_no_price"] == False and \
+                       group["end_game_choice_part_1"] is None:
+
+                        group["show_end_game_choice_no_price"] = True
+      
+            if status == "success" and \
+               not group["show_end_game_choice_steal"] and \
+               not group["show_end_game_choice_no_price"]:  
+                  
                 if event_data["fruit_type"] == "apple":
                     if group["apple_tray_inventory"] <= 0:
                         status = "fail"
@@ -470,7 +488,8 @@ class SubjectUpdatesMixin():
                     
                     if status == "success":
                         session_player["apples"] += 1
-                        session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
+                        if group["end_game_mode"] == EndGameChoices.OFF:
+                            session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
                         group["apple_tray_inventory"] -= 1
 
                 elif event_data["fruit_type"] == "orange":
@@ -483,11 +502,13 @@ class SubjectUpdatesMixin():
 
                     if status == "success":
                         session_player["oranges"] += 1
-                        session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
+                        if group["end_game_mode"] == EndGameChoices.OFF:
+                            session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
                         group["orange_tray_inventory"] -= 1
                 
                 #raise checkout barrier when retailer takes fruit from tray
-                group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
+                if group["end_game_mode"] != EndGameChoices.STEAL:
+                    group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
 
         if status == "success":
             self.session_events.append(SessionEvent(session_id=self.session_id,
@@ -507,6 +528,8 @@ class SubjectUpdatesMixin():
                   "retailer_barrier_up" : group["barriers"][str(group["retailer_barrier"])]["enabled"],
                   "checkout_barrier_up" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
                   "fruit_type" : event_data["fruit_type"],
+                  "show_end_game_choice_steal" : group["show_end_game_choice_steal"],
+                  "show_end_game_choice_no_price" : group["show_end_game_choice_no_price"],
                   "session_player_id" : player_id}
         
         if status == "fail":
@@ -801,6 +824,11 @@ class SubjectUpdatesMixin():
                 #setup next period
                 group["current_period"] += 1
                 group["time_remaining"] = 0
+
+                #check if last period and no price end game choice
+                if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
+                    if parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                        group["end_game_mode"] = EndGameChoices.NO_PRICE
                 
                 world_state = await sync_to_async(session.setup_next_period)(world_state, parameter_set, parameter_set_player["parameter_set_group"])
             else:
@@ -818,6 +846,7 @@ class SubjectUpdatesMixin():
                 "session_players" : world_state["session_players"],
                 "barriers" : group["barriers"],
                 "complete" : group["complete"],
+                "end_game_mode" : group["end_game_mode"],
                 "current_period" : group["current_period"]}
     
         if status == "fail":
@@ -846,6 +875,83 @@ class SubjectUpdatesMixin():
         if event_data["value"] == "success":
             await self.send_message(message_to_self=event_data, message_to_group=None,
                                     message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    async def end_game_choice(self, event):
+        '''
+        end game choice by retailer from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("end_game_steal_choice")
+
+        status = "success"
+        error_message = ""
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set = self.parameter_set_local
+        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+
+        group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
+        group["end_game_choice_part_2"] = event_data["end_game_choice_part_2"]
+
+        group["show_end_game_choice_steal"] = False
+        group["show_end_game_choice_no_price"] = False
+
+        if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
+           if group["end_game_choice_part_2"]:
+               group["end_game_mode"] = EndGameChoices.STEAL
+               group["barriers"][str(group["exit_barrier"])]["enabled"] = True
+
+        elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+            if group["end_game_choice_part_1"]:
+                group["end_game_mode"] = EndGameChoices.OFF
+
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "show_end_game_choice_steal" : group["show_end_game_choice_steal"],
+                  "show_end_game_choice_no_price" : group["show_end_game_choice_no_price"],
+                  "end_game_choice_part_1" : group["end_game_choice_part_1"],
+                  "end_game_choice_part_2" : group["end_game_choice_part_2"],
+                  "end_game_mode" : group["end_game_mode"],
+                  "exit_barrier_enabled" : group["barriers"][str(group["exit_barrier"])]["enabled"],
+                  "session_player_id" : player_id}
+
+        
+        if status == "success":
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=event_data))
+
+        
+        if status == "fail":
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=group["members"])
+
+
+    
+    async def update_end_game_choice(self, event):
+        '''
+        update end game choice by retailer from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
 
 async def get_player_by_type(world_state, parameter_set, player_type, group):
     '''

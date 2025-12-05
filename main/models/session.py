@@ -34,6 +34,7 @@ from main.models import ParameterSet
 
 from main.globals import ExperimentPhase
 from main.globals import round_up
+from main.globals import EndGameChoices
 
 #experiment sessoin
 class Session(models.Model):
@@ -239,6 +240,17 @@ class Session(models.Model):
             group["time_remaining"] = 0
             group["current_period"] = 1
             group["barriers"] = {}
+            group["show_end_game_choice_steal"] = False
+            group["end_game_choice_part_1"] = None
+            group["end_game_choice_part_2"] = None
+            group["show_end_game_choice_no_price"] = False
+
+            if self.parameter_set.end_game_choice == EndGameChoices.NO_PRICE and \
+               self.parameter_set.parameter_set_periods.count() == 1:
+                group["end_game_mode"] = EndGameChoices.NO_PRICE
+            else:
+                group["end_game_mode"] = EndGameChoices.OFF
+
             group["results"] = {}
 
         #session players
@@ -282,6 +294,9 @@ class Session(models.Model):
                     group["retailer_barrier"] = i.id
                 elif i.info == 'Checkout':
                     group["checkout_barrier"] = i.id
+                    group["barriers"][str(i.id)] = {"enabled":False}
+                elif i.info == 'Exit':
+                    group["exit_barrier"] = i.id
                     group["barriers"][str(i.id)] = {"enabled":False}
 
         parameter_set  = self.parameter_set.json_for_session
@@ -526,24 +541,34 @@ class Session(models.Model):
 
             writer = csv.writer(output)
 
-            writer.writerow(['Session', 'Date', 'Player', 'Name', 'Student ID', 'Earnings'])
+            writer.writerow(['Session', 'Date', 'Player', 'Name', 'Student ID', 'Earnings', 'Endgame Choice Part 1', 'Endgame Choice Part 2'])
 
             # session_players = self.session_players.all()
 
             # for p in session_players:
             #     writer.writerow([self.id, self.get_start_date_string(), p.player_number,p.name, p.student_id, p.earnings/100])
 
+            world_state = self.world_state
+
             parameter_set_players = {}
-            for i in self.session_players.all().values('id', 'player_number', 'name', 'student_id'):
+            for i in self.session_players.all().values('id', 
+                                                       'player_number', 
+                                                       'name', 
+                                                       'student_id', 
+                                                       'parameter_set_player__parameter_set_group__id',
+                                                       'parameter_set_player__id_label' ):
                 parameter_set_players[str(i['id'])] = i
 
-            for p in self.world_state["session_players"]:
+            for p in world_state["session_players"]:
+                group = world_state["groups"][str(parameter_set_players[p]["parameter_set_player__parameter_set_group__id"])]
                 writer.writerow([self.id,
                                  self.get_start_date_string(),
                                  parameter_set_players[p]["player_number"],
                                  parameter_set_players[p]["name"],
                                  parameter_set_players[p]["student_id"],
-                                 self.world_state["session_players"][p]["earnings"]])
+                                 self.world_state["session_players"][p]["earnings"],
+                                 group["end_game_choice_part_1"] if parameter_set_players[p]["parameter_set_player__id_label"] == "R" else "",
+                                 group["end_game_choice_part_2"] if parameter_set_players[p]["parameter_set_player__id_label"] == "R" else ""] )
 
             v = output.getvalue()
             output.close()

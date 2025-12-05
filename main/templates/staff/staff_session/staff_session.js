@@ -233,6 +233,9 @@ let app = Vue.createApp({
                 case "update_sell_to_consumer":
                     app.take_update_sell_to_consumer(message_data);
                     break;
+                case "update_end_game_choice":
+                    app.take_update_end_game_choice(message_data);
+                    break;
             }
             app.working = false;
             app.process_the_feed(message_type, message_data);

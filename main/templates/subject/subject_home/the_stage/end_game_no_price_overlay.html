@@ -1,0 +1,35 @@
+{% load static %}
+
+<div class="row">
+    <div class="col text-center fw-bold mb-2 fs-4">        
+        Please answer the following question
+    </div>
+</div>
+
+<div class="row justify-content-center mb-3">
+    <div class="col text-center fs-5"> 
+        The prices of fruit and your budget are hidden, but still in affect.<br>
+        Would you like to reveal them?
+    </div>
+</div>
+
+<div class="row justify-content-center mt-2">
+    <div class="col-md-auto">
+        
+        <button class="btn btn-success me-4 btn-lg" 
+                v-on:click="end_game_no_price_yes()" 
+                v-bind:disabled="reconnecting || working"                
+                title="Would you like to reveal prices? Yes.">
+            Yes <i class="fas fa-check"></i>
+        </button>
+
+        <button class="btn btn-danger btn-lg" 
+                v-on:click="end_game_no_price_no()" 
+                v-bind:disabled="reconnecting || working"               
+                title="Would you like to reveal prices? No.">
+            No <i class="fas fa-times"></i>
+        </button>
+    </div>
+</div>
+
+  
