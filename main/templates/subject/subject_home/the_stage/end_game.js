@@ -190,3 +190,11 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
         app.update_register_labels();
     }
 },
+
+/**
+ * end game notice ok
+ */
+end_game_notice_ok: function end_game_notice_ok()
+{
+    app.end_game_notice_visible = false;
+},

@@ -64,6 +64,13 @@
                     {%include "subject/subject_home/the_stage/end_game_no_price_overlay.html"%}
                 </div>
 
+                <div id="end_game_notice_overlay" 
+                     class="end_game_overlay"                     
+                     v-if="is_subject && 
+                           end_game_notice_visible">
+                    {%include "subject/subject_home/the_stage/end_game_notice_overlay.html"%}
+                </div>
+
                 <canvas class="field" 
                         key="sd_graph" 
                         id="sd_graph_id" 

@@ -464,6 +464,21 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
         group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
     }
+    else if(parameter_set_player_local.id_label == "W" && 
+            app.is_player_in_group(session_player_id))
+    {
+        //show end game notice to wholesaler
+        if(group["show_end_game_choice_steal"])
+        {
+            app.end_game_notice_visible = true;
+            app.end_game_notice_message = "The Retailer has the option to steal fruit from you without paying.<br>Please wait for them to make their choice.";
+        }
+        else if(group["show_end_game_choice_no_price"])
+        {
+            app.end_game_notice_visible = true;
+            app.end_game_notice_message = "Your prices to the Retailer are not visible but are in effect.<br>The Retailer is deciding whether to proceed without knowing your prices.<br>Please wait for them to make their choice.";
+        }   
+    }
 
     if(app.is_player_in_group(session_player_id))
     {

@@ -87,6 +87,10 @@ let app = Vue.createApp({
 
                     //current group
                     current_group : null,
+
+                    //end game notice
+                    end_game_notice_message : "",
+                    end_game_notice_visible : false,
                     
                 }},
     methods: {
