@@ -156,7 +156,7 @@ class Session(models.Model):
             session_player["apples"] = 0
             session_player["oranges"] = 0
             session_player["checkout"] = False
-            session_player["consumer"] = False
+            session_player["buyer"] = False
 
             if parameter_set_player["id_label"] == "W":
                 session_player["earnings"] += parameter_set_period["wholesaler_budget"]
@@ -267,7 +267,7 @@ class Session(models.Model):
             v['apples'] = 0
             v['oranges'] = 0
             v['checkout'] = False
-            v['consumer'] = False
+            v['buyer'] = False
             v['budget'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             v['id'] = i['id']
@@ -505,7 +505,7 @@ class Session(models.Model):
             return f'{data["prompt"]} | {strip_tags(data["response"])}'
         elif type == "harvest_fruit" or type == "tray_fruit":
             return data["fruit_type"]
-        elif type == "checkout" or type == "sell_to_consumer":
+        elif type == "checkout" or type == "sell_to_buyer":
             return f'Apples: {data["apples"]}, Oranges: {data["oranges"]}, Payment: {data["payment"]}'
         elif type == "help_doc":
             return data

@@ -732,9 +732,9 @@ class SubjectUpdatesMixin():
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
     
-    async def sell_to_consumer(self, event):
+    async def sell_to_buyer(self, event):
         '''
-        sell to consumer from subject screen
+        sell to buyer from subject screen
         '''
 
         if self.controlling_channel != self.channel_name:
@@ -764,13 +764,13 @@ class SubjectUpdatesMixin():
         #check if subject is a reseller
         if parameter_set_player["id_label"] != "R":
             status = "fail"
-            error_message = "Only resellers can sell to consumers."
+            error_message = "Only resellers can sell to buyers."
 
-        #check if subject has has already sold to consumer
+        #check if subject has has already sold to buyer
         if status == "success":
-            if session_player["consumer"]:
+            if session_player["buyer"]:
                 status = "fail"
-                error_message = "You have already sold to a consumer."
+                error_message = "You have already sold to a buyer."
 
         #check that subject has fruit to sell
         if status == "success":
@@ -791,7 +791,7 @@ class SubjectUpdatesMixin():
 
             group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
 
-            session_player["consumer"] = True
+            session_player["buyer"] = True
             
             session_period = await session.session_periods.aget(period_number=group["current_period"])
             period_summary_data = session_period.summary_data
@@ -865,9 +865,9 @@ class SubjectUpdatesMixin():
         #                             message_type=, send_to_client=False,
         #                             send_to_group=True)
 
-    async def update_sell_to_consumer(self, event):
+    async def update_sell_to_buyer(self, event):
         '''
-        sell to consumer from subject screen
+        sell to buyer from subject screen
         '''
 
         event_data = json.loads(event["group_data"])

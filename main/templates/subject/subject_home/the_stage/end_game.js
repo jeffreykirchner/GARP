@@ -72,7 +72,7 @@ end_game_steal_yes: function end_game_steal_yes()
     
     let group = app.session.world_state.groups[app.current_group];
 
-    if(!group.end_game_choice_part_1)
+    if(group.end_game_choice_part_1 === null)
     {
         group.end_game_choice_part_1 = true;
     }

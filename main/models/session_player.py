@@ -30,7 +30,7 @@ class SessionPlayer(models.Model):
 
     player_number = models.IntegerField(verbose_name='Player number', default=0)                        #player number, from 1 to N
     player_key = models.UUIDField(default=uuid.uuid4, editable=False, verbose_name = 'Player Key')      #login and channel key
-    connecting = models.BooleanField(default=False, verbose_name='Consumer is connecting')              #true when a consumer is connceting
+    connecting = models.BooleanField(default=False, verbose_name='Consumer is connecting')              #true when a buyer is connceting
     connected_count = models.IntegerField(verbose_name='Number of consumer connections', default=0)     #number of consumers connected to this subject
 
     name = models.CharField(verbose_name='Full Name', max_length = 100, default="", blank=True, null=True)              #subject's full name

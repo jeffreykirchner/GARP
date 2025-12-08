@@ -176,7 +176,7 @@ class InterfaceMixin():
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
         
     @check_message_for_me
-    async def update_sell_to_consumer(self, event):
+    async def update_sell_to_buyer(self, event):
 
         event_data = json.loads(event["group_data"])
 

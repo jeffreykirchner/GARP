@@ -209,7 +209,7 @@ register_double_click: function register_double_click()
 
         if(group.end_game_mode == "Steal")
         {
-            app.add_text_emitters("Error: Pick up fruit and proceed directly to the consumer.",
+            app.add_text_emitters("Error: Pick up fruit and proceed directly to the buyer.",
                             session_player.current_location.x,
                             session_player.current_location.y,
                             session_player.current_location.x,
@@ -313,7 +313,7 @@ take_update_checkout: function take_update_checkout(data)
         if(parameter_set_player_local.id_label == "R")
         {
             app.remove_all_notices();
-            app.add_notice("Move to the consumer.", group.current_period+1, 1)
+            app.add_notice("Move to the buyer.", group.current_period+1, 1)
         }
         else if(parameter_set_player_local.id_label == "W")
         {
