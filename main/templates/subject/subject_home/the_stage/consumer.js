@@ -75,7 +75,7 @@ update_consumer_label: function update_consumer_label()
     if(!app.session.started) return;
 
     let world_state = app.session.world_state;
-    let retailer_player_id = null;
+    let reseller_player_id = null;
 
     let retail_player = app.get_player_by_type("R");
     let parameter_set_player = app.get_parameter_set_player_from_player_id(retail_player.id);
@@ -227,7 +227,7 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         let consumer_location = parameter_set.consumer_location.split(",");
         consumer_location = {x:parseInt(consumer_location[0]), y:parseInt(consumer_location[1])};
 
-        //transfer beam to retailer
+        //transfer beam to reseller
         let elements = [];
         let element = {source_change: "-" + period_earnings,
                     target_change: "+" + period_earnings, 

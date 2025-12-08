@@ -441,26 +441,26 @@ class SubjectUpdatesMixin():
                         session_player["oranges"] -= 1
                         group["orange_tray_inventory"] += 1
                 
-            #check if retailer barrier should go down
+            #check if reseller barrier should go down
             if group["apple_tray_inventory"] == parameter_set["apple_tray_capacity"] and \
                 group["orange_tray_inventory"] == parameter_set["orange_tray_capacity"]:
-                group["barriers"][str(group["retailer_barrier"])]["enabled"] = False
+                group["barriers"][str(group["reseller_barrier"])]["enabled"] = False
 
         elif parameter_set_player["id_label"] == "R":
-            #retailer moved fruit from tray to inventory
+            #reseller moved fruit from tray to inventory
             
-            #check if retailer already checked out
+            #check if reseller already checked out
             if session_player["checkout"]:
                 status = "fail"
                 error_message = "You have already checked out."
             
-            #check if retailer is already at max fruit
+            #check if reseller is already at max fruit
             if status == "success": 
                 if session_player["apples"] + session_player["oranges"] >= parameter_set_period["max_fruit"]:
                     status = "fail"
                     error_message = "You have reached the maximum fruit limit."
 
-            #check if retailer has needs to answer end game questions
+            #check if reseller has needs to answer end game questions
             if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
                 if parameter_set["end_game_choice"] == EndGameChoices.STEAL:
                     if group["show_end_game_choice_steal"] == False and \
@@ -506,7 +506,7 @@ class SubjectUpdatesMixin():
                             session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
                         group["orange_tray_inventory"] -= 1
                 
-                #raise checkout barrier when retailer takes fruit from tray
+                #raise checkout barrier when reseller takes fruit from tray
                 if group["end_game_mode"] != EndGameChoices.STEAL:
                     group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
 
@@ -525,7 +525,7 @@ class SubjectUpdatesMixin():
                   "session_player_budget" : session_player["budget"],
                   "apple_tray_inventory" : group["apple_tray_inventory"],
                   "orange_tray_inventory" : group["orange_tray_inventory"],
-                  "retailer_barrier_up" : group["barriers"][str(group["retailer_barrier"])]["enabled"],
+                  "reseller_barrier_up" : group["barriers"][str(group["reseller_barrier"])]["enabled"],
                   "checkout_barrier_up" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
                   "fruit_type" : event_data["fruit_type"],
                   "show_end_game_choice_steal" : group["show_end_game_choice_steal"],
@@ -577,18 +577,18 @@ class SubjectUpdatesMixin():
 
         wholesaler = await get_player_by_type(world_state, self.parameter_set_local, "W", group)
 
-        #check if retailer is checking out
+        #check if reseller is checking out
         if parameter_set_player["id_label"] != "R":
             status = "fail"
-            error_message = "Only retailers can checkout."
+            error_message = "Only resellers can checkout."
         
-        #check if retailer has already checked out
+        #check if reseller has already checked out
         if status == "success":
             if session_player["checkout"]:
                 status = "fail"
                 error_message = "You have checked out."
         
-        #check if retailer has fruit to checkout
+        #check if reseller has fruit to checkout
         if status == "success":
             if session_player["apples"] == 0 and session_player["oranges"] == 0:
                 status = "fail"
@@ -625,8 +625,8 @@ class SubjectUpdatesMixin():
         result = {"value" : status,
                   "error_message" : error_message,
                   "payment" : payment,
-                  "retailer_budget" : session_player["budget"],
-                  "retailer_checkout" : session_player["checkout"],
+                  "reseller_budget" : session_player["budget"],
+                  "reseller_checkout" : session_player["checkout"],
                   "wholesaler_earnings" : wholesaler["earnings"],
                   "checkout_barrier" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
                   "session_player_id" : player_id}
@@ -651,15 +651,15 @@ class SubjectUpdatesMixin():
             await self.send_message(message_to_self=event_data, message_to_group=None,
                                     message_type=event['type'], send_to_client=True, send_to_group=False)
         
-    async def reset_retailer_inventory(self, event):
+    async def reset_reseller_inventory(self, event):
         '''
-        reset retailer inventory from subject screen
+        reset reseller inventory from subject screen
         '''
         if self.controlling_channel != self.channel_name:
             return
         
         logger = logging.getLogger(__name__) 
-        # logger.info("reset_retailer_inventory")
+        # logger.info("reset_reseller_inventory")
 
         status = "success"
         error_message = ""
@@ -674,10 +674,10 @@ class SubjectUpdatesMixin():
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         
 
-        #check if retailer is resetting inventory
+        #check if reseller is resetting inventory
         if parameter_set_player["id_label"] != "R":
             status = "fail"
-            error_message = "Only retailers can reset inventory."
+            error_message = "Only resellers can reset inventory."
         
         if session_player["checkout"]:
             status = "fail"
@@ -687,13 +687,13 @@ class SubjectUpdatesMixin():
         oranges = session_player["oranges"]
         
         if status == "success":    
-            #reset retailer inventory
+            #reset reseller inventory
             group["apple_tray_inventory"] += apples
             group["orange_tray_inventory"] += oranges
 
             session_player["apples"] = 0
             session_player["oranges"] = 0
-            session_player["budget"] = parameter_set_period["retailer_budget"]
+            session_player["budget"] = parameter_set_period["reseller_budget"]
 
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
@@ -722,9 +722,9 @@ class SubjectUpdatesMixin():
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=group["members"])
 
-    async def update_reset_retailer_inventory(self, event):
+    async def update_reset_reseller_inventory(self, event):
         '''
-        update reset retailer inventory from subject screen
+        update reset reseller inventory from subject screen
         '''
 
         event_data = json.loads(event["group_data"])
@@ -741,7 +741,7 @@ class SubjectUpdatesMixin():
             return
         
         logger = logging.getLogger(__name__) 
-        # logger.info("reset_retailer_inventory")
+        # logger.info("reset_reseller_inventory")
 
         status = "success"
         error_message = ""
@@ -761,10 +761,10 @@ class SubjectUpdatesMixin():
         parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
         
 
-        #check if subject is a retailer
+        #check if subject is a reseller
         if parameter_set_player["id_label"] != "R":
             status = "fail"
-            error_message = "Only retailers can sell to consumers."
+            error_message = "Only resellers can sell to consumers."
 
         #check if subject has has already sold to consumer
         if status == "success":
@@ -789,7 +789,7 @@ class SubjectUpdatesMixin():
             session_player["earnings"] += period_earnings
             session_player["earnings"] += session_player["budget"]
 
-            group["results"]["retailer_earnings"] += period_earnings +  session_player["budget"]
+            group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
 
             session_player["consumer"] = True
             
@@ -878,7 +878,7 @@ class SubjectUpdatesMixin():
     
     async def end_game_choice(self, event):
         '''
-        end game choice by retailer from subject screen
+        end game choice by reseller from subject screen
         '''
         if self.controlling_channel != self.channel_name:
             return
@@ -945,7 +945,7 @@ class SubjectUpdatesMixin():
     
     async def update_end_game_choice(self, event):
         '''
-        update end game choice by retailer from subject screen
+        update end game choice by reseller from subject screen
         '''
 
         event_data = json.loads(event["group_data"])

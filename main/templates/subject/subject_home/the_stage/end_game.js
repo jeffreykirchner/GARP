@@ -1,14 +1,14 @@
 /**
- * if it the last period and the retailer is making their final choice and steal option is enabled
+ * if it the last period and the reseller is making their final choice and steal option is enabled
  */
 show_end_game_steal_overlay: function show_end_game_steal_overlay()
 {
     if(!app.session) return false;
     if(!app.session.started) return false;
 
-    //check if local player is retailer
-    let retailer = app.get_player_by_type("R");
-    if(app.session_player.id != retailer.id) return false;
+    //check if local player is reseller
+    let reseller = app.get_player_by_type("R");
+    if(app.session_player.id != reseller.id) return false;
 
     let group = app.session.world_state.groups[app.current_group];
 
@@ -48,16 +48,16 @@ show_end_game_steal_part_2_info: function show_end_game_steal_part_2_info()
 },
 
 /**
- * if it the last period and the retailer is making their final choice and no price option is enabled
+ * if it the last period and the reseller is making their final choice and no price option is enabled
  */
 show_end_game_no_price_overlay: function show_end_game_no_price_overlay()
 {
     if(!app.session) return false;
     if(!app.session.started) return false;
 
-    //check if local player is retailer
-    let retailer = app.get_player_by_type("R");
-    if(app.session_player.id != retailer.id) return false;
+    //check if local player is reseller
+    let reseller = app.get_player_by_type("R");
+    if(app.session_player.id != reseller.id) return false;
 
     let group = app.session.world_state.groups[app.current_group];
 

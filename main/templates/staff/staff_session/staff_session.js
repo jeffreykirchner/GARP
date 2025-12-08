@@ -224,8 +224,8 @@ let app = Vue.createApp({
                 case "update_tray_fruit":
                     app.take_update_tray_fruit(message_data);
                     break;
-                case "update_reset_retailer_inventory":
-                    app.take_reset_retailer_inventory(message_data);
+                case "update_reset_reseller_inventory":
+                    app.take_reset_reseller_inventory(message_data);
                     break;
                 case "update_checkout":
                     app.take_update_checkout(message_data);
