@@ -23,7 +23,7 @@ class ParameterSetPeriod(models.Model):
     wholesale_orange_price = models.IntegerField(verbose_name='Wholesale Orange Price (¢)', default=80)
 
     wholesaler_budget = models.IntegerField(verbose_name='Wholesaler Budget (¢)', default=1000)
-    retailer_budget = models.IntegerField(verbose_name='Retailer Budget (¢)', default=1000)
+    reseller_budget = models.IntegerField(verbose_name='Reseller Budget (¢)', default=1000)
 
     max_fruit = models.IntegerField(verbose_name='Max Fruit', default=10)
 
@@ -52,7 +52,7 @@ class ParameterSetPeriod(models.Model):
         self.wholesale_orange_price = new_ps.get("wholesale_orange_price")
 
         self.wholesaler_budget = new_ps.get("wholesaler_budget")
-        self.retailer_budget = new_ps.get("retailer_budget")
+        self.reseller_budget = new_ps.get("reseller_budget")
 
         self.max_fruit = new_ps.get("max_fruit")
 
@@ -95,7 +95,7 @@ class ParameterSetPeriod(models.Model):
             "wholesale_orange_price" : self.wholesale_orange_price,
 
             "wholesaler_budget" : self.wholesaler_budget,
-            "retailer_budget" : self.retailer_budget,
+            "reseller_budget" : self.reseller_budget,
 
             "max_fruit" : self.max_fruit,
         }

@@ -87,6 +87,10 @@ let app = Vue.createApp({
 
                     //current group
                     current_group : null,
+
+                    //end game notice
+                    end_game_notice_message : "",
+                    end_game_notice_visible : false,
                     
                 }},
     methods: {
@@ -183,11 +187,11 @@ let app = Vue.createApp({
                 case "update_checkout":
                     app.take_update_checkout(message_data);
                     break;
-                case "update_reset_retailer_inventory":
-                    app.take_reset_retailer_inventory(message_data);
+                case "update_reset_reseller_inventory":
+                    app.take_reset_reseller_inventory(message_data);
                     break;
-                case "update_sell_to_consumer":
-                    app.take_update_sell_to_consumer(message_data);
+                case "update_sell_to_buyer":
+                    app.take_update_sell_to_buyer(message_data);
                     break;
                 case "update_end_game_choice":
                     app.take_update_end_game_choice(message_data);
@@ -298,8 +302,6 @@ let app = Vue.createApp({
             app.session = message_data.session;
             app.session_player = message_data.session_player;
 
-            
-
             if(app.session.started)
             {
                 let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
@@ -357,6 +359,8 @@ let app = Vue.createApp({
             app.remove_all_notices();
 
             app.notices_seen = [];
+            app.end_game_notice_message = "";
+            app.end_game_notice_visible = false;
         },
 
         /**
@@ -555,7 +559,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/orchard.js"%}
         {%include "subject/subject_home/the_stage/tray.js"%}
         {%include "subject/subject_home/the_stage/register.js"%}
-        {%include "subject/subject_home/the_stage/consumer.js"%}
+        {%include "subject/subject_home/the_stage/buyer.js"%}
         {%include "subject/subject_home/the_stage/end_game.js"%}
         
         

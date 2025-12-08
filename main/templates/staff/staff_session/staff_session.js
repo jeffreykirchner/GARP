@@ -224,14 +224,14 @@ let app = Vue.createApp({
                 case "update_tray_fruit":
                     app.take_update_tray_fruit(message_data);
                     break;
-                case "update_reset_retailer_inventory":
-                    app.take_reset_retailer_inventory(message_data);
+                case "update_reset_reseller_inventory":
+                    app.take_reset_reseller_inventory(message_data);
                     break;
                 case "update_checkout":
                     app.take_update_checkout(message_data);
                     break;
-                case "update_sell_to_consumer":
-                    app.take_update_sell_to_consumer(message_data);
+                case "update_sell_to_buyer":
+                    app.take_update_sell_to_buyer(message_data);
                     break;
                 case "update_end_game_choice":
                     app.take_update_end_game_choice(message_data);
@@ -303,6 +303,7 @@ let app = Vue.createApp({
             app.update_orchard_labels();
             app.update_tray_labels();
             app.set_avatar_visibility();
+            app.update_barriers();
         },
 
         /** send winsock request to get session info
@@ -481,7 +482,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/orchard.js"%}
         {%include "subject/subject_home/the_stage/tray.js"%}
         {%include "subject/subject_home/the_stage/register.js"%}
-        {%include "subject/subject_home/the_stage/consumer.js"%}
+        {%include "subject/subject_home/the_stage/buyer.js"%}
         {%include "js/help_doc.js"%}
     
         /** clear form error messages

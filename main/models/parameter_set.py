@@ -48,7 +48,7 @@ class ParameterSet(models.Model):
     orchard_orange_location = models.CharField(max_length=100, default="300,150", verbose_name="Orange Orchard Location", blank=True, null=True)     #x,y location of orange orchard
 
     register_location = models.CharField(max_length=100, default="200,250", verbose_name="Register Location", blank=True, null=True)                 #x,y location of register
-    consumer_location = models.CharField(max_length=100, default="250,350", verbose_name="Consumer Location", blank=True, null=True)                #x,y location of consumer
+    buyer_location = models.CharField(max_length=100, default="250,350", verbose_name="Consumer Location", blank=True, null=True)                #x,y location of buyer
 
     orange_tray_location = models.CharField(max_length=100, default="500,150", verbose_name="Orange Tray Location", blank=True, null=True)           #x,y location of orange tray
     apple_tray_location = models.CharField(max_length=100, default="700,150", verbose_name="Apple Tray Location", blank=True, null=True)             #x,y location of apple tray
@@ -58,7 +58,7 @@ class ParameterSet(models.Model):
     orange_tray_starting_inventory = models.IntegerField(verbose_name='Orange Tray Starting Inventory', default=0)  #starting inventory of orange tray
     apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
 
-    customer_prices = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                      #json model of customer prices
+    buyer_prices = models.JSONField(encoder=DjangoJSONEncoder, null=True, blank=True)                      #json model of buyer prices
 
     end_game_choice = models.CharField(max_length=20, choices=EndGameChoices.choices, default=EndGameChoices.OFF, verbose_name='End Game Choice')
 
@@ -113,7 +113,7 @@ class ParameterSet(models.Model):
             self.orchard_orange_location = new_ps.get("orchard_orange_location", "300,150")
 
             self.register_location = new_ps.get("register_location", "200,250")
-            self.consumer_location = new_ps.get("consumer_location", "250,350")
+            self.buyer_location = new_ps.get("buyer_location", "250,350")
 
             self.orange_tray_location = new_ps.get("orange_tray_location", "500,150")
             self.apple_tray_location = new_ps.get("apple_tray_location", "700,150")
@@ -124,7 +124,7 @@ class ParameterSet(models.Model):
             self.orange_tray_starting_inventory = new_ps.get("orange_tray_starting_inventory", 0)
             self.apple_tray_starting_inventory = new_ps.get("apple_tray_starting_inventory", 0)
 
-            self.customer_prices = new_ps.get("customer_prices", {})
+            self.buyer_prices = new_ps.get("buyer_prices", {})
 
             self.end_game_choice = new_ps.get("end_game_choice", EndGameChoices.OFF)
 
@@ -230,7 +230,7 @@ class ParameterSet(models.Model):
         for i in self.parameter_set_players.all():
             i.setup()
 
-        self.setup_customer_prices()
+        self.setup_buyer_prices()
         self.json(update_required=True)
 
     def add_player(self):
@@ -270,19 +270,19 @@ class ParameterSet(models.Model):
             i.update_json_local()
             i.save()
 
-    def setup_customer_prices(self):
+    def setup_buyer_prices(self):
         '''
-        update consumer based of grid of orange and apple tray capacitys
+        update buyer based of grid of orange and apple tray capacitys
         '''
 
-        if not self.customer_prices:
-            self.customer_prices = {}
+        if not self.buyer_prices:
+            self.buyer_prices = {}
     
         for o in range(0, self.orange_tray_capacity + 1):
             for a in range(0, self.apple_tray_capacity + 1):
 
-                if not self.customer_prices.get(f"o{o}a{a}", None):
-                    self.customer_prices[f"o{o}a{a}"] = 0
+                if not self.buyer_prices.get(f"o{o}a{a}", None):
+                    self.buyer_prices[f"o{o}a{a}"] = 0
 
         self.save()
 
@@ -319,7 +319,7 @@ class ParameterSet(models.Model):
         self.json_for_session["orchard_orange_location"] = self.orchard_orange_location
 
         self.json_for_session["register_location"] = self.register_location
-        self.json_for_session["consumer_location"] = self.consumer_location
+        self.json_for_session["buyer_location"] = self.buyer_location
 
         self.json_for_session["orange_tray_location"] = self.orange_tray_location
         self.json_for_session["apple_tray_location"] = self.apple_tray_location
@@ -329,7 +329,7 @@ class ParameterSet(models.Model):
         self.json_for_session["orange_tray_starting_inventory"] = self.orange_tray_starting_inventory
         self.json_for_session["apple_tray_starting_inventory"] = self.apple_tray_starting_inventory
 
-        self.json_for_session["customer_prices"] = self.customer_prices if self.customer_prices else {}
+        self.json_for_session["buyer_prices"] = self.buyer_prices if self.buyer_prices else {}
 
         self.json_for_session["end_game_choice"] = self.end_game_choice
 

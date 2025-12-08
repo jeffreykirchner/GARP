@@ -1,0 +1,27 @@
+{% load static %}
+
+<div class="row">
+    <div class="col text-center fw-bold mb-2 fs-4">        
+        Notice
+    </div>
+</div>
+
+<div class="row justify-content-center mb-3">
+    <div class="col text-center fs-5"> 
+        <span v-html="end_game_notice_message"></span>        
+    </div>
+</div>
+
+<div class="row justify-content-center mt-2">
+    <div class="col-md-auto">
+        
+        <button class="btn btn-primary me-4 btn-lg" 
+                v-on:click="end_game_notice_ok()" 
+                v-bind:disabled="reconnecting || working"                
+                title="Ok">
+            Ok <i class="fas fa-check"></i>
+        </button>
+    </div>
+</div>
+
+  

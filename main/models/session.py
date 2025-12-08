@@ -156,19 +156,19 @@ class Session(models.Model):
             session_player["apples"] = 0
             session_player["oranges"] = 0
             session_player["checkout"] = False
-            session_player["consumer"] = False
+            session_player["buyer"] = False
 
             if parameter_set_player["id_label"] == "W":
                 session_player["earnings"] += parameter_set_period["wholesaler_budget"]
             elif parameter_set_player["id_label"] == "R":
-                session_player["budget"] = parameter_set_period["retailer_budget"]
+                session_player["budget"] = parameter_set_period["reseller_budget"]
         
         #barriers
         if group["wholesaler_barrier"]:
             group["barriers"][str(group["wholesaler_barrier"])]["enabled"] = True
         
-        if group["retailer_barrier"]:
-            group["barriers"][str(group["retailer_barrier"])]["enabled"] = True
+        if group["reseller_barrier"]:
+            group["barriers"][str(group["reseller_barrier"])]["enabled"] = True
 
         if group["checkout_barrier"]:
             group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
@@ -185,7 +185,7 @@ class Session(models.Model):
                             "orange_sold":0,
                             "apple_sold":0,
                             "wholesaler_earnings":parameter_set_period["wholesaler_budget"],
-                            "retailer_earnings":0,}
+                            "reseller_earnings":0,}
 
         self.world_state = world_state
         self.save()
@@ -234,7 +234,7 @@ class Session(models.Model):
             group["apple_orchard_inventory"] = 0
             group["orange_tray_inventory"] = self.parameter_set.orange_tray_starting_inventory
             group["apple_tray_inventory"] = self.parameter_set.apple_tray_starting_inventory
-            group["retailer_barrier"] = None
+            group["reseller_barrier"] = None
             group["wholesaler_barrier"] = None
             group["checkout_barrier"] = None
             group["time_remaining"] = 0
@@ -267,7 +267,7 @@ class Session(models.Model):
             v['apples'] = 0
             v['oranges'] = 0
             v['checkout'] = False
-            v['consumer'] = False
+            v['buyer'] = False
             v['budget'] = 0
             v['parameter_set_player_id'] = i['parameter_set_player__id']
             v['id'] = i['id']
@@ -289,9 +289,9 @@ class Session(models.Model):
                 if i.info == 'Wholesaler':
                     group["wholesaler_barrier"] = i.id
                     group["barriers"][str(i.id)] = {"enabled":True}
-                elif i.info == 'Retailer':
+                elif i.info == 'Reseller':
                     group["barriers"][str(i.id)] = {"enabled":True}
-                    group["retailer_barrier"] = i.id
+                    group["reseller_barrier"] = i.id
                 elif i.info == 'Checkout':
                     group["checkout_barrier"] = i.id
                     group["barriers"][str(i.id)] = {"enabled":False}
@@ -402,9 +402,9 @@ class Session(models.Model):
 
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
-            top_row = ["Session ID", "Period", "Group", "Wholesaler ID", "Retailer ID", 
+            top_row = ["Session ID", "Period", "Group", "Wholesaler ID", "Reseller ID", 
                        "Orange Harvested", "Apples Harvested", "Oranges Sold", "Apples Sold", 
-                       "Wholesaler Earnings", "Retailer Earnings"]
+                       "Wholesaler Earnings", "Reseller Earnings"]
             
             writer.writerow(top_row)
 
@@ -417,7 +417,7 @@ class Session(models.Model):
                 for g_id in summary_data["groups"]:
                     g = summary_data["groups"][g_id]
                     wholesaler_id = ""
-                    retailer_id = ""
+                    reseller_id = ""
 
                     if not g.get("members", None):
                         continue
@@ -429,19 +429,19 @@ class Session(models.Model):
                         if parameter_set_player["id_label"] == "W":
                             wholesaler_id = parameter_set_player["player_number"]
                         elif parameter_set_player["id_label"] == "R":
-                            retailer_id = parameter_set_player["player_number"]
+                            reseller_id = parameter_set_player["player_number"]
 
                     writer.writerow([self.id,
                                      p.period_number,
                                      parameter_set["parameter_set_groups"][str(g_id)]["name"],
                                      wholesaler_id,
-                                     retailer_id,
+                                     reseller_id,
                                      g["results"]["orange_harvested"],
                                      g["results"]["apple_harvested"],
                                      g["results"]["orange_sold"],
                                      g["results"]["apple_sold"],
                                      g["results"]["wholesaler_earnings"],
-                                     g["results"]["retailer_earnings"]])
+                                     g["results"]["reseller_earnings"]])
 
                     
             v = output.getvalue()
@@ -476,7 +476,7 @@ class Session(models.Model):
                                 p.period_number, 
                                 p.time_remaining, 
                                 parameter_set_players[str(p.session_player_id)]["player_number"], 
-                                "Wholesaler" if parameter_set_players[str(p.session_player_id)]["parameter_set_player__id_label"] == "W" else "Retailer",
+                                "Wholesaler" if parameter_set_players[str(p.session_player_id)]["parameter_set_player__id_label"] == "W" else "Reseller",
                                 p.type, 
                                 self.action_data_parse(p.type, p.data, session_players),
                                 p.data, 
@@ -505,7 +505,7 @@ class Session(models.Model):
             return f'{data["prompt"]} | {strip_tags(data["response"])}'
         elif type == "harvest_fruit" or type == "tray_fruit":
             return data["fruit_type"]
-        elif type == "checkout" or type == "sell_to_consumer":
+        elif type == "checkout" or type == "sell_to_buyer":
             return f'Apples: {data["apples"]}, Oranges: {data["oranges"]}, Payment: {data["payment"]}'
         elif type == "help_doc":
             return data

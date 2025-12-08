@@ -24,7 +24,7 @@ get_current_period : function get_current_period() {
 update_current_group : function update_current_group() {
     app.set_avatar_visibility();
     app.update_barriers();
-    app.update_consumer_label();
+    app.update_buyer_label();
     app.update_orchard_labels();
     app.update_register_labels();
     app.update_check_marks();

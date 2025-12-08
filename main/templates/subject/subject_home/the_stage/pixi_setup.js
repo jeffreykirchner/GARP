@@ -17,7 +17,7 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'water_tex', src:'{% static "water_tile.jpg"%}'});
     PIXI.Assets.add({alias:'dash_tex', src:'{% static "dash_1.png"%}'});
     PIXI.Assets.add({alias:'factory_tex', src:'{% static "factory.png"%}'});
-    PIXI.Assets.add({alias:'consumer_tex', src:'{% static "consumer.png"%}'});
+    PIXI.Assets.add({alias:'buyer_tex', src:'{% static "consumer.png"%}'});
     PIXI.Assets.add({alias:'tray_tex', src:'{% static "tray.png"%}'});
     PIXI.Assets.add({alias:'cash_register_tex', src:'{% static "cash_register.png"%}'});
     PIXI.Assets.add({alias:'counter_top_tex', src:'{% static "counter_top.png"%}'});
@@ -34,7 +34,7 @@ setup_pixi: function setup_pixi(){
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
-                                               'consumer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
+                                               'buyer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
                                                'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
                                                'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex', 
                                                'dollar_symbol_tex', 'cents_symbol_tex']);
@@ -48,7 +48,7 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_orchard_apple();
         app.setup_pixi_orchard_orange();
         app.setup_pixi_register();
-        app.setup_pixi_consumer();
+        app.setup_pixi_buyer();
        
         app.setup_pixi_tray_apple();
         app.setup_pixi_tray_orange();

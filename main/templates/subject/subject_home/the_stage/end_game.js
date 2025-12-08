@@ -1,14 +1,14 @@
 /**
- * if it the last period and the retailer is making their final choice and steal option is enabled
+ * if it the last period and the reseller is making their final choice and steal option is enabled
  */
 show_end_game_steal_overlay: function show_end_game_steal_overlay()
 {
     if(!app.session) return false;
     if(!app.session.started) return false;
 
-    //check if local player is retailer
-    let retailer = app.get_player_by_type("R");
-    if(app.session_player.id != retailer.id) return false;
+    //check if local player is reseller
+    let reseller = app.get_player_by_type("R");
+    if(app.session_player.id != reseller.id) return false;
 
     let group = app.session.world_state.groups[app.current_group];
 
@@ -48,16 +48,16 @@ show_end_game_steal_part_2_info: function show_end_game_steal_part_2_info()
 },
 
 /**
- * if it the last period and the retailer is making their final choice and no price option is enabled
+ * if it the last period and the reseller is making their final choice and no price option is enabled
  */
 show_end_game_no_price_overlay: function show_end_game_no_price_overlay()
 {
     if(!app.session) return false;
     if(!app.session.started) return false;
 
-    //check if local player is retailer
-    let retailer = app.get_player_by_type("R");
-    if(app.session_player.id != retailer.id) return false;
+    //check if local player is reseller
+    let reseller = app.get_player_by_type("R");
+    if(app.session_player.id != reseller.id) return false;
 
     let group = app.session.world_state.groups[app.current_group];
 
@@ -72,7 +72,7 @@ end_game_steal_yes: function end_game_steal_yes()
     
     let group = app.session.world_state.groups[app.current_group];
 
-    if(!group.end_game_choice_part_1)
+    if(group.end_game_choice_part_1 === null)
     {
         group.end_game_choice_part_1 = true;
     }
@@ -189,4 +189,12 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
         app.update_tray_labels();
         app.update_register_labels();
     }
+},
+
+/**
+ * end game notice ok
+ */
+end_game_notice_ok: function end_game_notice_ok()
+{
+    app.end_game_notice_visible = false;
 },

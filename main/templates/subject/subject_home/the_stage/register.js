@@ -6,12 +6,12 @@ setup_pixi_register: function setup_pixi_register()
     let parameter_set = app.session.parameter_set;
     let register_container = new PIXI.Container();
     let wholesaler_pad_container = new PIXI.Container();
-    let retailer_pad_container = new PIXI.Container();
+    let reseller_pad_container = new PIXI.Container();
     let world_state = app.session.world_state;
 
     register_container.zIndex = 1;
     wholesaler_pad_container.zIndex = 1;
-    retailer_pad_container.zIndex = 1;
+    reseller_pad_container.zIndex = 1;
 
     let location = parameter_set.register_location.split(",");
 
@@ -86,67 +86,67 @@ setup_pixi_register: function setup_pixi_register()
     wholesaler_pad_container.position.set(register_container.x - wholesaler_pad_container.width - register_container.width/2 - 30,
                                           register_container.y - wholesaler_pad_container.height/2);
 
-    //add retailer pad
-    let retailer_outline_dash = new PIXI.Graphics();
-    let check_mark_retailer_sprite = new PIXI.Sprite(app.pixi_textures['check_mark_tex']);
-    let x_mark_retailer_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
+    //add reseller pad
+    let reseller_outline_dash = new PIXI.Graphics();
+    let check_mark_reseller_sprite = new PIXI.Sprite(app.pixi_textures['check_mark_tex']);
+    let x_mark_reseller_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
 
-    retailer_outline_dash.rect(0, 0, 400, 300);
-    let retailer_outline_fill_color = 0xFFFFFF;
-    let retailer = app.get_player_by_type("R");
+    reseller_outline_dash.rect(0, 0, 400, 300);
+    let reseller_outline_fill_color = 0xFFFFFF;
+    let reseller = app.get_player_by_type("R");
  
-    if(retailer)
+    if(reseller)
     {
-        retailer_outline_fill_color = app.get_parameter_set_player_from_player_id(retailer.id).hex_color;
+        reseller_outline_fill_color = app.get_parameter_set_player_from_player_id(reseller.id).hex_color;
     }
     
-    retailer_outline_dash.fill({color:retailer_outline_fill_color, alpha:0.5});
-    retailer_outline_dash.anchor = 0.5;
+    reseller_outline_dash.fill({color:reseller_outline_fill_color, alpha:0.5});
+    reseller_outline_dash.anchor = 0.5;
 
     let matrix_3 = new PIXI.Matrix(1,0,0,1,0,0);
     matrix_3.rotate(1.5708);
-    retailer_outline_dash.stroke({width:10,
+    reseller_outline_dash.stroke({width:10,
                             texture:app.pixi_textures['dash_tex'],
                             alpha:0.5,
                             alignment:1,
                             color:0x000000,
                             matrix:matrix_3});
 
-    retailer_pad_container.addChild(retailer_outline_dash);
-    retailer_pad_container.addChild(check_mark_retailer_sprite);
-    retailer_pad_container.addChild(x_mark_retailer_sprite);
+    reseller_pad_container.addChild(reseller_outline_dash);
+    reseller_pad_container.addChild(check_mark_reseller_sprite);
+    reseller_pad_container.addChild(x_mark_reseller_sprite);
 
-    x_mark_retailer_sprite.position.set(10,10);
-    check_mark_retailer_sprite.position.set(10,10);
-    retailer_pad_container.position.set(parseInt(register_container.x) + parseInt(register_container.width)/2 + 30,
-                                        register_container.y - retailer_pad_container.height/2);
+    x_mark_reseller_sprite.position.set(10,10);
+    check_mark_reseller_sprite.position.set(10,10);
+    reseller_pad_container.position.set(parseInt(register_container.x) + parseInt(register_container.width)/2 + 30,
+                                        register_container.y - reseller_pad_container.height/2);
 
     
 
     //build pixi json
     pixi_register = {register_container:null,
                      wholesaler_pad_container:null,
-                     retailer_pad_container:null,
+                     reseller_pad_container:null,
                      label:null,
                      check_mark_wholesaler_sprite:null,
                      x_mark_wholesaler_sprite:null,
-                     check_mark_retailer_sprite:null,
-                     x_mark_retailer_sprite:null,
+                     check_mark_reseller_sprite:null,
+                     x_mark_reseller_sprite:null,
                      last_click:null,
     }
 
     pixi_register.register_container = register_container;
     pixi_register.wholesaler_pad_container = wholesaler_pad_container;
-    pixi_register.retailer_pad_container = retailer_pad_container;
+    pixi_register.reseller_pad_container = reseller_pad_container;
     pixi_register.check_mark_wholesaler_sprite = check_mark_wholesaler_sprite;
     pixi_register.x_mark_wholesaler_sprite = x_mark_wholesaler_sprite;
-    pixi_register.check_mark_retailer_sprite = check_mark_retailer_sprite;
-    pixi_register.x_mark_retailer_sprite = x_mark_retailer_sprite;
+    pixi_register.check_mark_reseller_sprite = check_mark_reseller_sprite;
+    pixi_register.x_mark_reseller_sprite = x_mark_reseller_sprite;
     pixi_register.label = label;
 
     pixi_container_main.addChild(pixi_register.register_container);
     pixi_container_main.addChild(pixi_register.wholesaler_pad_container);
-    pixi_container_main.addChild(pixi_register.retailer_pad_container);
+    pixi_container_main.addChild(pixi_register.reseller_pad_container);
 
 },
 
@@ -160,13 +160,13 @@ update_register_labels: function update_register_labels()
 
     if(world_state.session_players_order && world_state.session_players_order.length > 1)
     {
-        let retailer_player = app.get_player_by_type("R");
-        let total_apples = retailer_player.apples;
-        let total_oranges = retailer_player.oranges;
+        let reseller_player = app.get_player_by_type("R");
+        let total_apples = reseller_player.apples;
+        let total_oranges = reseller_player.oranges;
         
         let total_cost = parameter_set_period.wholesale_apple_price * total_apples + parameter_set_period.wholesale_orange_price * total_oranges;
 
-        if(retailer_player.checkout)
+        if(reseller_player.checkout)
         {
             pixi_register.label.text = "Checked out";
         }
@@ -197,10 +197,10 @@ register_double_click: function register_double_click()
         pixi_register.last_click = null;
 
         let wholesaler_position = null;
-        let retailer_position = null;
+        let reseller_position = null;
 
         let wholesaler = app.get_player_by_type("W");
-        let retailer = app.get_player_by_type("R");
+        let reseller = app.get_player_by_type("R");
 
         let world_state = app.session.world_state;
         let session_player = world_state.session_players[app.session_player.id];
@@ -209,7 +209,7 @@ register_double_click: function register_double_click()
 
         if(group.end_game_mode == "Steal")
         {
-            app.add_text_emitters("Error: Pick up fruit and proceed directly to the consumer.",
+            app.add_text_emitters("Error: Pick up fruit and proceed directly to the buyer.",
                             session_player.current_location.x,
                             session_player.current_location.y,
                             session_player.current_location.x,
@@ -223,7 +223,7 @@ register_double_click: function register_double_click()
         wholesaler_position = wholesaler.current_location;
         if(wholesaler.id == app.session_player.id)
         {
-            app.add_text_emitters("Error: The retailer must checkout.",
+            app.add_text_emitters("Error: The reseller must checkout.",
                 session_player.current_location.x,
                 session_player.current_location.y,
                 session_player.current_location.x,
@@ -234,7 +234,7 @@ register_double_click: function register_double_click()
             return;
         }
         
-        retailer_position = retailer.current_location;
+        reseller_position = reseller.current_location;
         
         if(!app.is_in_wholesaler_pad(wholesaler_position))
         {
@@ -249,7 +249,7 @@ register_double_click: function register_double_click()
             return;
         }
         
-        if(!app.is_in_retailer_pad(retailer_position))
+        if(!app.is_in_reseller_pad(reseller_position))
         {
             app.add_text_emitters("Error: You are not on the pad", 
                     session_player.current_location.x, 
@@ -313,7 +313,7 @@ take_update_checkout: function take_update_checkout(data)
         if(parameter_set_player_local.id_label == "R")
         {
             app.remove_all_notices();
-            app.add_notice("Move to the consumer.", group.current_period+1, 1)
+            app.add_notice("Move to the buyer.", group.current_period+1, 1)
         }
         else if(parameter_set_player_local.id_label == "W")
         {
@@ -327,10 +327,10 @@ take_update_checkout: function take_update_checkout(data)
     let payment = data.payment;
     
     let wholesaler_player = app.get_player_by_type("W");
-    let retailer_player = app.get_player_by_type("R");
+    let reseller_player = app.get_player_by_type("R");
 
-    retailer_player.budget = data.retailer_budget;
-    retailer_player.checkout = data.retailer_checkout;
+    reseller_player.budget = data.reseller_budget;
+    reseller_player.checkout = data.reseller_checkout;
     group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier;
     //add transfer beam
     if(app.is_player_in_group(session_player_id))
@@ -341,7 +341,7 @@ take_update_checkout: function take_update_checkout(data)
                        texture:app.pixi_textures['cents_symbol_tex'],
                       }
         elements.push(element);
-        app.add_transfer_beam(retailer_player.current_location, 
+        app.add_transfer_beam(reseller_player.current_location, 
                             wholesaler_player.current_location,
                             elements,
                             true,
@@ -365,30 +365,30 @@ is_in_wholesaler_pad: function is_in_wholesaler_pad(point)
 },
 
 /**
- *  check if point is in retailer pad
+ *  check if point is in reseller pad
  */
-is_in_retailer_pad: function is_in_retailer_pad(point)
+is_in_reseller_pad: function is_in_reseller_pad(point)
 {
     return app.check_point_in_rectagle(point, 
-                {x:pixi_register.retailer_pad_container.x,
-                 y:pixi_register.retailer_pad_container.y,
-                 width:pixi_register.retailer_pad_container.width,
-                 height:pixi_register.retailer_pad_container.height});
+                {x:pixi_register.reseller_pad_container.x,
+                 y:pixi_register.reseller_pad_container.y,
+                 width:pixi_register.reseller_pad_container.width,
+                 height:pixi_register.reseller_pad_container.height});
 },
 
 /**
- * update check and x marks on wholesaler and retailer pads if player is in them
+ * update check and x marks on wholesaler and reseller pads if player is in them
  */
 update_check_marks: function update_check_marks()
 {
     if(!app.session.started) return;
 
     let wholesaler_position = {x:0, y:0};
-    let retailer_position = {x:0, y:0};
+    let reseller_position = {x:0, y:0};
     let world_state = app.session.world_state;
 
     let wholesaler_player = app.get_player_by_type("W");
-    let retailer_player = app.get_player_by_type("R");
+    let reseller_player = app.get_player_by_type("R");
 
     if(wholesaler_player)
     {
@@ -406,19 +406,19 @@ update_check_marks: function update_check_marks()
         }
     }
 
-    if(retailer_player)
+    if(reseller_player)
     {
-        retailer_position = retailer_player.current_location;
+        reseller_position = reseller_player.current_location;
 
-        if(app.is_in_retailer_pad(retailer_position))
+        if(app.is_in_reseller_pad(reseller_position))
         {
-            pixi_register.check_mark_retailer_sprite.visible = true;
-            pixi_register.x_mark_retailer_sprite.visible = false;
+            pixi_register.check_mark_reseller_sprite.visible = true;
+            pixi_register.x_mark_reseller_sprite.visible = false;
         }
         else
         {
-            pixi_register.check_mark_retailer_sprite.visible = false;
-            pixi_register.x_mark_retailer_sprite.visible = true;
+            pixi_register.check_mark_reseller_sprite.visible = false;
+            pixi_register.x_mark_reseller_sprite.visible = true;
         }
     }    
 },

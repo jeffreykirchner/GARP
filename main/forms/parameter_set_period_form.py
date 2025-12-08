@@ -42,9 +42,9 @@ class ParameterSetPeriodForm(forms.ModelForm):
                                                                            "step":"1",
                                                                            "min":"0"}))
     
-    retailer_budget = forms.IntegerField(label='Retailer Budget (¢)',
+    reseller_budget = forms.IntegerField(label='Reseller Budget (¢)',
                                          min_value=1,
-                                         widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_period.retailer_budget",
+                                         widget=forms.NumberInput(attrs={"v-model":"current_parameter_set_period.reseller_budget",
                                                                          "step":"1",
                                                                          "min":"1"}))
     
@@ -57,5 +57,5 @@ class ParameterSetPeriodForm(forms.ModelForm):
     class Meta:
         model=ParameterSetPeriod
         fields =['orchard_apple_price', 'wholesale_apple_price', 'orchard_orange_price', 
-                 'wholesale_orange_price', 'wholesaler_budget', 'retailer_budget', 'max_fruit']
+                 'wholesale_orange_price', 'wholesaler_budget', 'reseller_budget', 'max_fruit']
     

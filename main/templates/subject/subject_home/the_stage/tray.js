@@ -424,7 +424,7 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         }
         else
         {
-            //retailer move fruit from tray
+            //reseller move fruit from tray
             if(data.fruit_type == "apple")
             {
                 let location = app.session.parameter_set.apple_tray_location.split(",");
@@ -461,8 +461,23 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         group.apple_tray_inventory = data.apple_tray_inventory;
         group.orange_tray_inventory = data.orange_tray_inventory;
 
-        group["barriers"][group["retailer_barrier"]]["enabled"] = data.retailer_barrier_up;
+        group["barriers"][group["reseller_barrier"]]["enabled"] = data.reseller_barrier_up;
         group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
+    }
+    else if(parameter_set_player_local.id_label == "W" && 
+            app.is_player_in_group(session_player_id))
+    {
+        //show end game notice to wholesaler
+        if(group["show_end_game_choice_steal"])
+        {
+            app.end_game_notice_visible = true;
+            app.end_game_notice_message = "The Reseller has the option to steal fruit from you without paying.<br>Please wait for them to make their choice.";
+        }
+        else if(group["show_end_game_choice_no_price"])
+        {
+            app.end_game_notice_visible = true;
+            app.end_game_notice_message = "Your prices to the Reseller are not visible but are in effect.<br>The Reseller is deciding whether to proceed without knowing your prices.<br>Please wait for them to make their choice.";
+        }   
     }
 
     if(app.is_player_in_group(session_player_id))
@@ -476,20 +491,20 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 },
 
 /**
- * reset retailer inventory to zero
+ * reset reseller inventory to zero
  */
-reset_retailer_inventory: function reset_retailer_inventory()
+reset_reseller_inventory: function reset_reseller_inventory()
 {
     app.working = true;
-    app.send_message("reset_retailer_inventory", 
+    app.send_message("reset_reseller_inventory", 
                       {},
                      "group");
 },
 
 /**
- * take reset retailer inventory
+ * take reset reseller inventory
  */
-take_reset_retailer_inventory: function take_reset_retailer_inventory(data)
+take_reset_reseller_inventory: function take_reset_reseller_inventory(data)
 {
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];

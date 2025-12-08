@@ -114,10 +114,10 @@ update_barriers: function update_barriers()
 
     try
     {
-        if(group.barriers[group.retailer_barrier])
+        if(group.barriers[group.reseller_barrier])
         {
-            let retailer_barrier_container = pixi_barriers[group.retailer_barrier].barrier_container;
-            retailer_barrier_container.visible = group.barriers[group.retailer_barrier].enabled;
+            let reseller_barrier_container = pixi_barriers[group.reseller_barrier].barrier_container;
+            reseller_barrier_container.visible = group.barriers[group.reseller_barrier].enabled;
         }
 
         if(group.barriers[group.wholesaler_barrier])

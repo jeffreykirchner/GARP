@@ -1,22 +1,22 @@
 /**
- * setup consumer objects
+ * setup buyer objects
  */
-setup_pixi_consumer: function setup_pixi_consumer()
+setup_pixi_buyer: function setup_pixi_buyer()
 {
     let parameter_set = app.session.parameter_set;
-    let consumer_container = new PIXI.Container();
+    let buyer_container = new PIXI.Container();
     
     let world_state = app.session.world_state;
 
-    consumer_container.zIndex = 1;
+    buyer_container.zIndex = 1;
 
-    let location = parameter_set.consumer_location.split(",");
+    let location = parameter_set.buyer_location.split(",");
 
-    //consumer container
-    consumer_container.position.set(location[0], location[1]);
+    //buyer container
+    buyer_container.position.set(location[0], location[1]);
 
     //add graphic
-    let graphic = new PIXI.Sprite(app.pixi_textures['consumer_tex']);
+    let graphic = new PIXI.Sprite(app.pixi_textures['buyer_tex']);
     graphic.anchor.set(0.5);   
     
     //add label that says double click to harvest
@@ -36,59 +36,59 @@ setup_pixi_consumer: function setup_pixi_consumer()
     let double_click_graphic = new PIXI.Sprite(app.pixi_textures['double_click_tex']);
     double_click_graphic.anchor.set(0.5);
    
-    consumer_container.addChild(graphic);
-    consumer_container.addChild(label);
-    // consumer_container.addChild(label2);
-    consumer_container.addChild(double_click_graphic);
+    buyer_container.addChild(graphic);
+    buyer_container.addChild(label);
+    // buyer_container.addChild(label2);
+    buyer_container.addChild(double_click_graphic);
 
-    label.position.set(0, consumer_container.height/2 + label.height/2 + 5);
-    label2.position.set(0, -consumer_container.height/2 - label2.height/2 +10);
+    label.position.set(0, buyer_container.height/2 + label.height/2 + 5);
+    label2.position.set(0, -buyer_container.height/2 - label2.height/2 +10);
     double_click_graphic.position.set(graphic.width/2+10, -graphic.height/2);
 
-    consumer_container.eventMode = 'static';
-    consumer_container.on("pointertap", app.consumer_double_click);
+    buyer_container.eventMode = 'static';
+    buyer_container.on("pointertap", app.buyer_double_click);
 
     
     //build pixi json
-    pixi_consumer = {consumer_container:null,                    
+    pixi_buyer = {buyer_container:null,                    
                      label:null,
                      last_click:null,
                      rect:null,
     }
 
-    const absolute_position = consumer_container.toGlobal(new PIXI.Point(0, 0));
+    const absolute_position = buyer_container.toGlobal(new PIXI.Point(0, 0));
 
-    pixi_consumer.consumer_container = consumer_container;
-    pixi_consumer.rect = new PIXI.Rectangle(absolute_position.x, 
+    pixi_buyer.buyer_container = buyer_container;
+    pixi_buyer.rect = new PIXI.Rectangle(absolute_position.x, 
                                             absolute_position.y, 
-                                            consumer_container.width, 
-                                            consumer_container.height);
-    pixi_consumer.label = label;
+                                            buyer_container.width, 
+                                            buyer_container.height);
+    pixi_buyer.label = label;
     
-    pixi_container_main.addChild(pixi_consumer.consumer_container);
+    pixi_container_main.addChild(pixi_buyer.buyer_container);
 
-    app.update_consumer_label();
+    app.update_buyer_label();
 },
 
-update_consumer_label: function update_consumer_label()
+update_buyer_label: function update_buyer_label()
 {
     if(!app.session.started) return;
 
     let world_state = app.session.world_state;
-    let retailer_player_id = null;
+    let reseller_player_id = null;
 
     let retail_player = app.get_player_by_type("R");
     let parameter_set_player = app.get_parameter_set_player_from_player_id(retail_player.id);
     let oranges = retail_player.oranges;
     let apples = retail_player.apples;
 
-    pixi_consumer.label.text = "Sale Price: " + app.get_customer_price(oranges, apples) + "¢";
+    pixi_buyer.label.text = "Sale Price: " + app.get_buyer_price(oranges, apples) + "¢";
 },
 
 /**
- * consumer double click
+ * buyer double click
  */
-consumer_double_click: function consumer_double_click()
+buyer_double_click: function buyer_double_click()
 {
     if(app.pixi_mode != "subject") return;
     if(app.working) return;
@@ -98,7 +98,7 @@ consumer_double_click: function consumer_double_click()
     if(group.complete) return;
 
     let local_player = app.session.world_state.session_players[app.session_player.id];
-    let rect = pixi_consumer.rect;
+    let rect = pixi_buyer.rect;
 
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                 y:local_player.current_location.y, 
@@ -118,26 +118,26 @@ consumer_double_click: function consumer_double_click()
 
     let now = Date.now();
 
-    if(pixi_consumer.last_click && (now - pixi_consumer.last_click) < 400)
+    if(pixi_buyer.last_click && (now - pixi_buyer.last_click) < 400)
     {
-        pixi_consumer.last_click = null;
+        pixi_buyer.last_click = null;
 
         app.working = true;
-        app.send_message("sell_to_consumer",
+        app.send_message("sell_to_buyer",
                         {},
                         "group");
         
     }
     else
     {
-        pixi_consumer.last_click = now;
+        pixi_buyer.last_click = now;
     }
 },
 
 /**
- * take result of consumer double click
+ * take result of buyer double click
  */
-take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
+take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
 {
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
@@ -193,7 +193,7 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         world_state.session_players[i].oranges = data.session_players[i].oranges;
         world_state.session_players[i].earnings = data.session_players[i].earnings;
         world_state.session_players[i].checkout = data.session_players[i].checkout;
-        world_state.session_players[i].consumer = data.session_players[i].consumer;
+        world_state.session_players[i].buyer = data.session_players[i].buyer;
         world_state.session_players[i].budget = data.session_players[i].budget;
     }
 
@@ -224,23 +224,23 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
     
     if(app.is_player_in_group(session_player_id))
     {
-        let consumer_location = parameter_set.consumer_location.split(",");
-        consumer_location = {x:parseInt(consumer_location[0]), y:parseInt(consumer_location[1])};
+        let buyer_location = parameter_set.buyer_location.split(",");
+        buyer_location = {x:parseInt(buyer_location[0]), y:parseInt(buyer_location[1])};
 
-        //transfer beam to retailer
+        //transfer beam to reseller
         let elements = [];
         let element = {source_change: "-" + period_earnings,
                     target_change: "+" + period_earnings, 
                     texture:app.pixi_textures['cents_symbol_tex'],
                     }
         elements.push(element);
-        app.add_transfer_beam(consumer_location, 
+        app.add_transfer_beam(buyer_location, 
                             session_player.current_location,
                             elements,
                             false,
                             true);
 
-        //transfer to consumer
+        //transfer to buyer
         let elements2 = [];
         if(apples_sold > 0)
         {
@@ -262,7 +262,7 @@ take_update_sell_to_consumer: function take_update_sell_to_consumer(data)
         if(elements2.length > 0)
         {
             app.add_transfer_beam(session_player.current_location, 
-                                consumer_location,
+                                buyer_location,
                                 elements2,
                                 false,
                                 true);
