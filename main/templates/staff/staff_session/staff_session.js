@@ -303,6 +303,7 @@ let app = Vue.createApp({
             app.update_orchard_labels();
             app.update_tray_labels();
             app.set_avatar_visibility();
+            app.update_barriers();
         },
 
         /** send winsock request to get session info
