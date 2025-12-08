@@ -26,7 +26,7 @@ from main.forms import ParameterSetBarrierForm
 from main.forms import ParameterSetGroupForm
 from main.forms import ParameterSetGroundForm
 from main.forms import ParameterSetPeriodForm
-from main.forms import ParameterSetCustomerPriceForm
+from main.forms import ParameterSetBuyerPriceForm
 
 class StaffSessionParametersView(SingleObjectMixin, View):
     '''
@@ -51,7 +51,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         parameter_set_group_form = ParameterSetGroupForm()
         parameter_set_ground_form = ParameterSetGroundForm()
         parameter_set_period_form = ParameterSetPeriodForm()
-        parameter_set_customer_price_form = ParameterSetCustomerPriceForm()
+        parameter_set_buyer_price_form = ParameterSetBuyerPriceForm()
 
         parameter_set_player_form.fields["parameter_set_group"].queryset = session.parameter_set.parameter_set_groups.all()
         parameter_set_barrier_form.fields["parameter_set_groups"].queryset = session.parameter_set.parameter_set_groups.all()
@@ -83,7 +83,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
         for i in parameter_set_period_form:
             parameterset_form_ids.append(i.html_name)
 
-        for i in parameter_set_customer_price_form:
+        for i in parameter_set_buyer_price_form:
             parameterset_form_ids.append(i.html_name)
 
         return render(request=request,
@@ -100,7 +100,7 @@ class StaffSessionParametersView(SingleObjectMixin, View):
                                "parameter_set_barrier_form" : parameter_set_barrier_form,
                                "parameter_set_ground_form" : parameter_set_ground_form,
                                "parameter_set_period_form" : parameter_set_period_form,
-                               "parameter_set_customer_price_form" : parameter_set_customer_price_form,
+                               "parameter_set_buyer_price_form" : parameter_set_buyer_price_form,
                                
                                "import_parameters_form" : ImportParametersForm(user=request.user, session_id=session.id),
 

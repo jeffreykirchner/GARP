@@ -46,7 +46,7 @@ let app = Vue.createApp({
                         id:0,
                     },
 
-                    current_parameter_set_customer_price : {
+                    current_parameter_set_buyer_price : {
                         id:0,
                     },
 
@@ -67,7 +67,7 @@ let app = Vue.createApp({
                     edit_parameterset_group_modal : null,
                     edit_parameterset_ground_modal : null,
                     edit_parameterset_period_modal : null,
-                    edit_parameterset_customer_price_modal : null,
+                    edit_parameterset_buyer_price_modal : null,
                     upload_parameter_set_modal : null,
 
                     //form paramters
@@ -151,7 +151,7 @@ let app = Vue.createApp({
             app.edit_parameterset_barrier_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('edit_parameterset_barrier_modal'), {keyboard: false})
             app.edit_parameterset_ground_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('edit_parameterset_ground_modal'), {keyboard: false})
             app.edit_parameterset_period_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('edit_parameterset_period_modal'), {keyboard: false})
-            app.edit_parameterset_customer_price_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('edit_parameterset_customer_price_modal'), {keyboard: false})
+            app.edit_parameterset_buyer_price_modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('edit_parameterset_buyer_price_modal'), {keyboard: false})
 
             document.getElementById('import_parameters_modal').addEventListener('hidden.bs.modal', app.hide_import_parameters);
             document.getElementById('edit_parameterset_modal').addEventListener('hidden.bs.modal', app.hide_edit_parameter_set);
@@ -197,7 +197,7 @@ let app = Vue.createApp({
         {%include "staff/staff_session_parameters/barriers/barriers.js"%}
         {%include "staff/staff_session_parameters/grounds/grounds.js"%}
         {%include "staff/staff_session_parameters/periods/periods.js"%}
-        {%include "staff/staff_session_parameters/customer_prices/customer_prices.js"%}
+        {%include "staff/staff_session_parameters/buyer_prices/buyer_prices.js"%}
 
         {%include "js/help_doc.js"%}
     

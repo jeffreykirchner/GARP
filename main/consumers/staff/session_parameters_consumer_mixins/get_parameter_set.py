@@ -75,7 +75,7 @@ def take_update_parameter_set(data):
 
     if form.is_valid():              
         form.save()    
-        session.parameter_set.setup_customer_prices()
+        session.parameter_set.setup_buyer_prices()
         session.parameter_set.update_json_local()
 
         return {"value" : "success"}                      

@@ -2,7 +2,7 @@
 
 <div class="row">
     <div class="col text-center fw-bold mb-2">        
-        Customer Sales Prices (¢)
+        Sell fruit combinations to buyer at these prices (¢)
     </div>
 </div>
 
@@ -10,7 +10,7 @@
     <div class="col">
         <table class="table table-condensed d-flex justify-content-center align-items-center table-bordered m-0 p-0"> 
 
-            <tbody id="customer_price_list">
+            <tbody id="buyer_price_list">
                 <tr class = "">
                     <td scope="col" class = "m-0 p-0">
                     
@@ -25,8 +25,8 @@
                     </td>
                     <td v-for="(a, index2) in session.parameter_set.apple_tray_capacity+1" 
                         class="text-center m-0 p-0 text-nowrap"
-                        v-bind:style="get_customer_price_style(o-1, a-1)">                
-                        [[get_customer_price(o-1, a-1)]]
+                        v-bind:style="get_buyer_price_style(o-1, a-1)">                
+                        [[get_buyer_price(o-1, a-1)]]
                     </td>
                 </tr>
             </tbody>
