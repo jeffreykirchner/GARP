@@ -91,6 +91,7 @@ let app = Vue.createApp({
                     //end game notice
                     end_game_notice_message : "",
                     end_game_notice_visible : false,
+                    end_game_steal_choice : null,
                     
                 }},
     methods: {
