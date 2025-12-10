@@ -476,7 +476,7 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         else if(group["show_end_game_choice_no_price"])
         {
             app.end_game_notice_visible = true;
-            app.end_game_notice_message = "Your prices to the Reseller are not visible but are in effect.<br>The Reseller is deciding whether to proceed without knowing your prices.<br>Please wait for them to make their choice.";
+            app.end_game_notice_message = "The Reseller is deciding whether or not to see the prices before paying you for the bundle.<br><br>Please wait for them to make their choice.";
         }   
     }
 
