@@ -362,6 +362,7 @@ let app = Vue.createApp({
             app.notices_seen = [];
             app.end_game_notice_message = "";
             app.end_game_notice_visible = false;
+            app.end_game_steal_choice = null;
         },
 
         /**

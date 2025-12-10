@@ -471,7 +471,7 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         if(group["show_end_game_choice_steal"])
         {
             app.end_game_notice_visible = true;
-            app.end_game_notice_message = "The Reseller has the option to steal fruit from you without paying.<br>Please wait for them to make their choice.";
+            app.end_game_notice_message = "The Reseller is deciding whether to take fruit without paying you for them <u>or</u> to pick up fruit and pay you for them.<br><br>Please wait for them to make their choice.";
         }
         else if(group["show_end_game_choice_no_price"])
         {
