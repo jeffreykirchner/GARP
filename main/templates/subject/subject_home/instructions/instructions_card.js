@@ -154,21 +154,44 @@ scroll_update: function scroll_update()
     }
 },
 
-
-/*
-* send chat instructions
-*/
-send_chat_instructions: function send_chat_instructions(chat_text_processed)
+/**
+ * harvest fruit instructions
+ */
+send_harvest_fruit_instructions: function send_harvest_fruit_instructions(fruit_type)
 {
+    if(app.session_player.current_instruction != app.instructions.action_page_2) return;
 
-    if(app.session_player.current_instruction != app.instructions.action_page_3) return;
+    let group = app.session.world_state.groups[app.current_group];
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    if(fruit_type == "apple")
+    {
+        if(group.apple_orchard_inventory == 0)
+        {
+           return
+        }
+    }
+    else if(fruit_type == "orange")
+    {
+        if(group.orange_orchard_inventory == 0)
+        {
+           return
+        }
+    }
 
     let message_data = {
-        "status": "success",
-        "text": chat_text_processed,
-        "sender_id": app.session_player.id,       
-        "nearby_players": [],
+        "value": "success",
+        "error_message": "",
+        "apples": fruit_type == "apple" ? session_player.apples+1 : session_player.apples,
+        "oranges": fruit_type == "orange" ? session_player.oranges+1 : session_player.oranges,
+        "apple_orchard_inventory": fruit_type == "apple" ? group.apple_orchard_inventory-1 : group.apple_orchard_inventory,
+        "orange_orchard_inventory": fruit_type == "orange" ? group.orange_orchard_inventory-1 : group.orange_orchard_inventory,
+        "fruit_type": fruit_type,
+        "earnings": fruit_type == "apple" ? session_player.earnings - parameter_set_period.orchard_apple_price : session_player.earnings - parameter_set_period.orchard_orange_price,
+        "fruit_cost": fruit_type == "apple" ? parameter_set_period.orchard_apple_price : parameter_set_period.orchard_orange_price,
+        "session_player_id": app.session_player.id       
     };
 
-    app.take_update_chat(message_data);
+    app.take_update_harvest_fruit(message_data);
 },
