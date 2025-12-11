@@ -92,26 +92,54 @@ send_current_instruction_complete: function current_instruction_complete()
  * process instruction page
  */
 process_instruction_page: function process_instruction_page(){
-
+    
     //update view when instructions changes
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let world_state = app.session.world_state;
+    let group = world_state.groups[app.current_group];
+    let parameter_set = app.session.parameter_set;
+    let parameter_set_period = app.get_current_parameter_set_period();
+
     switch(app.session_player.current_instruction){
         case app.instructions.action_page_1:    
-            return;        
+            return;      
             break; 
         case app.instructions.action_page_2:
-            return; 
+            return;
             break;
         case app.instructions.action_page_3:
-            return; 
+            if(app.session_player.current_instruction_complete <= app.instructions.action_page_3)
+            {
+                //wholesaler tray fruit
+                session_player.apples = parameter_set.apple_tray_capacity - parameter_set.apple_tray_starting_inventory;
+                session_player.oranges = parameter_set.orange_tray_capacity - parameter_set.orange_tray_starting_inventory;
+                group.apple_orchard_inventory = 0;
+                group.orange_orchard_inventory = 0;
+            }
+            return;
             break;
         case app.instructions.action_page_4:
-            return; 
+            if(app.session_player.current_instruction_complete <= app.instructions.action_page_4)
+            {
+                //reseller tray fruit
+                let current_instruction = JSON.parse(JSON.stringify(app.session_player.current_instruction));
+                let current_instruction_complete = JSON.parse(JSON.stringify(app.session_player.current_instruction_complete));
+
+                let session_player_r = app.get_player_by_type("R");
+                app.session_player = app.session.session_players[session_player_r.id];
+                app.session_player.current_instruction = current_instruction;
+                app.session_player.current_instruction_complete = current_instruction_complete;
+
+                group.barriers[group.reseller_barrier].enabled = false;
+                app.update_barriers();
+            }
+            return;
             break;
         case app.instructions.action_page_5:
-            return; 
+            return;
             break;
         case app.instructions.action_page_6:
-            return; 
+            return;
             break;
     }
 
@@ -120,7 +148,6 @@ process_instruction_page: function process_instruction_page(){
         app.session_player.current_instruction_complete = app.session_player.current_instruction;
     }
 
-        
 },
 
 /**
@@ -194,4 +221,101 @@ send_harvest_fruit_instructions: function send_harvest_fruit_instructions(fruit_
     };
 
     app.take_update_harvest_fruit(message_data);
+},
+
+/**
+ * tray fruit instructions
+ */
+send_tray_fruit_instructions: function send_tray_fruit_instructions(fruit_type)
+{
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    let group = app.session.world_state.groups[app.current_group];
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    if(parameter_set_player.id_label == "W")
+    {
+        if(app.session_player.current_instruction != app.instructions.action_page_3) return;
+
+        if(fruit_type == "apple")
+        {
+            if(session_player.apples == 0)
+            {
+                return
+            }
+        }
+        else if(fruit_type == "orange")
+        {
+            if(session_player.oranges == 0)
+            {
+                return
+            }
+        }
+
+        let message_data = {
+            "value": "success",
+            "error_message": "",
+            "session_player_apples": fruit_type == "apple" ? session_player.apples-1 : session_player.apples,
+            "session_player_oranges": fruit_type == "orange" ? session_player.oranges-1 : session_player.oranges,
+            "session_player_budget": session_player.budget,
+            "apple_tray_inventory": fruit_type == "apple" ? group.apple_tray_inventory+1 : group.apple_tray_inventory,
+            "orange_tray_inventory": fruit_type == "orange" ? group.orange_tray_inventory+1 : group.orange_tray_inventory,
+            "reseller_barrier_up": true,
+            "checkout_barrier_up": false,
+            "fruit_type": fruit_type,
+            "show_end_game_choice_steal": false,
+            "show_end_game_choice_no_price": false,
+            "session_player_id": app.session_player.id
+        };
+
+        app.take_update_tray_fruit(message_data);
+
+        if(app.session_player.current_instruction_complete < app.instructions.action_page_3)
+        {
+            if(session_player.apples == 0 && session_player.oranges == 0)
+            {
+                app.session_player.current_instruction_complete=app.instructions.action_page_3;
+                app.send_current_instruction_complete();
+            }
+        }            
+    }
+    else
+    {
+        if(app.session_player.current_instruction != app.instructions.action_page_4) return;
+
+        if(fruit_type == "apple")
+        {
+            if(session_player.apples == 1)
+            {
+                return
+            }
+        }
+        else if(fruit_type == "orange")
+        {
+            if(session_player.oranges == 1)
+            {
+                return
+            }
+        }
+
+        let message_data = {
+            {
+                "value": "success",
+                "error_message": "",
+                "session_player_apples": 0,
+                "session_player_oranges": 1,
+                "session_player_budget": 72,
+                "apple_tray_inventory": 10,
+                "orange_tray_inventory": 9,
+                "reseller_barrier_up": false,
+                "checkout_barrier_up": true,
+                "fruit_type": "orange",
+                "show_end_game_choice_steal": false,
+                "show_end_game_choice_no_price": false,
+                "session_player_id": 60
+            }
+    }
+    
+
+
 },

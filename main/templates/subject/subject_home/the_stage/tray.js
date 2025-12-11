@@ -268,11 +268,17 @@ tray_apple_double_click: function tray_apple_double_click()
 
     if(pixi_tray_apple.last_click && (now - pixi_tray_apple.last_click) < 400)
     {
-        // console.log("double click apple tray");
-        app.working = true;
-        app.send_message("tray_fruit",
-                        {"fruit_type" : "apple", },
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_tray_fruit_instructions("apple");
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("tray_fruit",
+                            {"fruit_type" : "apple", },
+                            "group");
+        }
 
         pixi_tray_apple.last_click = null;
     }
@@ -314,10 +320,17 @@ tray_orange_double_click: function tray_orange_double_click()
 
     if(pixi_tray_orange.last_click && (now - pixi_tray_orange.last_click) < 400)
     {        
-        app.working = true;
-        app.send_message("tray_fruit", 
-                        {"fruit_type" : "orange", },
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_tray_fruit_instructions("orange");
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("tray_fruit", 
+                            {"fruit_type" : "orange", },
+                            "group");
+        }
 
         pixi_tray_orange.last_click = null;
     }
@@ -408,8 +421,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
         
             if(app.is_subject &&
-            session_player.apples == 0 && 
-            session_player.oranges == 0)
+               session_player.apples == 0 && 
+               session_player.oranges == 0)
             {
                 app.remove_all_notices();
                 if(parameter_set_player_local.id_label == "W")

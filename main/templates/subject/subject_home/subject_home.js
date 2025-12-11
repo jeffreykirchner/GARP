@@ -35,6 +35,7 @@ let app = Vue.createApp({
                     first_load_done : false,                       //true after software is loaded for the first time
                     player_key : "{{session_player.player_key}}",
                     session_player : null, 
+                    session_player_id: "{{session_player.id}}",
                     session : null,
                     website_instance_id : "{{website_instance_id}}",
 
