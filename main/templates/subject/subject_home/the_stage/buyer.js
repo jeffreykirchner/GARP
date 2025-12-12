@@ -122,10 +122,17 @@ buyer_double_click: function buyer_double_click()
     {
         pixi_buyer.last_click = null;
 
-        app.working = true;
-        app.send_message("sell_to_buyer",
-                        {},
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_sell_to_buyer_instructions();
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("sell_to_buyer",
+                            {},
+                            "group");
+        }
         
     }
     else

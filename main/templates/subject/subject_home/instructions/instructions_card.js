@@ -144,6 +144,9 @@ process_instruction_page: function process_instruction_page(){
                 app.update_player_inventory();
                 app.update_orchard_labels();
                 app.update_register_labels();
+
+                app.remove_all_notices();
+                app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
             }
             return;
             break;
@@ -161,16 +164,48 @@ process_instruction_page: function process_instruction_page(){
                 app.session_player = app.session.session_players[session_player_r.id];
                 app.session_player.current_instruction = current_instruction;
                 app.session_player.current_instruction_complete = current_instruction_complete;
-                // session_player_r.current_location = {"x":pixi_tray_apple.container.x,
-                //                                      "y":pixi_tray_apple.container.y+100};
-                // session_player_r.target_location =  {"x":pixi_tray_apple.container.x,
-                //                                      "y":pixi_tray_apple.container.y+99};
+
+                session_player_r.current_location = {"x":parseInt(pixi_tray_apple.container.x)+400,
+                                                     "y":parseInt(pixi_tray_apple.container.y)};
+                session_player_r.target_location =  {"x":parseInt(pixi_tray_apple.container.x)+401,
+                                                     "y":parseInt(pixi_tray_apple.container.y)};
 
                 group.apple_orchard_inventory = 0;
                 group.orange_orchard_inventory = 0;
                 session_player_r.apples = 1;
                 session_player_r.oranges = 1;
                 session_player_r.budget = session_player_r.budget - (parameter_set_period.wholesale_apple_price + parameter_set_period.wholesale_orange_price);
+
+                group.apple_tray_inventory = parameter_set.apple_tray_capacity-1;
+                group.orange_tray_inventory = parameter_set.orange_tray_capacity-1;
+
+                group.barriers[group.checkout_barrier].enabled = true;
+                group.barriers[group.reseller_barrier].enabled = false;
+
+                app.update_barriers();
+                app.update_player_inventory();
+                app.update_orchard_labels();
+                app.update_register_labels();
+            }
+            return;
+            break;
+        case app.instructions.action_page_6:
+            if(app.session_player.current_instruction_complete <= app.instructions.action_page_6)
+            {
+                let current_instruction = JSON.parse(JSON.stringify(app.session_player.current_instruction));
+                let current_instruction_complete = JSON.parse(JSON.stringify(app.session_player.current_instruction_complete));
+
+                let session_player_r = app.get_player_by_type("R");
+                app.session_player = app.session.session_players[session_player_r.id];
+                app.session_player.current_instruction = current_instruction;
+                app.session_player.current_instruction_complete = current_instruction_complete;
+
+                group.apple_orchard_inventory = 0;
+                group.orange_orchard_inventory = 0;
+                session_player_r.apples = 1;
+                session_player_r.oranges = 1;
+                session_player_r.budget = session_player_r.budget - (parameter_set_period.wholesale_apple_price + parameter_set_period.wholesale_orange_price);
+                session_player_r.checkout = true;
 
                 group.apple_tray_inventory = parameter_set.apple_tray_capacity-1;
                 group.orange_tray_inventory = parameter_set.orange_tray_capacity-1;
@@ -183,9 +218,6 @@ process_instruction_page: function process_instruction_page(){
                 app.update_orchard_labels();
                 app.update_register_labels();
             }
-            return;
-            break;
-        case app.instructions.action_page_6:
             return;
             break;
     }
@@ -405,9 +437,9 @@ send_checkout_instructions: function send_checkout_instructions()
     if(session_player.checkout)
     {
         let message_data = {
-        "value": "fail",
-        "error_message": "You have already checked out.",
-        "session_player_id": app.session_player.id
+            "value": "fail",
+            "error_message": "You have already checked out.",
+            "session_player_id": app.session_player.id
         };
         app.take_update_checkout(message_data);
         return;
@@ -429,6 +461,58 @@ send_checkout_instructions: function send_checkout_instructions()
     if(app.session_player.current_instruction_complete < app.instructions.action_page_5)
     {
         app.session_player.current_instruction_complete=app.instructions.action_page_5;
+        app.send_current_instruction_complete();
+    }
+},
+
+/**
+ * send sell to buyer instructions
+ */
+send_sell_to_buyer_instructions: function send_sell_to_buyer_instructions()
+{
+    if(app.session_player.current_instruction != app.instructions.action_page_6) return;
+
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+    let group = app.session.world_state.groups[app.current_group];
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let session_player_w = app.get_player_by_type("W");
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    if(session_player.apples == 0 && session_player.oranges == 0)
+    {
+        let message_data = {
+            "value": "fail",
+            "error_message": "You have no fruit to sell.",
+            "session_player_id": app.session_player.id
+        };
+        app.take_update_sell_to_buyer(message_data);
+        return;
+    }
+
+    session_player.apples = 0;
+    session_player.oranges = 0;
+
+    let message_data = {
+        "value": "success",
+        "error_message": "",
+        "apples_sold": 1,
+        "oranges_sold": 1,
+        "period_earnings": app.get_buyer_price(1,1),
+        "session_player_id": app.session_player.id,
+        "apple_orchard_inventory": 0,
+        "orange_orchard_inventory": 0,
+        "session_players": app.session.world_state.session_players,
+        "barriers": group.barriers,
+        "complete": false,
+        "end_game_mode": "Off",
+        "current_period": 1
+    }
+
+    app.take_update_sell_to_buyer(message_data);
+
+    if(app.session_player.current_instruction_complete < app.instructions.action_page_6)
+    {
+        app.session_player.current_instruction_complete=app.instructions.action_page_6;
         app.send_current_instruction_complete();
     }
 },
