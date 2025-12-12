@@ -319,13 +319,13 @@ let app = Vue.createApp({
                                 
             }
 
-            if(app.session.world_state.current_experiment_phase == 'Instructions')
-            {
-                Vue.nextTick(() => {
-                    app.process_instruction_page();
-                    app.instruction_display_scroll();
-                });
-            }
+            // if(app.session.world_state.current_experiment_phase == 'Instructions')
+            // {
+            //     Vue.nextTick(() => {
+            //         app.process_instruction_page();
+            //         app.instruction_display_scroll();
+            //     });
+            // }
 
             if(!app.first_load_done)
             {
