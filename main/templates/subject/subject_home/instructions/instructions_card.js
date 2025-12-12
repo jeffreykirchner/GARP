@@ -130,6 +130,12 @@ process_instruction_page: function process_instruction_page(){
                 app.session_player.current_instruction = current_instruction;
                 app.session_player.current_instruction_complete = current_instruction_complete;
 
+                group.apple_orchard_inventory = 0;
+                group.orange_orchard_inventory = 0;
+
+                group.apple_tray_inventory = parameter_set.apple_tray_capacity;
+                group.orange_tray_inventory = parameter_set.orange_tray_capacity;
+
                 group.barriers[group.reseller_barrier].enabled = false;
                 app.update_barriers();
             }
@@ -287,33 +293,55 @@ send_tray_fruit_instructions: function send_tray_fruit_instructions(fruit_type)
         {
             if(session_player.apples == 1)
             {
-                return
+                let message_data = {
+                    "value": "fail",
+                    "error_message": "Pick up only one apple during the instructions.",
+                    "session_player_id": app.session_player.id
+                }
+                app.take_update_tray_fruit(message_data);
+                return;
             }
         }
         else if(fruit_type == "orange")
         {
             if(session_player.oranges == 1)
             {
-                return
+                let message_data = {
+                    "value": "fail",
+                    "error_message": "Pick up only one orange during the instructions.",
+                    "session_player_id": app.session_player.id
+                }
+                app.take_update_tray_fruit(message_data);
+                return;
             }
         }
 
         let message_data = {
-            {
                 "value": "success",
                 "error_message": "",
-                "session_player_apples": 0,
-                "session_player_oranges": 1,
-                "session_player_budget": 72,
-                "apple_tray_inventory": 10,
-                "orange_tray_inventory": 9,
+                "session_player_apples": fruit_type == "apple" ? session_player.apples+1 : session_player.apples,
+                "session_player_oranges": fruit_type == "orange" ? session_player.oranges+1 : session_player.oranges,
+                "session_player_budget": fruit_type == "apple" ? session_player.budget-parameter_set_period.wholesale_apple_price :  session_player.budget-parameter_set_period.wholesale_orange_price,
+                "apple_tray_inventory": fruit_type == "apple" ? group.apple_tray_inventory-1 : group.apple_tray_inventory,
+                "orange_tray_inventory": fruit_type == "orange" ? group.orange_tray_inventory-1 : group.orange_tray_inventory,
                 "reseller_barrier_up": false,
                 "checkout_barrier_up": true,
-                "fruit_type": "orange",
+                "fruit_type": fruit_type,
                 "show_end_game_choice_steal": false,
                 "show_end_game_choice_no_price": false,
-                "session_player_id": 60
+                "session_player_id": app.session_player.id
             }
+
+        app.take_update_tray_fruit(message_data);
+
+        if(app.session_player.current_instruction_complete < app.instructions.action_page_4)
+        {
+            if(session_player.apples == 1 && session_player.oranges == 1)
+            {
+                app.session_player.current_instruction_complete=app.instructions.action_page_4;
+                app.send_current_instruction_complete();
+            }
+        }
     }
     
 
