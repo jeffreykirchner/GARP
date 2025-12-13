@@ -222,11 +222,17 @@ orchard_apple_double_click: function orchard_apple_double_click()
 
     if(pixi_orchard_apple.last_click && (now - pixi_orchard_apple.last_click) < 400)
     {
-        app.working = true;
-        app.send_message("harvest_fruit",
-                        {"fruit_type" : "apple", },
-                        "group");
-
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_harvest_fruit_instructions("apple");
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("harvest_fruit",
+                            {"fruit_type" : "apple", },
+                            "group");
+        }
         pixi_orchard_apple.last_click = null;
     }
     else
@@ -266,10 +272,17 @@ orchard_orange_double_click: function orchard_orange_double_click()
 
     if(pixi_orchard_orange.last_click && (now - pixi_orchard_orange.last_click) < 400)
     {        
-        app.working = true;
-        app.send_message("harvest_fruit", 
-                        {"fruit_type" : "orange", },
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_harvest_fruit_instructions("orange");
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("harvest_fruit", 
+                            {"fruit_type" : "orange", },
+                            "group");
+        }
 
         pixi_orchard_orange.last_click = null;
     }
@@ -349,6 +362,21 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
     {
         app.update_player_inventory();
         app.update_orchard_labels();
+    }
+
+    //instructions
+    if (group.apple_orchard_inventory == 0 && group.orange_orchard_inventory == 0) {
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            if(app.session_player.current_instruction == app.instructions.action_page_2)
+            {
+                if(app.session_player.current_instruction_complete < app.instructions.action_page_2)
+                {
+                    app.session_player.current_instruction_complete=app.instructions.action_page_2;
+                    app.send_current_instruction_complete();
+                }
+            }
+        }
     }
 },
 

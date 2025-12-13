@@ -268,11 +268,17 @@ tray_apple_double_click: function tray_apple_double_click()
 
     if(pixi_tray_apple.last_click && (now - pixi_tray_apple.last_click) < 400)
     {
-        // console.log("double click apple tray");
-        app.working = true;
-        app.send_message("tray_fruit",
-                        {"fruit_type" : "apple", },
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_tray_fruit_instructions("apple");
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("tray_fruit",
+                            {"fruit_type" : "apple", },
+                            "group");
+        }
 
         pixi_tray_apple.last_click = null;
     }
@@ -314,10 +320,17 @@ tray_orange_double_click: function tray_orange_double_click()
 
     if(pixi_tray_orange.last_click && (now - pixi_tray_orange.last_click) < 400)
     {        
-        app.working = true;
-        app.send_message("tray_fruit", 
-                        {"fruit_type" : "orange", },
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_tray_fruit_instructions("orange");
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("tray_fruit", 
+                            {"fruit_type" : "orange", },
+                            "group");
+        }
 
         pixi_tray_orange.last_click = null;
     }
@@ -408,8 +421,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
         
             if(app.is_subject &&
-            session_player.apples == 0 && 
-            session_player.oranges == 0)
+               session_player.apples == 0 && 
+               session_player.oranges == 0)
             {
                 app.remove_all_notices();
                 if(parameter_set_player_local.id_label == "W")
@@ -471,12 +484,12 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         if(group["show_end_game_choice_steal"])
         {
             app.end_game_notice_visible = true;
-            app.end_game_notice_message = "The Reseller has the option to steal fruit from you without paying.<br>Please wait for them to make their choice.";
+            app.end_game_notice_message = "The Reseller is deciding whether to take fruit without paying you for them <u>or</u> to pick up fruit and pay you for them.<br><br>Please wait for them to make their choice.";
         }
         else if(group["show_end_game_choice_no_price"])
         {
             app.end_game_notice_visible = true;
-            app.end_game_notice_message = "Your prices to the Reseller are not visible but are in effect.<br>The Reseller is deciding whether to proceed without knowing your prices.<br>Please wait for them to make their choice.";
+            app.end_game_notice_message = "The Reseller is deciding whether or not to see the prices before paying you for the bundle.<br><br>Please wait for them to make their choice.";
         }   
     }
 

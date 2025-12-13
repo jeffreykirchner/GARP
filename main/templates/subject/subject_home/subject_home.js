@@ -35,6 +35,7 @@ let app = Vue.createApp({
                     first_load_done : false,                       //true after software is loaded for the first time
                     player_key : "{{session_player.player_key}}",
                     session_player : null, 
+                    session_player_id: "{{session_player.id}}",
                     session : null,
                     website_instance_id : "{{website_instance_id}}",
 
@@ -91,6 +92,7 @@ let app = Vue.createApp({
                     //end game notice
                     end_game_notice_message : "",
                     end_game_notice_visible : false,
+                    end_game_steal_choice : null,
                     
                 }},
     methods: {
@@ -317,13 +319,13 @@ let app = Vue.createApp({
                                 
             }
 
-            if(app.session.world_state.current_experiment_phase == 'Instructions')
-            {
-                Vue.nextTick(() => {
-                    app.process_instruction_page();
-                    app.instruction_display_scroll();
-                });
-            }
+            // if(app.session.world_state.current_experiment_phase == 'Instructions')
+            // {
+            //     Vue.nextTick(() => {
+            //         app.process_instruction_page();
+            //         app.instruction_display_scroll();
+            //     });
+            // }
 
             if(!app.first_load_done)
             {
@@ -361,6 +363,7 @@ let app = Vue.createApp({
             app.notices_seen = [];
             app.end_game_notice_message = "";
             app.end_game_notice_visible = false;
+            app.end_game_steal_choice = null;
         },
 
         /**
@@ -499,6 +502,8 @@ let app = Vue.createApp({
             app.session.world_state.current_experiment_phase = message_data.current_experiment_phase;
             app.session.world_state.finished = message_data.finished;
 
+            app.session_player = app.session.session_players[app.session_player_id];
+
             if(app.session.world_state.current_experiment_phase == 'Names')
             {
                 app.show_end_game_modal();
@@ -523,6 +528,20 @@ let app = Vue.createApp({
                 app.destroy_setup_pixi_subjects();
                 app.do_reload();
                 app.remove_all_notices();
+            }
+
+            if(app.session.world_state.current_experiment_phase == 'Run')
+            {
+                let parameter_set_player_local = app.get_parameter_set_player_from_player_id(app.session_player.id);
+
+                if(parameter_set_player_local.id_label == "R")
+                { 
+                    app.add_notice("Please wait.", app.session.world_state.current_period+1, 1)
+                }
+                else if(parameter_set_player_local.id_label == "W")
+                {
+                    app.add_notice("Harvest all of the fruit and place it on the trays.", app.session.world_state.current_period+1, 1)
+                }
             }
         },
 

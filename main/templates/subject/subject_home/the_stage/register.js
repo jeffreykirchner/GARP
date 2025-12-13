@@ -262,10 +262,17 @@ register_double_click: function register_double_click()
             return;
         }
 
-        app.working = true;
-        app.send_message("checkout",
-                        {},
-                        "group");
+        if(app.session.world_state.current_experiment_phase == 'Instructions')
+        {
+            app.send_checkout_instructions();
+        }
+        else
+        {
+            app.working = true;
+            app.send_message("checkout",
+                            {},
+                            "group");
+        }
         
     }
     else

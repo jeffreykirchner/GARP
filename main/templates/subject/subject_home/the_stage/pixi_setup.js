@@ -71,6 +71,14 @@ setup_pixi: function setup_pixi(){
         {
             // app.setup_pixi_minimap();
             app.setup_subject_status_overlay();
+
+            if(app.session.world_state.current_experiment_phase == 'Instructions')
+            {
+                Vue.nextTick(() => {
+                    app.process_instruction_page();
+                    app.instruction_display_scroll();
+                });
+            }
         }
     });
 

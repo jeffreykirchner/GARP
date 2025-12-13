@@ -264,6 +264,9 @@ update_player_inventory: function update_player_inventory()
     for(const i in app.session.world_state.session_players)
     {
         let session_player = app.session.world_state.session_players[i];
+
+        if(!app.is_player_in_group(i)) continue;
+        
         pixi_avatars[i].apples_label.text = session_player.apples < 10 ? `0${session_player.apples}` : session_player.apples;
         pixi_avatars[i].oranges_label.text = session_player.oranges < 10 ? `0${session_player.oranges}` : session_player.oranges;
 
