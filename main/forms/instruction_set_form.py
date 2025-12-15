@@ -39,7 +39,7 @@ class InstructionSetForm(forms.ModelForm):
                                                                        "v-model":"instruction_set.action_page_5",
                                                                        "placeholder" : "Page Number"}))
     
-    action_page_6 = forms.IntegerField(label='Required Action: Sell fruit to buyer', 
+    action_page_6 = forms.IntegerField(label='Required Action: Sell fruit to the Buyer', 
                                        widget=forms.NumberInput(attrs={"min":"1", 
                                                                        "v-model":"instruction_set.action_page_6",
                                                                        "placeholder" : "Page Number"}))
