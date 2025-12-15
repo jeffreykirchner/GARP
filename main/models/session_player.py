@@ -183,6 +183,8 @@ class SessionPlayer(models.Model):
 
         text = text.replace("#player_count-1#", str(len(parameter_set["parameter_set_players"])-1))
         text = text.replace("#id_label#", str(parameter_set_player["id_label"]))
+        text = text.replace("#my_role#", "Wholesaler" if parameter_set_player["id_label"] == "W" else "Reseller")
+        text = text.replace("#other_role#", "Reseller" if parameter_set_player["id_label"] == "R" else "Wholesaler")
         
         return text
     
