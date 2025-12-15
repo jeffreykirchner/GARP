@@ -167,6 +167,7 @@ process_instruction_page: function process_instruction_page(){
         case app.instructions.action_page_5:
             if(app.session_player.current_instruction_complete <= app.instructions.action_page_5)
             {
+                //reseller checkout
                 let current_instruction = JSON.parse(JSON.stringify(app.session_player.current_instruction));
                 let current_instruction_complete = JSON.parse(JSON.stringify(app.session_player.current_instruction_complete));
 
@@ -206,6 +207,7 @@ process_instruction_page: function process_instruction_page(){
         case app.instructions.action_page_6:
             if(app.session_player.current_instruction_complete <= app.instructions.action_page_6)
             {
+                //reseller sell to buyer
                 let current_instruction = JSON.parse(JSON.stringify(app.session_player.current_instruction));
                 let current_instruction_complete = JSON.parse(JSON.stringify(app.session_player.current_instruction_complete));
 
@@ -541,10 +543,14 @@ send_sell_to_buyer_instructions: function send_sell_to_buyer_instructions()
 
 send_reset_reseller_inventory: function send_reset_reseller_inventory()
 {
+    if(app.session_player.current_instruction != app.instructions.action_page_4) return;
+
     let group = app.session.world_state.groups[app.current_group];
     let session_player = app.session.world_state.session_players[app.session_player.id];
     let parameter_set = app.session.parameter_set;
     let parameter_set_period = app.get_current_parameter_set_period();
+
+    if(session_player.apples == 0 && session_player.oranges == 0) return;
 
     let message_data = {
         "value": "success",
