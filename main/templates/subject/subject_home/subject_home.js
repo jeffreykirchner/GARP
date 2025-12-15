@@ -190,7 +190,7 @@ let app = Vue.createApp({
                     app.take_update_checkout(message_data);
                     break;
                 case "update_reset_reseller_inventory":
-                    app.take_reset_reseller_inventory(message_data);
+                    app.take_update_reset_reseller_inventory(message_data);
                     break;
                 case "update_sell_to_buyer":
                     app.take_update_sell_to_buyer(message_data);

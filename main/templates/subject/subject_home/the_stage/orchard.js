@@ -162,8 +162,8 @@ update_orchard_labels: function update_orchard_labels()
 
     if(!parameter_set_period) return;
 
-    pixi_orchard_apple.label.text = "Buy: " + parameter_set_period.orchard_apple_price + "¢ / Apple";
-    pixi_orchard_orange.label.text = "Buy: " + parameter_set_period.orchard_orange_price + "¢ / Orange";
+    pixi_orchard_apple.label.text = "Harvest: " + parameter_set_period.orchard_apple_price + "¢ / Apple";
+    pixi_orchard_orange.label.text = "Harvest: " + parameter_set_period.orchard_orange_price + "¢ / Orange";
 
     //hide fruit if it has been harvested
     for(let i=0; i<pixi_orchard_apple.apples.length; i++)

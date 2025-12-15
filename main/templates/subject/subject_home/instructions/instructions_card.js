@@ -105,6 +105,17 @@ process_instruction_page: function process_instruction_page(){
             return;      
             break; 
         case app.instructions.action_page_2:
+            if(app.session_player.current_instruction_complete <= app.instructions.action_page_3)
+            {
+                //wholesaler harvest fruit
+                let current_instruction = JSON.parse(JSON.stringify(app.session_player.current_instruction));
+                let current_instruction_complete = JSON.parse(JSON.stringify(app.session_player.current_instruction_complete));
+                
+                let session_player_r = app.get_player_by_type("W");
+                app.session_player = app.session.session_players[session_player_r.id];
+                app.session_player.current_instruction = current_instruction;
+                app.session_player.current_instruction_complete = current_instruction_complete;
+            }
             return;
             break;
         case app.instructions.action_page_3:
@@ -217,6 +228,7 @@ process_instruction_page: function process_instruction_page(){
                 app.update_player_inventory();
                 app.update_orchard_labels();
                 app.update_register_labels();
+                app.update_buyer_label();
             }
             return;
             break;
@@ -489,6 +501,13 @@ send_sell_to_buyer_instructions: function send_sell_to_buyer_instructions()
         return;
     }
 
+    let earnings = parameter_set_period.reseller_budget + 
+                   app.get_buyer_price(session_player.apples, session_player.oranges) - 
+                   (parameter_set_period.wholesale_apple_price * session_player.apples +
+                    parameter_set_period.wholesale_orange_price * session_player.oranges);
+
+    session_player.earnings = earnings;
+
     session_player.apples = 0;
     session_player.oranges = 0;
 
@@ -515,4 +534,27 @@ send_sell_to_buyer_instructions: function send_sell_to_buyer_instructions()
         app.session_player.current_instruction_complete=app.instructions.action_page_6;
         app.send_current_instruction_complete();
     }
+},
+
+send_reset_reseller_inventory: function send_reset_reseller_inventory()
+{
+    let group = app.session.world_state.groups[app.current_group];
+    let session_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set = app.session.parameter_set;
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    let message_data = {
+        "value": "success",
+        "error_message": "",
+        "session_player_apples": 0,
+        "session_player_oranges": 0,
+        "session_player_budget": parameter_set_period.reseller_budget,
+        "apple_tray_inventory":parameter_set.apple_tray_capacity,
+        "orange_tray_inventory": parameter_set.orange_tray_capacity,
+        "starting_apples": session_player.apples,
+        "starting_oranges": session_player.oranges,
+        "session_player_id": app.session_player.id
+    }
+
+    app.take_update_reset_reseller_inventory(message_data);
 },

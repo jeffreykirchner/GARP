@@ -508,16 +508,23 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
  */
 reset_reseller_inventory: function reset_reseller_inventory()
 {
-    app.working = true;
-    app.send_message("reset_reseller_inventory", 
-                      {},
-                     "group");
+    if(app.session.world_state.current_experiment_phase == 'Instructions')
+    {
+        app.send_reset_reseller_inventory();
+    }
+    else
+    {
+        app.working = true;
+        app.send_message("reset_reseller_inventory", 
+                        {},
+                        "group");
+    }
 },
 
 /**
  * take reset reseller inventory
  */
-take_reset_reseller_inventory: function take_reset_reseller_inventory(data)
+take_update_reset_reseller_inventory: function take_update_reset_reseller_inventory(data)
 {
     let session_player_id = data.session_player_id;
     let session_player = app.session.world_state.session_players[session_player_id];
