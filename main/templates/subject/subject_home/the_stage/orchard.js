@@ -25,7 +25,7 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"NNN¢ / Apple", style:style});
+    let label = new PIXI.Text({text:"Harvest: NNN¢ / Apple", style:style});
     label.anchor.set(0.5);
 
     //add double click graphic bottom left corner of container
@@ -37,7 +37,7 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
     orchard_apple_container.addChild(double_click_graphic);
 
     label.position.set(0, orchard_apple_container.height/2 + label.height/2 + 5);
-    double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2 + 10, label.y- double_click_graphic.height/2+10);
+    double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2, label.y- double_click_graphic.height/2+10);
 
     //add apples in random positions on the tree
     let apples = [];
@@ -100,7 +100,7 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"NNN¢ / Orange", style:style});
+    let label = new PIXI.Text({text:"Harvest: NNN¢ / Orange", style:style});
     label.anchor.set(0.5);
 
     //add double click graphic bottom left corner of container
@@ -112,7 +112,7 @@ setup_pixi_orchard_orange: function setup_pixi_orchard_orange()
     orchard_orange_container.addChild(double_click_graphic);
 
     label.position.set(0, orchard_orange_container.height/2 + label.height/2 + 5);
-    double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2 + 10, label.y- double_click_graphic.height/2+10);
+    double_click_graphic.position.set(label.x + label.width/2 + double_click_graphic.width/2, label.y- double_click_graphic.height/2+10);
 
     //add oranges in random positions on the tree
     let oranges = [];
