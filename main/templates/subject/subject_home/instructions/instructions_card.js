@@ -228,6 +228,7 @@ process_instruction_page: function process_instruction_page(){
                 app.update_player_inventory();
                 app.update_orchard_labels();
                 app.update_register_labels();
+                app.update_buyer_label();
             }
             return;
             break;
@@ -499,6 +500,13 @@ send_sell_to_buyer_instructions: function send_sell_to_buyer_instructions()
         app.take_update_sell_to_buyer(message_data);
         return;
     }
+
+    let earnings = parameter_set_period.reseller_budget + 
+                   app.get_buyer_price(session_player.apples, session_player.oranges) - 
+                   (parameter_set_period.wholesale_apple_price * session_player.apples +
+                    parameter_set_period.wholesale_orange_price * session_player.oranges);
+
+    session_player.earnings = earnings;
 
     session_player.apples = 0;
     session_player.oranges = 0;
