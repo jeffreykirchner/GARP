@@ -115,6 +115,9 @@ process_instruction_page: function process_instruction_page(){
                 app.session_player = app.session.session_players[session_player_r.id];
                 app.session_player.current_instruction = current_instruction;
                 app.session_player.current_instruction_complete = current_instruction_complete;
+
+                app.session_player.earnings = parameter_set_period.wholesaler_budget;
+                app.update_subject_status_overlay();
             }
             return;
             break;

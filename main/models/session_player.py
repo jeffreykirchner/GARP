@@ -176,6 +176,8 @@ class SessionPlayer(models.Model):
         '''
 
         parameter_set = self.parameter_set_player.parameter_set.json()
+        parameter_set_period_id = parameter_set["parameter_set_periods_order"][0]
+        parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
         parameter_set_player = parameter_set["parameter_set_players"][str(self.parameter_set_player.id)]
 
         for i in parameter_set:
@@ -185,6 +187,7 @@ class SessionPlayer(models.Model):
         text = text.replace("#id_label#", str(parameter_set_player["id_label"]))
         text = text.replace("#my_role#", "Wholesaler" if parameter_set_player["id_label"] == "W" else "Reseller")
         text = text.replace("#other_role#", "Reseller" if parameter_set_player["id_label"] == "W" else "Wholesaler")
+        text = text.replace("#wholesaler_budget#", str(parameter_set_period["wholesaler_budget"]))
         
         return text
     
