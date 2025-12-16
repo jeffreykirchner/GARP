@@ -32,18 +32,20 @@ do_test_mode: function do_test_mode(){
         return;
     }
 
-    if(app.session.started &&
-       app.test_mode
-       )
+    if(app.session.started && app.test_mode)
     {
-        
+        let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+
         switch (app.session.world_state.current_experiment_phase)
         {
             case "Instructions":
                 app.do_test_mode_instructions();
                 break;
             case "Run":
-                app.do_test_mode_run();
+                if(parameter_set_player.id_label == "W")
+                    app.do_test_mode_run_w();
+                else if(parameter_set_player.id_label == "R")
+                    app.do_test_mode_run_r();
                 break;
             
         }        
@@ -102,79 +104,206 @@ do_test_mode_instructions: function do_test_mode_instructions()
  },
 
 /**
- * test during run phase
+ * test during run phase for wholesaler
  */
-do_test_mode_run: function do_test_mode_run()
+do_test_mode_run_w: function do_test_mode_run_w()
 {
-    //do chat
-    let go = true;
+    let group = app.session.world_state.groups[app.current_group];
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set = app.session.parameter_set;
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
 
-    if(go)
-        if(app.chat_text != "")
-        {
-            document.getElementById("send_chat_id").click();
-            go=false;
+    if(group.complete) return;
+
+    // harvest apples
+    if(group.apple_orchard_inventory > 0)
+    {
+        if (!pixi_orchard_apple || !pixi_orchard_apple.container) {
+            return;
         }
-    
-    if(app.session.world_state.finished) return;
+
+        //move to apple orchard
+        local_player.target_location = {"x":parseInt(pixi_orchard_apple.container.x), 
+                                        "y":parseInt(pixi_orchard_apple.container.y)-50};
+        app.target_location_update();
+
+        app.orchard_apple_double_click();
+        app.orchard_apple_double_click();
         
-    if(go)
-        switch (app.random_number(1, 3)){
-            case 1:
-                app.do_test_mode_chat();
-                break;
-            
-            case 2:                
-                app.test_mode_move();
-                break;
-            case 3:
-                
-                break;
+        return;
+    }
+
+    //harvest oranges
+    if(group.orange_orchard_inventory > 0)
+    {
+        if (!pixi_orchard_orange || !pixi_orchard_orange.container) {
+            return;
         }
-},
 
-/**
- * test mode chat
- */
-do_test_mode_chat: function do_test_mode_chat(){
+        //move to orange orchard
+        local_player.target_location = {"x":parseInt(pixi_orchard_orange.container.x), 
+                                        "y":parseInt(pixi_orchard_orange.container.y)-50};
+        app.target_location_update();
 
-    app.chat_text = app.random_string(5, 20);
-},
-
-/**
- * test mode move to a location
- */
-test_mode_move: function test_mode_move(){
-
-    if(app.session.world_state.finished) return;
-
-    let obj = app.session.world_state.session_players[app.session_player.id];
-    let current_period_id = app.session.world_state.session_periods_order[app.session.world_state.current_period-1];
-
-    if(!current_period_id) return;
-   
-    if(!app.test_mode_location_target || 
-        app.get_distance(app.test_mode_location_target,  obj.current_location) <= 25)
-    {
-         //if near target location, move to a new one
+        app.orchard_orange_double_click();
+        app.orchard_orange_double_click();
         
-        // app.test_mode_location_target = 
-    }
-    else if(app.get_distance(app.test_mode_location_target,  obj.current_location)<1000)
-    {
-        //object is close move to it
-        obj.target_location = app.test_mode_location_target;
-    }
-    else
-    {
-        //if far from target location, move to intermediate location
-        obj.target_location = app.get_point_from_angle_distance(obj.current_location.x, 
-                                                        obj.current_location.y,
-                                                        app.test_mode_location_target.x,
-                                                        app.test_mode_location_target.y,
-                                                        app.random_number(300,1000))
+        return;
     }
 
+    // go to apple tray
+    if(local_player.apples > 0)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x-50), 
+                                        "y":parseInt(pixi_tray_apple.container.y)};
+        app.target_location_update();
+
+        app.tray_apple_double_click();
+        app.tray_apple_double_click();
+
+        return;
+    }
+
+    // go to orange tray
+    if(local_player.oranges > 0)
+    {
+        if (!pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x-50), 
+                                        "y":parseInt(pixi_tray_orange.container.y)};
+        app.target_location_update();
+
+        app.tray_orange_double_click();
+        app.tray_orange_double_click();
+
+        return;
+    }
+
+    // go to the register
+    if (!pixi_register || !pixi_register.wholesaler_pad_container) {
+        return;
+    }
+
+    //move to register
+    local_player.target_location = {"x":parseInt(pixi_register.wholesaler_pad_container.x + 
+                                        parseInt(pixi_register.wholesaler_pad_container.width)/2), 
+                                    "y":parseInt(pixi_register.wholesaler_pad_container.y + 
+                                        parseInt(pixi_register.wholesaler_pad_container.height)/2)};
     app.target_location_update();
 },
+
+/**
+ *  test during run phase for retailer
+ */
+do_test_mode_run_r: function do_test_mode_run_r()
+{
+    let group = app.session.world_state.groups[app.current_group];
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let parameter_set = app.session.parameter_set;
+
+    if(group.complete) return;
+    
+    if(group.barriers[group.reseller_barrier].enabled) return;
+
+    //move to buyer
+    if(local_player.checkout)
+    {
+        if (!pixi_buyer || !pixi_buyer.buyer_container) {
+            return;
+        }
+
+        //move to buyer
+        local_player.target_location = {"x":parseInt(pixi_buyer.buyer_container.x), 
+                                        "y":parseInt(pixi_buyer.buyer_container.y)+50};
+        app.target_location_update();
+
+        app.buyer_double_click();
+        app.buyer_double_click();
+
+        return;
+    }
+
+    //check if going to register
+    if (pixi_register && pixi_register.reseller_pad_container)
+    {
+        if(local_player.apples+ local_player.oranges >=4)
+        {
+            local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
+                                                parseInt(pixi_register.reseller_pad_container.width)/2, 
+                                            "y":parseInt(pixi_register.reseller_pad_container.y) +
+                                                parseInt(pixi_register.reseller_pad_container.height)/2};
+            app.target_location_update();
+
+            app.register_double_click();
+            app.register_double_click();
+            
+            return;
+        }
+    }
+
+    // pick up fruit from trays
+    if(app.random_number(1,2) == 1)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container) {
+            return;
+        }
+
+        //move to apple tray
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 30, 
+                                        "y":parseInt(pixi_tray_apple.container.y)};
+        app.target_location_update();
+
+        app.tray_apple_double_click();
+        app.tray_apple_double_click();
+
+    }
+
+    if(app.random_number(1,2) == 1)
+    {
+        if (!pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to orange tray
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 30, 
+                                        "y":parseInt(pixi_tray_orange.container.y)};
+        app.target_location_update();
+
+        app.tray_orange_double_click();
+        app.tray_orange_double_click();
+    }
+
+    // if((local_player.apples > 2 || local_player.oranges > 2) && app.random_number(1,3) == 1)
+    // {
+    //     // go to the register
+    //     if (!pixi_register || !pixi_register.reseller_pad_container) {
+    //         return;
+    //     }
+
+    //     //move to register
+    //     local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
+    //                                         parseInt(pixi_register.reseller_pad_container.width)/2, 
+    //                                     "y":parseInt(pixi_register.reseller_pad_container.y) +
+    //                                         parseInt(pixi_register.reseller_pad_container.height)/2};
+    //     app.target_location_update();
+    // }
+},
+
+// /**
+//  * test mode chat
+//  */
+// do_test_mode_chat: function do_test_mode_chat(){
+
+//     app.chat_text = app.random_string(5, 20);
+// },
+
+
 {%endif%}
