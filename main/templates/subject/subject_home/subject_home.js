@@ -35,7 +35,7 @@ let app = Vue.createApp({
                     first_load_done : false,                       //true after software is loaded for the first time
                     player_key : "{{session_player.player_key}}",
                     session_player : null, 
-                    session_player_id: "{{session_player.id}}",
+                    session_player_copy: null,
                     session : null,
                     website_instance_id : "{{website_instance_id}}",
 
@@ -303,6 +303,7 @@ let app = Vue.createApp({
             
             app.session = message_data.session;
             app.session_player = message_data.session_player;
+            app.session_player_copy = JSON.parse(JSON.stringify(message_data.session_player));
 
             if(app.session.started)
             {
@@ -502,7 +503,7 @@ let app = Vue.createApp({
             app.session.world_state.current_experiment_phase = message_data.current_experiment_phase;
             app.session.world_state.finished = message_data.finished;
 
-            app.session_player = app.session.session_players[app.session_player_id];
+            app.session_player = JSON.parse(JSON.stringify(app.session_player_copy));
 
             if(app.session.world_state.current_experiment_phase == 'Names')
             {
