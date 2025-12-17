@@ -142,8 +142,8 @@ class ParameterSet(models.Model):
                 v = new_parameter_set_groups[i]
                 p.from_dict(v)
 
-                new_parameter_set_groups_map[i] = p.id
-
+                new_parameter_set_groups_map[str(i)] = p.id
+                
             #parameter set players
             self.parameter_set_players.all().delete()
 
@@ -174,7 +174,10 @@ class ParameterSet(models.Model):
 
                 groups = []
                 for g in new_parameter_set_barriers[i]["parameter_set_groups"]:
-                    groups.append(new_parameter_set_groups_map[str(g)])
+                    try:
+                        groups.append(new_parameter_set_groups_map[str(g)])
+                    except Exception as exp:
+                        logger.warning(f"Failed to map parameter set group ID: {i}, {exp}")
 
                 p.parameter_set_groups.set(groups)
 
