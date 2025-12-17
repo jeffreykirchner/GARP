@@ -371,7 +371,9 @@ let app = Vue.createApp({
         * update time and start status
         */
         take_update_time: function take_update_time(message_data){
-          
+            
+            if(!app.session) return;
+
             let status = message_data.value;
 
             if(status == "fail") return;

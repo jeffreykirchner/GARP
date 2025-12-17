@@ -180,6 +180,13 @@ class SessionPlayer(models.Model):
         parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
         parameter_set_player = parameter_set["parameter_set_players"][str(self.parameter_set_player.id)]
 
+        parameter_set_player_partner = None
+        for i in parameter_set["parameter_set_players"]:
+            temp_parameter_set_player_partner = parameter_set["parameter_set_players"][i]
+            if i != str(self.parameter_set_player.id) and temp_parameter_set_player_partner["parameter_set_group"] == parameter_set_player["parameter_set_group"]:
+                parameter_set_player_partner = temp_parameter_set_player_partner
+                break
+
         for i in parameter_set:
             text = text.replace(f'#{i}#', str(parameter_set[i]))
 
@@ -187,6 +194,11 @@ class SessionPlayer(models.Model):
         text = text.replace("#id_label#", str(parameter_set_player["id_label"]))
         text = text.replace("#my_role#", "Wholesaler" if parameter_set_player["id_label"] == "W" else "Reseller")
         text = text.replace("#other_role#", "Reseller" if parameter_set_player["id_label"] == "W" else "Wholesaler")
+        text = text.replace("#my_role_colorize#", f"<span style='color:{parameter_set_player["hex_color"]}'>Wholesaler</span>" if parameter_set_player["id_label"] == "W" else
+                                                  f"<span style='color:{parameter_set_player["hex_color"]}'>Reseller</span>")
+        if parameter_set_player_partner:
+            text = text.replace("#other_role_colorize#", f"<span style='color:{parameter_set_player_partner["hex_color"]}'>Reseller</span>" if parameter_set_player["id_label"] == "W" else 
+                                                        f"<span style='color:{parameter_set_player_partner["hex_color"]}'>Wholesaler</span>")
         text = text.replace("#wholesaler_budget#", str(parameter_set_period["wholesaler_budget"]))
         
         return text

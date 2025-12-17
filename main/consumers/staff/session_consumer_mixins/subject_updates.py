@@ -304,7 +304,7 @@ class SubjectUpdatesMixin():
         # logger.info(f"target_location_update: world state controller {self.controlling_channel} channel name {self.channel_name}")
         
         logger = logging.getLogger(__name__)
-        logger.info(f"harvest_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
+        #logger.info(f"harvest_fruit: world state controller {self.controlling_channel} channel name {self.channel_name}")
 
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
