@@ -32,7 +32,7 @@ do_test_mode: function do_test_mode(){
         return;
     }
 
-    if(app.session.started && app.test_mode)
+    if(app.session.started && app.test_mode && app.working == false)
     {
         let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
 
@@ -198,6 +198,7 @@ do_test_mode_run_w: function do_test_mode_run_w()
                                     "y":parseInt(pixi_register.wholesaler_pad_container.y + 
                                         parseInt(pixi_register.wholesaler_pad_container.height)/2)};
     app.target_location_update();
+    
 },
 
 /**
@@ -208,13 +209,40 @@ do_test_mode_run_r: function do_test_mode_run_r()
     let group = app.session.world_state.groups[app.current_group];
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let parameter_set = app.session.parameter_set;
+    let parameter_set_period = app.get_current_parameter_set_period();
 
     if(group.complete) return;
-    
+
+    //end game choice steal
+    if(group.show_end_game_choice_steal)
+    {
+        if(app.random_number(1,2) == 1)
+            app.end_game_steal_yes();
+        else
+            app.end_game_steal_no();
+
+        if(app.random_number(1,2) == 1)
+            app.end_game_steal_yes();
+        else
+            app.end_game_steal_no();
+
+        return;
+    }
+
+
+    if(group.show_end_game_choice_no_price)
+    {
+        if(app.random_number(1,2) == 1)
+            app.end_game_no_price_yes();
+        else
+            app.end_game_no_price_no();
+        return;
+    }
+
     if(group.barriers[group.reseller_barrier].enabled) return;
 
     //move to buyer
-    if(local_player.checkout)
+    if(local_player.checkout || (group.end_game_mode == "Steal" && local_player.apples > 0 && local_player.oranges > 0))
     {
         if (!pixi_buyer || !pixi_buyer.buyer_container) {
             return;
@@ -232,9 +260,10 @@ do_test_mode_run_r: function do_test_mode_run_r()
     }
 
     //check if going to register
-    if (pixi_register && pixi_register.reseller_pad_container)
+    if (pixi_register && pixi_register.reseller_pad_container && group.end_game_mode != "Steal")
     {
-        if(local_player.apples+ local_player.oranges >=4)
+        if(local_player.budget<parameter_set_period.wholesale_apple_price &&
+           local_player.budget<parameter_set_period.wholesale_orange_price)
         {
             local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
                                                 parseInt(pixi_register.reseller_pad_container.width)/2, 
@@ -257,7 +286,7 @@ do_test_mode_run_r: function do_test_mode_run_r()
         }
 
         //move to apple tray
-        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 30, 
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 50, 
                                         "y":parseInt(pixi_tray_apple.container.y)};
         app.target_location_update();
 
@@ -273,7 +302,7 @@ do_test_mode_run_r: function do_test_mode_run_r()
         }
 
         //move to orange tray
-        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 30, 
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 50, 
                                         "y":parseInt(pixi_tray_orange.container.y)};
         app.target_location_update();
 
