@@ -541,7 +541,7 @@ class Session(models.Model):
 
             writer = csv.writer(output)
 
-            writer.writerow(['Session', 'Date', 'Player', 'Name', 'Student ID', 'Earnings', 'Endgame Choice Part 1', 'Endgame Choice Part 2'])
+            writer.writerow(['Session', 'Date', 'Player', 'Role', 'Name', 'Student ID', 'Earnings', 'Endgame Choice Part 1', 'Endgame Choice Part 2'])
 
             # session_players = self.session_players.all()
 
@@ -561,14 +561,21 @@ class Session(models.Model):
 
             for p in world_state["session_players"]:
                 group = world_state["groups"][str(parameter_set_players[p]["parameter_set_player__parameter_set_group__id"])]
+                group_choice_part_1 = "Yes" if group["end_game_choice_part_1"] else "No"
+                
+                group_choice_part_2 = "Yes" if group["end_game_choice_part_2"] else "No"
+                if self.parameter_set.end_game_choice == EndGameChoices.NO_PRICE:
+                    group_choice_part_2 = "N/A"
+
                 writer.writerow([self.id,
                                  self.get_start_date_string(),
                                  parameter_set_players[p]["player_number"],
+                                 parameter_set_players[p]["parameter_set_player__id_label"],
                                  parameter_set_players[p]["name"],
                                  parameter_set_players[p]["student_id"],
                                  self.world_state["session_players"][p]["earnings"],
-                                 group["end_game_choice_part_1"] if parameter_set_players[p]["parameter_set_player__id_label"] == "R" else "",
-                                 group["end_game_choice_part_2"] if parameter_set_players[p]["parameter_set_player__id_label"] == "R" else ""] )
+                                 group_choice_part_1 if parameter_set_players[p]["parameter_set_player__id_label"] == "R" else "",
+                                 group_choice_part_2 if parameter_set_players[p]["parameter_set_player__id_label"] == "R" else ""] )
 
             v = output.getvalue()
             output.close()
