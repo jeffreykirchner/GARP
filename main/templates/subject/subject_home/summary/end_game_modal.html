@@ -51,13 +51,13 @@
                 <button type="button"
                         class="btn btn-outline-primary"
                         v-on:click = "post_session_link()"
-                        title="Press to continue"
+                        title="Press for survey"
                         v-else-if="(session.parameter_set.prolific_mode) || 
                                    (session.parameter_set.survey_required && 
                                     session_player.survey_complete == false && 
                                     session_player.name_submitted)"
                         v-bind:disabled="reconnecting || working">
-                    Press here to continue <i class="fas fa-sign-in-alt"></i>
+                   Continue to the Survey <i class="fas fa-sign-in-alt"></i>
                 </button>
             </div>
         </div>
