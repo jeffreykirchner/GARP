@@ -225,25 +225,30 @@ class SubjectUpdatesMixin():
         last_update = datetime.strptime(self.world_state_local["last_update"], "%Y-%m-%d %H:%M:%S.%f")
         dt_now = datetime.now()
 
-        if dt_now - last_update > timedelta(seconds=1):
+        if dt_now - last_update > timedelta(seconds=0.9):
             # logger.info("updating world state")
             self.world_state_local["last_update"] = str(dt_now)
             await self.store_world_state()
 
-            target_locations = {}
-            current_locations = {}
-            for i in self.world_state_local["session_players"]:
-                target_locations[i] = self.world_state_local["session_players"][i]["target_location"]
-                current_locations[i] = self.world_state_local["session_players"][i]["current_location"]
-            
-            data = {"target_locations" : target_locations, "current_locations" : current_locations}
+            for i in self.world_state_local["groups"]:
+                group = self.world_state_local["groups"][i]
+                target_locations = {}
+                current_locations = {}
 
-            # self.session_events.append(SessionEvent(session_id=self.session_id, 
-            #                                         session_player_id=player_id,
-            #                                         type=event['type'],
-            #                                         period_number=group["current_period"],
-            #                                         time_remaining=group["time_remaining"],
-            #                                         data=data))
+                for j in group["members"]:
+                    target_locations[j] = self.world_state_local["session_players"][str(j)]["target_location"]
+                    current_locations[j] = self.world_state_local["session_players"][str(j)]["current_location"]
+                
+                data = {"group_id" : i,
+                        "target_locations" : target_locations, 
+                        "current_locations" : current_locations}
+
+                self.session_events.append(SessionEvent(session_id=self.session_id, 
+                                                        session_player_id=player_id,
+                                                        type=event['type'],
+                                                        period_number=group["current_period"],
+                                                        time_remaining=group["time_remaining"],
+                                                        data=data))
         
         result = {"value" : "success", 
                   "target_location" : target_location, 
@@ -344,12 +349,7 @@ class SubjectUpdatesMixin():
             group["results"]["orange_harvested"] = session_player["oranges"]
             group["results"]["apple_harvested"] = session_player["apples"]
 
-            self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                    session_player_id=player_id,
-                                                    type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
-                                                    data=event_data))
+            
         
         result = {"value" : status,
                   "error_message" : error_message, 
@@ -367,6 +367,13 @@ class SubjectUpdatesMixin():
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+            
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False, 
                                     send_to_group=True, target_list=group["members"])
@@ -510,14 +517,6 @@ class SubjectUpdatesMixin():
                 if group["end_game_mode"] != EndGameChoices.STEAL:
                     group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
 
-        if status == "success":
-            self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                session_player_id=player_id,
-                                                type=event['type'],
-                                                period_number=group["current_period"],
-                                                time_remaining=group["time_remaining"],
-                                                data=event_data))
-
         result = {"value" : status,
                   "error_message" : error_message,
                   "session_player_apples" : session_player["apples"],
@@ -537,6 +536,13 @@ class SubjectUpdatesMixin():
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False, 
                                     send_to_group=True, target_list=group["members"])
@@ -614,13 +620,6 @@ class SubjectUpdatesMixin():
             event_data["apples"] = apples
             event_data["oranges"] = oranges
             event_data["payment"] = payment
-
-            self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                    session_player_id=player_id,
-                                                    type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
-                                                    data=event_data))
             
         result = {"value" : status,
                   "error_message" : error_message,
@@ -636,6 +635,13 @@ class SubjectUpdatesMixin():
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False, 
                                     send_to_group=True, target_list=group["members"])
@@ -695,13 +701,6 @@ class SubjectUpdatesMixin():
             session_player["oranges"] = 0
             session_player["budget"] = parameter_set_period["reseller_budget"]
 
-            self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                    session_player_id=player_id,
-                                                    type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
-                                                    data=event_data))
-
         result = {"value" : status,
                   "error_message" : error_message,
                   "session_player_apples" : session_player["apples"],
@@ -718,6 +717,13 @@ class SubjectUpdatesMixin():
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=group["members"])
@@ -809,13 +815,6 @@ class SubjectUpdatesMixin():
             event_data["oranges"] = oranges_sold
             event_data["payment"] = period_earnings
 
-            self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                    session_player_id=player_id,
-                                                    type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
-                                                    data=event_data))
-
             #reset for next period
             session_player["apples"] = 0
             session_player["oranges"] = 0
@@ -854,6 +853,13 @@ class SubjectUpdatesMixin():
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=group["members"])
@@ -922,21 +928,18 @@ class SubjectUpdatesMixin():
                   "exit_barrier_enabled" : group["barriers"][str(group["exit_barrier"])]["enabled"],
                   "session_player_id" : player_id}
 
-        
-        if status == "success":
-            self.session_events.append(SessionEvent(session_id=self.session_id,
-                                                    session_player_id=player_id,
-                                                    type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
-                                                    data=event_data))
-
-        
         if status == "fail":
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=[player_id])
         else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=group["members"])

@@ -21,7 +21,7 @@ take_load_session_events(message_data)
         app.session_events = message_data.session_events;
 
         app.replay_current_period = 1;
-        app.replay_time_remaining = 60;  // default period length
+        app.replay_time_remaining = 0;
 
         app.replay_load_world_state();
     }
@@ -70,28 +70,18 @@ replay_mode_play: function replay_mode_play()
 {
     if(app.replay_mode == "paused") return;
 
-    app.process_replay_events();
+    let result = app.process_replay_events();
 
-    if(app.replay_time_remaining > 0)
+    if(result.complete) return;
+
+    if(app.replay_current_period != result.current_period)
     {
-        app.replay_time_remaining--;
-    }
-    else if(app.replay_current_period == app.session.parameter_set.parameter_set_periods_order.length)
-    {
-        //end of the session
-        return;
+        app.replay_current_period = result.current_period;
+        app.replay_time_remaining = 0;
     }
     else
     {
-        app.replay_current_period++;
-
-        app.replay_time_remaining = 60;  // default period length
-
-        // break_frequency and break_length fields removed
-        // if(app.replay_current_period % app.session.parameter_set.break_frequency == 0)
-        // {
-        //     app.replay_time_remaining += app.session.parameter_set.break_length;
-        // }
+        app.replay_time_remaining++;
     }
 
     app.replay_timeout = setTimeout(app.replay_mode_play, 1000);
@@ -106,7 +96,7 @@ reset_replay: function reset_replay()
     if (app.replay_timeout) clearTimeout(app.replay_timeout);
 
     app.replay_current_period = 1;
-    app.replay_time_remaining = 60;  // default period length
+    app.replay_time_remaining = 0;  // default period length
 
     app.replay_load_world_state();
     app.the_feed = [];
@@ -115,25 +105,36 @@ reset_replay: function reset_replay()
 
 /**
  * process replay events
+ * @param {boolean} update_current_location - whether to update current location along with target location
+ * @return {boolean} - whether to continue processing events
  */
 process_replay_events: function process_replay_events(update_current_location = false)
 {
     let current_period = app.replay_current_period;
     let time_remaining = app.replay_time_remaining;
 
-    for(let i in app.session_events[current_period][time_remaining])
+    let result = {complete:false, current_period:current_period};
+
+    if (!app.session_events[current_period].hasOwnProperty(time_remaining)) return;
+
+    for(let i in app.session_events[current_period][time_remaining])    
     {   
         let event =  app.session_events[current_period][time_remaining][i];
 
         if(event.type == "target_location_update")
         {
-            for(let i in event.data.target_locations)
+            let group_id = event.data.group_id;
+            let group = app.session.world_state.groups[group_id];
+
+            for(let i in group.members)
             {
-                app.session.world_state.session_players[i].target_location = JSON.parse(JSON.stringify(event.data.target_locations[i]));
+                let player_id = group.members[i];
+                let session_player = app.session.world_state.session_players[player_id];
+                session_player.target_location = JSON.parse(JSON.stringify(event.data.target_locations[player_id]));
 
                 if(update_current_location)
                 {
-                    app.session.world_state.session_players[i].current_location = JSON.parse(JSON.stringify(event.data.current_locations[i]));
+                    session_player.current_location = JSON.parse(JSON.stringify(event.data.current_locations[player_id]));
                 }
             }
         }
@@ -142,6 +143,12 @@ process_replay_events: function process_replay_events(update_current_location = 
             let data = {message:{message_data:JSON.parse(JSON.stringify(event.data)),
                                  message_type:"update_" + event.type},}
             app.take_message(data);
+
+            if(event.type == "sell_to_buyer")
+            {
+                result.current_period = event.data.current_period;
+                result.complete = event.data.complete;
+            };
         }
         
     }
@@ -149,6 +156,8 @@ process_replay_events: function process_replay_events(update_current_location = 
     app.session.world_state["current_experiment_phase"] = "Done";
     app.session.world_state["time_remaining"] = app.replay_time_remaining;
     app.session.world_state["current_period"] = app.replay_current_period;
+
+    return result;
 },
 
 /**
