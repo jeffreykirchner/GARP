@@ -117,15 +117,12 @@ class TimerMixin():
             #session status
             result["value"] = "success"
             result["stop_timer"] = stop_timer
-            # result["time_remaining"] = world_state["time_remaining"]
-            # result["current_period"] = world_state["current_period"]
             result["groups"] = world_state["groups"]
             result["timer_running"] = world_state["timer_running"]
             result["started"] = world_state["started"]
             result["finished"] = world_state["finished"]
             result["current_experiment_phase"] = world_state["current_experiment_phase"]
-            # result["period_is_over"] = period_is_over
-
+            
             #locations
             result["current_locations"] = {}
             result["target_locations"] = {}

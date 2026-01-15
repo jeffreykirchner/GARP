@@ -197,7 +197,7 @@ advance_period: function advance_period(direction)
         }
     }
 
-    app.replay_time_remaining = 60;  // default period length
+    app.replay_time_remaining = 0;  // default period length
 
     // break_frequency and break_length fields removed
     // if(app.replay_current_period % app.session.parameter_set.break_frequency == 0)

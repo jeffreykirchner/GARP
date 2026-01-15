@@ -225,7 +225,7 @@ class SubjectUpdatesMixin():
         last_update = datetime.strptime(self.world_state_local["last_update"], "%Y-%m-%d %H:%M:%S.%f")
         dt_now = datetime.now()
 
-        if dt_now - last_update > timedelta(seconds=0.9):
+        if dt_now - last_update > timedelta(seconds=1):
             # logger.info("updating world state")
             self.world_state_local["last_update"] = str(dt_now)
             await self.store_world_state()
@@ -249,7 +249,9 @@ class SubjectUpdatesMixin():
                                                         period_number=group["current_period"],
                                                         time_remaining=group["time_remaining"],
                                                         data=data))
-        
+
+                await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
+                
         result = {"value" : "success", 
                   "target_location" : target_location, 
                   "current_location" : current_location,
