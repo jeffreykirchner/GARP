@@ -25,16 +25,18 @@ class InterfaceMixin():
             session_events_local[str(i.period_number)] = {}
 
             # period_length and break fields removed - using default value
-            total_period_length = 60  # default period length
+            #total_period_length = 60  # default period length
 
             # if i.period_number % self.parameter_set_local["break_frequency"] == 0:
             #     total_period_length += self.parameter_set_local["break_length"]
 
-            for j in range(total_period_length+1):
-                session_events_local[str(i.period_number)][str(j)] = []
+            # for j in range(total_period_length+1):
+            #     session_events_local[str(i.period_number)][str(j)] = []
 
         async for i in session.session_events.exclude(type="help_doc"):
             v = {"type" : i.type, "data" : i.data}
+            if str(i.time_remaining) not in session_events_local[str(i.period_number)]:
+                session_events_local[str(i.period_number)][str(i.time_remaining)] = []
             session_events_local[str(i.period_number)][str(i.time_remaining)].append(v)
 
         # session.replay_data = session_events_local

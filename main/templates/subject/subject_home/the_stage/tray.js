@@ -477,7 +477,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         group["barriers"][group["reseller_barrier"]]["enabled"] = data.reseller_barrier_up;
         group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
     }
-    else if(parameter_set_player_local.id_label == "W" && 
+    else if(app.is_subject &&
+            parameter_set_player_local.id_label == "W" && 
             app.is_player_in_group(session_player_id))
     {
         //show end game notice to wholesaler

@@ -26,7 +26,7 @@ let app = Vue.createApp({
                     session_key : "{{session.session_key}}",
                     session : null,
                     session_events : null,
-                    the_feed : [],
+                    the_feed : {},
                     staff_edit_name_etc_form_ids: {{staff_edit_name_etc_form_ids|safe}},
 
                     move_to_next_phase_text : 'Start Next Experiment Phase',
@@ -483,6 +483,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/tray.js"%}
         {%include "subject/subject_home/the_stage/register.js"%}
         {%include "subject/subject_home/the_stage/buyer.js"%}
+        {%include "subject/subject_home/the_stage/end_game.js"%}
         {%include "js/help_doc.js"%}
     
         /** clear form error messages
