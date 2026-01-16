@@ -618,14 +618,12 @@ class SubjectUpdatesMixin():
             group["results"]["wholesaler_earnings"] += payment
 
             group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
-
-            event_data["apples"] = apples
-            event_data["oranges"] = oranges
-            event_data["payment"] = payment
             
         result = {"value" : status,
                   "error_message" : error_message,
                   "payment" : payment,
+                  "apples" : apples,
+                  "oranges" : oranges,
                   "reseller_budget" : session_player["budget"],
                   "reseller_checkout" : session_player["checkout"],
                   "wholesaler_earnings" : wholesaler["earnings"],

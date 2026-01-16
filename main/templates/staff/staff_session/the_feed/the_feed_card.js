@@ -40,6 +40,8 @@ process_the_feed: function process_the_feed(message_type, message_data)
             }
             break;
         case "update_tray_fruit":
+            if(message_data.show_end_game_choice_steal || message_data.show_end_game_choice_no_price) return;
+
             if(player_label == "Wholesaler") {
                 if(message_data.fruit_type == "apple") {
                     html_text = "The " + player_label + " placed an apple <img src='/static/apple.png' width='20'> on the tray.";
@@ -62,10 +64,47 @@ process_the_feed: function process_the_feed(message_type, message_data)
                                                              + message_data.starting_oranges + " orange(s) <img src='/static/orange.png' width='20'> to the tray.";
             break;
         case "update_checkout":
-            html_text = "The " + player_label + " purchased " + message_data.apple_sold + " apples(s) <img src='/static/apple.png' width='20'> and " 
-                                                              + message_data.orange_sold + " orange(s) <img src='/static/orange.png' width='20'> for " 
+            html_text = "The " + player_label + " purchased " + message_data.apples + " apples(s) <img src='/static/apple.png' width='20'> and " 
+                                                              + message_data.oranges + " orange(s) <img src='/static/orange.png' width='20'> for " 
                                                               + message_data.wholesaler_earnings + "¢.";
             break;
+        case "update_sell_to_buyer":
+            html_text = "The " + player_label + " sold " + message_data.apples_sold + " apples(s) <img src='/static/apple.png' width='20'> and " 
+                                              + message_data.oranges_sold + " orange(s) <img src='/static/orange.png' width='20'> to a customer for " 
+                                              + message_data.period_earnings + "¢.";
+            break;
+        case "update_end_game_choice":
+            if(app.session.parameter_set.end_game_choice == "Steal")
+            {
+                if(message_data.end_game_choice_part_1 == true)
+                {
+                    html_text = "The " + player_label + " chose <i>to</i> learn about stealing.<br>";
+                }
+                else
+                {
+                    html_text = "The " + player_label + " chose <i>not to</i> learn about not stealing.<br>";
+                }
+
+                if(message_data.end_game_choice_part_2 == true)
+                {
+                    html_text += "The " + player_label + " chose <i>to</i> steal fruit.";
+                }
+                else
+                {
+                    html_text += "The " + player_label + " chose <i>not to</i> steal fruit.";
+                }
+            }
+            else if(app.session.parameter_set.end_game_choice == "No Price")
+            {
+                if(message_data.end_game_choice_part_1 == true)
+                {
+                    html_text = "The " + player_label + " chose <i>to</i> reveal the prices.";
+                }
+                else
+                {
+                    html_text = "The " + player_label + " chose <i>not to</i> reveal the prices.";
+                }
+            }
     }
 
     if(html_text != "") {
