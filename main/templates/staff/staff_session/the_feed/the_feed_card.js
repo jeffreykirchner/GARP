@@ -3,35 +3,69 @@
  */
 process_the_feed: function process_the_feed(message_type, message_data)
 {
-    if(message_data.status != "success") return;
+    if(message_data.value != "success") return;
+
+    if(message_type == "update_target_location_update") return;
     
     let html_text = "";
     let sender_label = "";
     let receiver_label = "";
     let group_label = "";
 
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(message_data.session_player_id);
+    let session_player = app.session.world_state.session_players[message_data.session_player_id];
+
+    if(!session_player) return;
+
+    let player_label = "Wholesaler";
+    let group_id = parameter_set_player.parameter_set_group;
+
+    if(parameter_set_player.id_label == "R")
+    {
+        player_label = "Retailer";  
+    }
+
     switch(message_type) {                
         
         case "update_chat":
 
-            sender_label = app.get_parameter_set_player_from_player_id(message_data.sender_id).id_label;
-            let source_player_group_label = app.get_parameter_set_group_from_player_id(message_data.sender_id).name;
-            receiver_label = "";
-
-            for(let i in message_data.nearby_players) {
-                if(receiver_label != "") receiver_label += ", ";
-                group_label = app.get_parameter_set_group_from_player_id(message_data.nearby_players[i]).name;
-                receiver_label += "<b>" + app.get_parameter_set_player_from_player_id(message_data.nearby_players[i]).id_label + "</b>(" + group_label + ")";
+            html_text = player_label + ": " +  message_data.text;
+            break;
+        case "update_harvest_fruit":
+            if(message_data.fruit_type == "apple") {
+                html_text = "The " + player_label + " harvested an apple <img src='/static/apple.png' width='20'> ";
             }
-
-            html_text = "<b>" + sender_label + "</b>(" + source_player_group_label + ") @ " + receiver_label + ": " +  message_data.text;
-
+            else if(message_data.fruit_type == "orange") {
+                html_text = "The " + player_label + " harvested an orange <img src='/static/orange.png' width='20'> ";
+            }
+            break;
+        case "update_tray_fruit":
+            if(player_label == "Wholesaler") {
+                if(message_data.fruit_type == "apple") {
+                    html_text = "The " + player_label + " placed an apple <img src='/static/apple.png' width='20'> on the tray.";
+                }
+                else if(message_data.fruit_type == "orange") {
+                    html_text = "The " + player_label + " placed an orange <img src='/static/orange.png' width='20'> on the tray.";
+                }
+            }
+            else if(player_label == "Retailer") {
+                if(message_data.fruit_type == "apple") {
+                    html_text = "The " + player_label + " took an apple <img src='/static/apple.png' width='20'> from the tray.";
+                }
+                else if(message_data.fruit_type == "orange") {
+                    html_text = "The " + player_label + " purchased " + message_data.apples_sold + " apples(s) took an orange <img src='/static/orange.png' width='20'> from the tray.";
+                }
+            }
+            break;
+        case "update_checkout":
+            html_text = "The " + player_label + " checked out a " + message_data.fruit_type + " for $" + message_data.amount + ".";
             break;
     }
 
     if(html_text != "") {
-        if(app.the_feed.length > 100) app.the_feed.pop();
-        app.the_feed.unshift(html_text);
+        if(!app.the_feed[group_id]) app.the_feed[group_id] = [];
+        if(app.the_feed[group_id].length > 100) app.the_feed[group_id].pop();
+        app.the_feed[group_id].unshift(html_text);
     }
 
 },

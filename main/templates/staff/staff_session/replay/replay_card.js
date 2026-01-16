@@ -99,7 +99,12 @@ reset_replay: function reset_replay()
     app.replay_time_remaining = 0;  // default period length
 
     app.replay_load_world_state();
-    app.the_feed = [];
+
+    app.the_feed = {};
+    for(let i in app.session.world_state.groups)
+    {
+        app.the_feed[i] = [];
+    }
     
 },
 
