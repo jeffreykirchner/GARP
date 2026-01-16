@@ -53,12 +53,18 @@ process_the_feed: function process_the_feed(message_type, message_data)
                     html_text = "The " + player_label + " took an apple <img src='/static/apple.png' width='20'> from the tray.";
                 }
                 else if(message_data.fruit_type == "orange") {
-                    html_text = "The " + player_label + " purchased " + message_data.apples_sold + " apples(s) took an orange <img src='/static/orange.png' width='20'> from the tray.";
+                    html_text = "The " + player_label + " took an orange <img src='/static/orange.png' width='20'> from the tray.";
                 }
             }
             break;
+        case "update_reset_reseller_inventory":
+            html_text = "The " + player_label + " returned " + message_data.starting_apples + " apples(s) <img src='/static/apple.png' width='20'> and " 
+                                                             + message_data.starting_oranges + " orange(s) <img src='/static/orange.png' width='20'> to the tray.";
+            break;
         case "update_checkout":
-            html_text = "The " + player_label + " checked out a " + message_data.fruit_type + " for $" + message_data.amount + ".";
+            html_text = "The " + player_label + " purchased " + message_data.apple_sold + " apples(s) <img src='/static/apple.png' width='20'> and " 
+                                                              + message_data.orange_sold + " orange(s) <img src='/static/orange.png' width='20'> for " 
+                                                              + message_data.wholesaler_earnings + "¢.";
             break;
     }
 
