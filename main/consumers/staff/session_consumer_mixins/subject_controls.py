@@ -91,23 +91,25 @@ class SubjectControlsMixin():
 
 
         session_player = self.world_state_local["session_players"][str(player_id)]
-        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        parameter_set = self.parameter_set_local
+        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
         group = self.world_state_local["groups"][str(parameter_set_player["parameter_set_group"])]
 
-        barriers_up = False
 
-        for barrier_id in group["barriers"]:
-            barrier = group["barriers"][barrier_id]
-            if barrier["enabled"]:
-                barriers_up = True
-                break
+        new_location = {"x" : parameter_set_player["start_x"], "y" : parameter_set_player["start_y"]}
 
-        if parameter_set_player["id_label"] == "W" or not barriers_up:
-            session_player["current_location"] = {"x" : parameter_set_player["start_x"], "y" : parameter_set_player["start_y"]}
-        else:
-            apple_tray_location = self.parameter_set_local["apple_tray_location"].split(",")
-            session_player["current_location"] = {"x" : int(apple_tray_location[0])+300, "y" : int(apple_tray_location[1])}
+        if parameter_set_player["id_label"] == "R":
+            #if retailer, move based on barriers
+            for barrier_id in group["barriers"]:
+                barrier = parameter_set["parameter_set_barriers"][str(barrier_id)]
+                barrier_enabled = group["barriers"][barrier_id]["enabled"]
 
+                if barrier_enabled:
+                    if barrier["info"] == "Checkout" or barrier["info"] == "Exit":
+                        apple_tray_location = self.parameter_set_local["apple_tray_location"].split(",")
+                        new_location = {"x" : int(apple_tray_location[0])+300, "y" : int(apple_tray_location[1])}
+
+        session_player["current_location"] = new_location
         session_player["target_location"] = session_player["current_location"]
         
         result = {"value" : "success", 
