@@ -150,6 +150,8 @@ process_instruction_page: function process_instruction_page(){
                 group.apple_orchard_inventory = 0;
                 group.orange_orchard_inventory = 0;
 
+                session_player_r.budget = parameter_set_period.reseller_budget;
+
                 group.apple_tray_inventory = parameter_set.apple_tray_capacity;
                 group.orange_tray_inventory = parameter_set.orange_tray_capacity;
 
@@ -189,7 +191,7 @@ process_instruction_page: function process_instruction_page(){
                 group.orange_orchard_inventory = 0;
                 session_player_r.apples = 1;
                 session_player_r.oranges = 1;
-                session_player_r.budget = session_player_r.budget - (parameter_set_period.wholesale_apple_price + parameter_set_period.wholesale_orange_price);
+                session_player_r.budget = parameter_set_period.reseller_budget - (parameter_set_period.wholesale_apple_price + parameter_set_period.wholesale_orange_price);
 
                 group.apple_tray_inventory = parameter_set.apple_tray_capacity-1;
                 group.orange_tray_inventory = parameter_set.orange_tray_capacity-1;
@@ -220,7 +222,7 @@ process_instruction_page: function process_instruction_page(){
                 group.orange_orchard_inventory = 0;
                 session_player_r.apples = 1;
                 session_player_r.oranges = 1;
-                session_player_r.budget = session_player_r.budget - (parameter_set_period.wholesale_apple_price + parameter_set_period.wholesale_orange_price);
+                session_player_r.budget = parameter_set_period.reseller_budget - (parameter_set_period.wholesale_apple_price + parameter_set_period.wholesale_orange_price);
                 session_player_r.checkout = true;
 
                 group.apple_tray_inventory = parameter_set.apple_tray_capacity-1;
