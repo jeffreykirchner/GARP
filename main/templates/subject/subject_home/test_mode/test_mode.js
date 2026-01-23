@@ -262,8 +262,9 @@ do_test_mode_run_r: function do_test_mode_run_r()
     //check if going to register
     if (pixi_register && pixi_register.reseller_pad_container && group.end_game_mode != "Steal")
     {
-        if(local_player.budget<parameter_set_period.wholesale_apple_price &&
-           local_player.budget<parameter_set_period.wholesale_orange_price)
+        if((local_player.budget<parameter_set_period.wholesale_apple_price &&
+           local_player.budget<parameter_set_period.wholesale_orange_price) ||
+           local_player.apples + local_player.oranges >= parameter_set_period.max_fruit)
         {
             local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
                                                 parseInt(pixi_register.reseller_pad_container.width)/2, 
