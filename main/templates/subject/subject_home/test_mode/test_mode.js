@@ -84,24 +84,176 @@ do_test_mode_instructions: function do_test_mode_instructions()
         //take action if needed to complete page
         switch (app.session_player.current_instruction)
         {
-            case 1:
+            case app.instructions.action_page_1:
+                app.do_test_mode_instructions_1();
                 break;
-            case 2:
-                
+            case app.instructions.action_page_2:        
+                app.do_test_mode_instructions_2();        
                 break;
-            case 3:
-                
+            case app.instructions.action_page_3:
+                app.do_test_mode_instructions_3();
                 break;
-            case 4:
-                
+            case app.instructions.action_page_4:
+                app.do_test_mode_instructions_4();
                 break;
-            case 5:
+            case app.instructions.action_page_5:
+
+                break;
+            case app.instructions.action_page_6:
+
                 break;
         }   
     }
 
     
  },
+
+ /**
+  * test mode page 1 of instructions
+  * move to the top of the screen
+  */
+ do_test_mode_instructions_1: function do_test_mode_instructions_1()
+ {
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    local_player.target_location = {"x":parseInt(local_player.current_location.x), 
+                                    "y":parseInt(local_player.current_location.y)-50};
+    app.target_location_update();    
+ },
+
+ /**
+  * test mode page 2 of instructions
+  * harvest all apples and oranges from the orchards
+  */
+do_test_mode_instructions_2: function do_test_mode_instructions_2()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let group = app.session.world_state.groups[app.current_group];
+
+    // harvest apples
+    if(group.apple_orchard_inventory > 0)
+    {
+        if (!pixi_orchard_apple || !pixi_orchard_apple.container) {
+            return;
+        }
+
+        //move to apple orchard
+        local_player.target_location = {"x":parseInt(pixi_orchard_apple.container.x), 
+                                        "y":parseInt(pixi_orchard_apple.container.y)-50};
+        app.target_location_update();
+
+        app.orchard_apple_double_click();
+        app.orchard_apple_double_click();
+        return;
+    }
+
+    //harvest oranges
+    if(group.orange_orchard_inventory > 0)
+    {
+        if (!pixi_orchard_orange || !pixi_orchard_orange.container) {
+            return;
+        }
+
+        //move to orange orchard
+        local_player.target_location = {"x":parseInt(pixi_orchard_orange.container.x), 
+                                        "y":parseInt(pixi_orchard_orange.container.y)-50};
+        app.target_location_update();
+
+        app.orchard_orange_double_click();
+        app.orchard_orange_double_click();
+        return;
+    }
+},
+
+/**
+ * test mode page 3 of instructions
+ * place all apples and oranges on the trays
+ */
+do_test_mode_instructions_3: function do_test_mode_instructions_3()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // go to apple tray
+    if(local_player.apples > 0)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x-50), 
+                                        "y":parseInt(pixi_tray_apple.container.y)};
+        app.target_location_update();
+
+        app.tray_apple_double_click();
+        app.tray_apple_double_click();
+
+        return;
+    }
+
+    // go to orange tray
+    if(local_player.oranges > 0)
+    {
+        if (!pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x-50), 
+                                        "y":parseInt(pixi_tray_orange.container.y)};
+        app.target_location_update();
+
+        app.tray_orange_double_click();
+        app.tray_orange_double_click();
+
+        return;
+    }
+},
+
+/**
+ * test mode page 4 of instructions
+ * move to trays and pick up one apple and one orange
+ */
+do_test_mode_instructions_4: function do_test_mode_instructions_4()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // go to apple tray
+    if(local_player.apples < 1)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 50, 
+                                        "y":parseInt(pixi_tray_apple.container.y)};
+        app.target_location_update();
+
+        app.tray_apple_double_click();
+        app.tray_apple_double_click();
+
+        return;
+    }
+
+    // go to orange tray
+    if(local_player.oranges < 1)
+    {
+        if (!pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 50, 
+                                        "y":parseInt(pixi_tray_orange.container.y)};
+        app.target_location_update();
+
+        app.tray_orange_double_click();
+        app.tray_orange_double_click();
+
+        return;
+    }
+},
 
 /**
  * test during run phase for wholesaler
