@@ -259,7 +259,7 @@ class SubjectUpdatesMixin():
         
         await self.send_message(message_to_self=None, message_to_group=result,
                                 message_type=event['type'], send_to_client=False, 
-                                send_to_group=True)
+                                send_to_group=True, target_list=group["members"])
 
     async def update_target_location_update(self, event):
         '''
