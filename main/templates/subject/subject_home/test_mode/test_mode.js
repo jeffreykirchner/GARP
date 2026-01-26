@@ -84,24 +84,220 @@ do_test_mode_instructions: function do_test_mode_instructions()
         //take action if needed to complete page
         switch (app.session_player.current_instruction)
         {
-            case 1:
+            case app.instructions.action_page_1:
+                app.do_test_mode_instructions_1();
                 break;
-            case 2:
-                
+            case app.instructions.action_page_2:        
+                app.do_test_mode_instructions_2();        
                 break;
-            case 3:
-                
+            case app.instructions.action_page_3:
+                app.do_test_mode_instructions_3();
                 break;
-            case 4:
-                
+            case app.instructions.action_page_4:
+                app.do_test_mode_instructions_4();
                 break;
-            case 5:
+            case app.instructions.action_page_5:
+                app.do_test_mode_instructions_5();
+                break;
+            case app.instructions.action_page_6:
+                app.do_test_mode_instructions_6();
                 break;
         }   
     }
 
     
  },
+
+ /**
+  * test mode page 1 of instructions
+  * move to the top of the screen
+  */
+ do_test_mode_instructions_1: function do_test_mode_instructions_1()
+ {
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    local_player.target_location = {"x":parseInt(local_player.current_location.x), 
+                                    "y":parseInt(local_player.current_location.y)-50};
+    app.target_location_update();    
+ },
+
+ /**
+  * test mode page 2 of instructions
+  * harvest all apples and oranges from the orchards
+  */
+do_test_mode_instructions_2: function do_test_mode_instructions_2()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+    let group = app.session.world_state.groups[app.current_group];
+
+    // harvest apples
+    if(group.apple_orchard_inventory > 0)
+    {
+        if (!pixi_orchard_apple || !pixi_orchard_apple.container) {
+            return;
+        }
+
+        //move to apple orchard
+        local_player.target_location = {"x":parseInt(pixi_orchard_apple.container.x), 
+                                        "y":parseInt(pixi_orchard_apple.container.y)-50};
+        app.target_location_update();
+
+        app.orchard_apple_double_click();
+        app.orchard_apple_double_click();
+        return;
+    }
+
+    //harvest oranges
+    if(group.orange_orchard_inventory > 0)
+    {
+        if (!pixi_orchard_orange || !pixi_orchard_orange.container) {
+            return;
+        }
+
+        //move to orange orchard
+        local_player.target_location = {"x":parseInt(pixi_orchard_orange.container.x), 
+                                        "y":parseInt(pixi_orchard_orange.container.y)-50};
+        app.target_location_update();
+
+        app.orchard_orange_double_click();
+        app.orchard_orange_double_click();
+        return;
+    }
+},
+
+/**
+ * test mode page 3 of instructions
+ * place all apples and oranges on the trays
+ */
+do_test_mode_instructions_3: function do_test_mode_instructions_3()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // go to apple tray
+    if(local_player.apples > 0)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x-50), 
+                                        "y":parseInt(pixi_tray_apple.container.y)};
+        app.target_location_update();
+
+        app.tray_apple_double_click();
+        app.tray_apple_double_click();
+
+        return;
+    }
+
+    // go to orange tray
+    if(local_player.oranges > 0)
+    {
+        if (!pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x-50), 
+                                        "y":parseInt(pixi_tray_orange.container.y)};
+        app.target_location_update();
+
+        app.tray_orange_double_click();
+        app.tray_orange_double_click();
+
+        return;
+    }
+},
+
+/**
+ * test mode page 4 of instructions
+ * move to trays and pick up one apple and one orange
+ */
+do_test_mode_instructions_4: function do_test_mode_instructions_4()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // go to apple tray
+    if(local_player.apples < 1)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 50, 
+                                        "y":parseInt(pixi_tray_apple.container.y)};
+        app.target_location_update();
+
+        app.tray_apple_double_click();
+        app.tray_apple_double_click();
+
+        return;
+    }
+
+    // go to orange tray
+    if(local_player.oranges < 1)
+    {
+        if (!pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to register
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 50, 
+                                        "y":parseInt(pixi_tray_orange.container.y)};
+        app.target_location_update();
+
+        app.tray_orange_double_click();
+        app.tray_orange_double_click();
+
+        return;
+    }
+},
+
+/**
+ * test mode page 5 of instructions
+ * move to the register and checkout
+ */
+do_test_mode_instructions_5: function do_test_mode_instructions_5()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // go to the register
+    if (!pixi_register || !pixi_register.register_container) {
+        return;
+    }
+
+    //move to register
+    local_player.target_location = {"x":parseInt(pixi_register.register_container.x) + 200, 
+                                    "y":parseInt(pixi_register.register_container.y)};
+    app.target_location_update();
+
+    app.register_double_click();
+    app.register_double_click();
+},
+
+/**
+ * test mode page 6 of instructions
+ * move to the buyer and sell fruit
+ */
+do_test_mode_instructions_6: function do_test_mode_instructions_6()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // move to buyer
+    if (!pixi_buyer || !pixi_buyer.buyer_container) {
+        return;
+    }
+
+    //move to buyer
+    local_player.target_location = {"x":parseInt(pixi_buyer.buyer_container.x), 
+                                    "y":parseInt(pixi_buyer.buyer_container.y)+50};
+    app.target_location_update();
+
+    app.buyer_double_click();
+    app.buyer_double_click();
+},
 
 /**
  * test during run phase for wholesaler
@@ -262,13 +458,12 @@ do_test_mode_run_r: function do_test_mode_run_r()
     //check if going to register
     if (pixi_register && pixi_register.reseller_pad_container && group.end_game_mode != "Steal")
     {
-        if(local_player.budget<parameter_set_period.wholesale_apple_price &&
-           local_player.budget<parameter_set_period.wholesale_orange_price)
+        if((local_player.budget<parameter_set_period.wholesale_apple_price &&
+           local_player.budget<parameter_set_period.wholesale_orange_price) ||
+           local_player.apples + local_player.oranges >= parameter_set_period.max_fruit)
         {
-            local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
-                                                parseInt(pixi_register.reseller_pad_container.width)/2, 
-                                            "y":parseInt(pixi_register.reseller_pad_container.y) +
-                                                parseInt(pixi_register.reseller_pad_container.height)/2};
+            local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 200, 
+                                            "y":parseInt(pixi_register.reseller_pad_container.y) };
             app.target_location_update();
 
             app.register_double_click();
