@@ -97,10 +97,10 @@ do_test_mode_instructions: function do_test_mode_instructions()
                 app.do_test_mode_instructions_4();
                 break;
             case app.instructions.action_page_5:
-
+                app.do_test_mode_instructions_5();
                 break;
             case app.instructions.action_page_6:
-
+                app.do_test_mode_instructions_6();
                 break;
         }   
     }
@@ -253,6 +253,50 @@ do_test_mode_instructions_4: function do_test_mode_instructions_4()
 
         return;
     }
+},
+
+/**
+ * test mode page 5 of instructions
+ * move to the register and checkout
+ */
+do_test_mode_instructions_5: function do_test_mode_instructions_5()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // go to the register
+    if (!pixi_register || !pixi_register.register_container) {
+        return;
+    }
+
+    //move to register
+    local_player.target_location = {"x":parseInt(pixi_register.register_container.x) + 200, 
+                                    "y":parseInt(pixi_register.register_container.y)};
+    app.target_location_update();
+
+    app.register_double_click();
+    app.register_double_click();
+},
+
+/**
+ * test mode page 6 of instructions
+ * move to the buyer and sell fruit
+ */
+do_test_mode_instructions_6: function do_test_mode_instructions_6()
+{
+    let local_player = app.session.world_state.session_players[app.session_player.id];
+
+    // move to buyer
+    if (!pixi_buyer || !pixi_buyer.buyer_container) {
+        return;
+    }
+
+    //move to buyer
+    local_player.target_location = {"x":parseInt(pixi_buyer.buyer_container.x), 
+                                    "y":parseInt(pixi_buyer.buyer_container.y)+50};
+    app.target_location_update();
+
+    app.buyer_double_click();
+    app.buyer_double_click();
 },
 
 /**
@@ -418,10 +462,8 @@ do_test_mode_run_r: function do_test_mode_run_r()
            local_player.budget<parameter_set_period.wholesale_orange_price) ||
            local_player.apples + local_player.oranges >= parameter_set_period.max_fruit)
         {
-            local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
-                                                parseInt(pixi_register.reseller_pad_container.width)/2, 
-                                            "y":parseInt(pixi_register.reseller_pad_container.y) +
-                                                parseInt(pixi_register.reseller_pad_container.height)/2};
+            local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 200, 
+                                            "y":parseInt(pixi_register.reseller_pad_container.y) };
             app.target_location_update();
 
             app.register_double_click();
