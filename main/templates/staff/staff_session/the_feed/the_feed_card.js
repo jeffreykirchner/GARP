@@ -5,7 +5,9 @@ process_the_feed: function process_the_feed(message_type, message_data)
 {
     if(message_data.value != "success") return;
 
-    if(message_type == "update_target_location_update") return;
+    if(message_type == "update_target_location_update" ||
+       message_type == "update_connection_status"
+    ) return;
     
     let html_text = "";
     let sender_label = "";

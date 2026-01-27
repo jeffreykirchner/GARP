@@ -382,3 +382,55 @@ get_earnings_display: function get_earnings_display(earnings)
         return "$" + v;
     }
 },  
+
+/**
+ * get final choice display
+ */
+get_final_choice_display: function get_final_choice_display(session_player)
+{
+    if(!app.session.started) return "---";
+
+    let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player.id);
+
+    if(parameter_set_player.id_label == "W") return "---";
+
+    let group_id = app.get_parameter_set_group_from_player_id(session_player.id).id;   
+    let group = app.session.world_state.groups[group_id];
+    let parameter_set = app.session.parameter_set;
+    
+    let v = "---";
+
+    if(parameter_set.end_game_choice == "Steal")
+    {
+        if(group.end_game_choice_part_1 == true)
+        {
+            v = "Info: Yes";
+        }
+        else if(group.end_game_choice_part_1 == false)
+        {
+            v = "Info: No";
+        }
+
+        if(group.end_game_choice_part_1 == true)
+        {
+            v += ", Steal: Yes";
+        }
+        else if(group.end_game_choice_part_2 == false)
+        {
+            v += ", Steal: No";
+        }
+    }
+    else if(parameter_set.end_game_choice == "No Price")
+    {
+        if(group.end_game_choice_part_1 == true)
+        {
+            v = "Show Prices: Yes";
+        }
+        else if(group.end_game_choice_part_1 == false)
+        {
+            v = "Show Prices: No";
+        }
+    }
+
+    return v;
+},
