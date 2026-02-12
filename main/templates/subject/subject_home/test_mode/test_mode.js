@@ -438,7 +438,7 @@ do_test_mode_run_r: function do_test_mode_run_r()
     if(group.barriers[group.reseller_barrier].enabled) return;
 
     //move to buyer
-    if(local_player.checkout || (group.end_game_mode == "Steal" && local_player.apples > 0 && local_player.oranges > 0))
+    if(local_player.checkout || (group.end_game_mode == "Steal" && local_player.apples + local_player.oranges ==  parameter_set_period.max_fruit))
     {
         if (!pixi_buyer || !pixi_buyer.buyer_container) {
             return;

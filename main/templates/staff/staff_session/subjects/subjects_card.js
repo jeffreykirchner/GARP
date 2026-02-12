@@ -411,7 +411,7 @@ get_final_choice_display: function get_final_choice_display(session_player)
             v = "Info: No";
         }
 
-        if(group.end_game_choice_part_1 == true)
+        if(group.end_game_choice_part_2 == true)
         {
             v += ", Steal: Yes";
         }
