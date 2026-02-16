@@ -793,9 +793,10 @@ class SubjectUpdatesMixin():
             period_earnings = parameter_set["buyer_prices"][f"o{oranges_sold}a{apples_sold}"]
 
             session_player["earnings"] += period_earnings
-            session_player["earnings"] += session_player["budget"]
+            # session_player["earnings"] += session_player["budget"]
 
-            group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
+            group["results"]["reseller_earnings"] += period_earnings
+            # group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
 
             session_player["buyer"] = True
             
