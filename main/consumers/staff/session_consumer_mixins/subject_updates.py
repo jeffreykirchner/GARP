@@ -497,7 +497,7 @@ class SubjectUpdatesMixin():
                     
                     if status == "success":
                         session_player["apples"] += 1
-                        if group["end_game_mode"] == EndGameChoices.OFF:
+                        if group["end_game_mode"] != EndGameChoices.STEAL:
                             session_player["budget"] -= parameter_set_period["wholesale_apple_price"]
                         group["apple_tray_inventory"] -= 1
 
@@ -511,7 +511,7 @@ class SubjectUpdatesMixin():
 
                     if status == "success":
                         session_player["oranges"] += 1
-                        if group["end_game_mode"] == EndGameChoices.OFF:
+                        if group["end_game_mode"] != EndGameChoices.STEAL:
                             session_player["budget"] -= parameter_set_period["wholesale_orange_price"]
                         group["orange_tray_inventory"] -= 1
                 
