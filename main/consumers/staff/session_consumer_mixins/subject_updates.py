@@ -795,15 +795,15 @@ class SubjectUpdatesMixin():
 
             session_player["earnings"] += period_earnings
 
-            if group["end_game_choice_part_2"] == True:
-                #reseller steals from wholesaler and sells to buyer without paying wholesaler
-                session_player["earnings"] += session_player["budget"]
+            # if group["end_game_choice_part_2"] == True:
+            #     #reseller steals from wholesaler and sells to buyer without paying wholesaler
+            #     session_player["earnings"] += session_player["budget"]
 
             group["results"]["reseller_earnings"] += period_earnings
             
-            if group["end_game_choice_part_2"] == True:
-                #reseller steals from wholesaler and sells to buyer without paying wholesaler
-                group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
+            # if group["end_game_choice_part_2"] == True:
+            #     #reseller steals from wholesaler and sells to buyer without paying wholesaler
+            #     group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
 
             session_player["buyer"] = True
             
