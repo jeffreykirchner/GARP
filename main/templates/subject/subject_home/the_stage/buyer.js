@@ -279,5 +279,6 @@ take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
         app.update_barriers();
         app.update_orchard_labels();
         app.update_register_labels();
+        app.update_tray_labels();
     }
 },
