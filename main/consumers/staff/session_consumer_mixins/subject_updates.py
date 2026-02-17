@@ -4,6 +4,7 @@ import math
 import json
 
 from datetime import datetime, timedelta
+from tokenize import group
 from asgiref.sync import sync_to_async
 
 from django.utils.html import strip_tags
@@ -793,10 +794,16 @@ class SubjectUpdatesMixin():
             period_earnings = parameter_set["buyer_prices"][f"o{oranges_sold}a{apples_sold}"]
 
             session_player["earnings"] += period_earnings
-            # session_player["earnings"] += session_player["budget"]
+
+            if group["end_game_choice_part_2"] == True:
+                #reseller steals from wholesaler and sells to buyer without paying wholesaler
+                session_player["earnings"] += session_player["budget"]
 
             group["results"]["reseller_earnings"] += period_earnings
-            # group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
+            
+            if group["end_game_choice_part_2"] == True:
+                #reseller steals from wholesaler and sells to buyer without paying wholesaler
+                group["results"]["reseller_earnings"] += period_earnings +  session_player["budget"]
 
             session_player["buyer"] = True
             
