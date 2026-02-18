@@ -28,7 +28,7 @@ setup_pixi_buyer: function setup_pixi_buyer()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"Resale Price: ---", style:style});
+    let label = new PIXI.Text({text:"Resale Profit: ---", style:style});
     label.anchor.set(0.5);
     let label2 = new PIXI.Text({text:"Checkout", style:style});
     label2.anchor.set(0.5);
@@ -82,7 +82,7 @@ update_buyer_label: function update_buyer_label()
     let oranges = retail_player.oranges;
     let apples = retail_player.apples;
 
-    pixi_buyer.label.text = "Resale Price: " + app.get_buyer_price(oranges, apples) + "¢";
+    pixi_buyer.label.text = "Resale Profit: " + app.get_buyer_price(oranges, apples) + "¢";
 },
 
 /**
