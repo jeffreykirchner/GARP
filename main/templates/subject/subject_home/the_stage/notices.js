@@ -36,7 +36,7 @@ update_notices: function update_notices()
             let label = new PIXI.Text({text:notice.text, style:{
                 fontFamily: 'Arial',
                 fontSize: 40,
-                fill: 'white',
+                fill: 'yellow',
                 align: 'center',
                 stroke: {color:'black', windth:2},
             }});  
