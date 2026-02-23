@@ -505,8 +505,10 @@ class Session(models.Model):
             return f'{data["prompt"]} | {strip_tags(data["response"])}'
         elif type == "harvest_fruit" or type == "tray_fruit":
             return data["fruit_type"]
-        elif type == "checkout" or type == "sell_to_buyer":
+        elif type == "checkout":
             return f'Apples: {data["apples"]}, Oranges: {data["oranges"]}, Payment: {data["payment"]}'
+        elif type ==  "sell_to_buyer":
+            return f'Apples: {data["apples_sold"]}, Oranges: {data["oranges_sold"]}, Payment: {data["period_earnings"]}'
         elif type == "help_doc":
             return data
 

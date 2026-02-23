@@ -574,6 +574,8 @@ class SubjectUpdatesMixin():
         status = "success"
         error_message = ""
         payment = 0
+        apples = 0
+        oranges = 0
 
         event_data =  event["message_text"]
         player_id = self.session_players_local[event["player_key"]]["id"]
@@ -819,9 +821,9 @@ class SubjectUpdatesMixin():
 
             await session_period.asave(update_fields=["summary_data"])
 
-            event_data["apples"] = apples_sold
-            event_data["oranges"] = oranges_sold
-            event_data["payment"] = period_earnings
+            # event_data["apples"] = apples_sold
+            # event_data["oranges"] = oranges_sold
+            # event_data["payment"] = period_earnings
 
             #reset for next period
             session_player["apples"] = 0
