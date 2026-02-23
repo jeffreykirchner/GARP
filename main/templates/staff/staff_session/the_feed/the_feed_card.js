@@ -24,7 +24,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
 
     if(parameter_set_player.id_label == "R")
     {
-        player_label = "Retailer";  
+        player_label = "Reseller";  
     }
 
     switch(message_type) {                
@@ -52,7 +52,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
                     html_text = "The " + player_label + " placed an orange <img src='/static/orange.png' width='20'> on the tray.";
                 }
             }
-            else if(player_label == "Retailer") {
+            else if(player_label == "Reseller") {
                 if(message_data.fruit_type == "apple") {
                     html_text = "The " + player_label + " took an apple <img src='/static/apple.png' width='20'> from the tray.";
                 }
@@ -68,11 +68,11 @@ process_the_feed: function process_the_feed(message_type, message_data)
         case "update_checkout":
             html_text = "The " + player_label + " purchased " + message_data.apples + " apples(s) <img src='/static/apple.png' width='20'> and " 
                                                               + message_data.oranges + " orange(s) <img src='/static/orange.png' width='20'> for " 
-                                                              + message_data.wholesaler_earnings + "¢.";
+                                                              + message_data.payment + "¢.";
             break;
         case "update_sell_to_buyer":
             html_text = "The " + player_label + " sold " + message_data.apples_sold + " apples(s) <img src='/static/apple.png' width='20'> and " 
-                                              + message_data.oranges_sold + " orange(s) <img src='/static/orange.png' width='20'> to a customer for " 
+                                              + message_data.oranges_sold + " orange(s) <img src='/static/orange.png' width='20'> to the buyer for a profit of" 
                                               + message_data.period_earnings + "¢.";
             break;
         case "update_end_game_choice":
