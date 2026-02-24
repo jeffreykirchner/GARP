@@ -403,7 +403,9 @@ class Session(models.Model):
             writer = csv.writer(output, quoting=csv.QUOTE_NONNUMERIC)
 
             top_row = ["Session ID", "Period", "Group", "Wholesaler ID", "Reseller ID", 
-                       "Orange Harvested", "Apples Harvested", "Oranges Sold", "Apples Sold", 
+                       "Orange Harvested", "Apples Harvested", 
+                       "Oranges Purchased", "Apples Purchased", 
+                       "Oranges Sold", "Apples Sold",
                        "Wholesaler Earnings", "Reseller Earnings"]
             
             writer.writerow(top_row)
@@ -440,6 +442,8 @@ class Session(models.Model):
                                      g["results"]["apple_harvested"],
                                      g["results"]["orange_sold"],
                                      g["results"]["apple_sold"],
+                                     g["results"]["orange_sold_buyer"] if "orange_sold_buyer" in g["results"] else "",
+                                     g["results"]["apple_sold_buyer"] if "apple_sold_buyer" in g["results"] else "",
                                      g["results"]["wholesaler_earnings"],
                                      g["results"]["reseller_earnings"]])
 
