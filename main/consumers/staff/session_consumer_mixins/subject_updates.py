@@ -795,6 +795,9 @@ class SubjectUpdatesMixin():
             oranges_sold = session_player["oranges"]
             period_earnings = parameter_set["buyer_prices"][f"o{oranges_sold}a{apples_sold}"]
 
+            group["results"]["apple_sold_buyer"] = apples_sold
+            group["results"]["orange_sold_buyer"] = oranges_sold
+           
             session_player["earnings"] += period_earnings
 
             # if group["end_game_choice_part_2"] == True:
@@ -833,6 +836,7 @@ class SubjectUpdatesMixin():
                 #setup next period
                 group["current_period"] += 1
                 group["time_remaining"] = 0
+                group["results"] = {}
 
                 #check if last period and no price end game choice
                 if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
