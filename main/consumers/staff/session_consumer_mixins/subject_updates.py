@@ -251,7 +251,7 @@ class SubjectUpdatesMixin():
                                                         time_remaining=group["time_remaining"],
                                                         data=data))
 
-                await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
+                # await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
                 
         result = {"value" : "success", 
                   "target_location" : target_location, 
