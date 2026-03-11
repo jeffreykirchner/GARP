@@ -57,7 +57,7 @@ class InterfaceMixin():
         event_data = event["message_text"]
 
         session_player = await SessionPlayer.objects.select_related('parameter_set_player__parameter_set_group').aget(id=self.session_player_id)
-
+        
         prompt = strip_tags(event_data["prompt"]).strip()
 
         session_player.chat_gpt_prompt.append({
@@ -102,6 +102,7 @@ class InterfaceMixin():
                             session_player_id=session_player.id,
                             type="chat_gpt_prompt",
                             period_number=event_data["current_period"],
+                            time_remaining=event_data["time_remaining"],
                             data=result_staff)
         
         # Send the response back to the client

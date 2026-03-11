@@ -290,16 +290,15 @@ class SubjectUpdatesMixin():
         player_id = event_data["session_player_id"]     
         session_player = self.world_state_local["session_players"][str(player_id)]
         parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        group = self.world_state_local["groups"][str(parameter_set_player["parameter_set_group"])]
 
         # store event
         self.session_events.append(SessionEvent(session_id=self.session_id, 
                                     session_player_id=player_id,
                                     type="clear_chat_gpt_history",
-                                    period_number=self.world_state_local["current_period"],
+                                    period_number=group["current_period"],
+                                    time_remaining=group["time_remaining"],
                                     data=event_data,))
-        
-        await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
-        self.session_events = []
 
     async def harvest_fruit(self, event):
         '''

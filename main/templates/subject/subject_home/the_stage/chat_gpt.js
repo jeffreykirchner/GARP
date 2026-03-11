@@ -7,6 +7,8 @@ send_process_chat_gpt_prompt : function send_process_chat_gpt_prompt(message_dat
         return;
     }
 
+    let group = app.session.world_state.groups[app.current_group];
+
     //check for empty prompt
     if(app.chat_gpt_text.trim().length == 0) {
         return;
@@ -23,7 +25,8 @@ send_process_chat_gpt_prompt : function send_process_chat_gpt_prompt(message_dat
 
     app.send_message("process_chat_gpt_prompt", 
                      {"prompt": app.chat_gpt_text,
-                      "current_period": app.session.world_state.current_period, 
+                      "current_period": group.current_period, 
+                      "time_remaining": group.time_remaining
                      },
                       "self");
 
