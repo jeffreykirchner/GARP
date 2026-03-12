@@ -93,6 +93,9 @@ let app = Vue.createApp({
                     end_game_notice_message : "",
                     end_game_notice_visible : false,
                     end_game_steal_choice : null,
+
+                    //on screen help docs
+                    help_docs : {},
                     
                 }},
     methods: {
@@ -583,9 +586,8 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/register.js"%}
         {%include "subject/subject_home/the_stage/buyer.js"%}
         {%include "subject/subject_home/the_stage/end_game.js"%}
+        {%include "subject/subject_home/the_stage/help_doc_buttons.js"%}
         
-        
-
         /** clear form error messages
         */
         clear_main_form_errors: function clear_main_form_errors(){
