@@ -68,6 +68,13 @@ setup_pixi_buyer: function setup_pixi_buyer()
     pixi_container_main.addChild(pixi_buyer.buyer_container);
 
     app.update_buyer_label();
+
+    //help doc button
+    app.add_help_doc_button({x:parseInt(buyer_container.x)-35, 
+                             y:parseInt(buyer_container.y)-80},
+                            {x:parseInt(buyer_container.x), 
+                             y:parseInt(buyer_container.y)+275},
+                            "buyer");
 },
 
 update_buyer_label: function update_buyer_label()

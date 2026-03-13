@@ -41,6 +41,8 @@ let app = Vue.createApp({
                     email_default_subject : "{{parameters.invitation_subject}}",
                     email_default_text : `{{parameters.invitation_text|safe}}`,
 
+                    instructions : {{instructions|safe}},
+
                     email_list_error : "",
                     collaborators_list_error : "",
 
@@ -85,6 +87,9 @@ let app = Vue.createApp({
 
                     //current group
                     current_group : null,
+
+                    //on screen help docs
+                    help_docs : {},
                 }},
     methods: {
 
@@ -453,6 +458,9 @@ let app = Vue.createApp({
 
             //update barriers
             app.update_barriers();
+
+            //update help doc buttons
+            app.clock_tick_help_doc_buttons();
         },
        
         //do nothing on when enter pressed for post
@@ -484,6 +492,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/register.js"%}
         {%include "subject/subject_home/the_stage/buyer.js"%}
         {%include "subject/subject_home/the_stage/end_game.js"%}
+        {%include "subject/subject_home/the_stage/help_doc_buttons.js"%}
         {%include "js/help_doc.js"%}
     
         /** clear form error messages

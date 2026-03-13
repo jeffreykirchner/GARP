@@ -23,26 +23,24 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
     let button_container = new PIXI.Container();
 
     let g = new PIXI.Graphics();
-    let width = 20;
-    let height = 30;
+
     
-    g.ellipse(0, 0, 15, 15);
+    g.ellipse(15, 15, 15, 15);
 
     g.fill({color:"yellow"});
     g.stroke(1, 0x000000);
 
-    let help_graphic = new PIXI.Sprite(app.pixi_textures['help_tex']);
-    help_graphic.anchor.set(0.5);
+    let help_graphic = new PIXI.Sprite(app.pixi_textures['help_tex']);    
 
     button_container.addChild(g);
     button_container.addChild(help_graphic);
 
-    button_container.pivot.set(width/2, height/2);
-    button_container.eventMode = 'static';
+    if(app.is_subject) button_container.eventMode = 'static';
     button_container.label = help_doc;
     button_container.alpha = 0.75;
-    button_container.position.set(button_location.x, button_location.y);
-    button_container.zIndex = 1000;
+    button_container.position.set(button_location.x-help_graphic.width/2, 
+                                  button_location.y-help_graphic.height/2);
+    button_container.zIndex = 100;
 
     button_container.on("pointerover", app.help_doc_button_over);
     button_container.on("pointerout", app.help_doc_button_out);
@@ -92,7 +90,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
 
     text_container.position.set(popup_location.x - text_container.width / 2, 
                                 popup_location.y - text_container.height / 2);
-    text_container.zIndex = 0;
+    text_container.zIndex = 1;
     text_container.visible = false;
 
     app.help_docs[help_doc] = {};
@@ -139,5 +137,41 @@ help_doc_button_click: function help_doc_button_click(event)
     {
         app.help_docs[help_doc].text_container.visible = true;
         app.help_docs[help_doc].time_remaining = 15;
+        app.send_message("show_help_doc", 
+                        {"help_doc": help_doc},    
+                         "group");
+    }
+},
+
+/**
+ * after each clock tick, reduce the time remaining for each help doc and hide the text container if time runs out
+ *
+ */
+clock_tick_help_doc_buttons: function update_help_doc_buttons()
+{
+    for(let i in app.help_docs)
+    {
+        if(app.help_docs[i].time_remaining > 0)
+        {
+            app.help_docs[i].time_remaining -= 1;
+            if(app.help_docs[i].time_remaining <= 0)
+            {
+                app.help_docs[i].text_container.visible = false;
+            }
+        }
+    }
+},
+
+/**
+ * take update show help doc message from server and update the time remaining for the help doc
+ * @param {object} message_data - the data from the server message
+ */
+take_update_show_help_doc: function take_update_show_help_doc(message_data)
+{
+    const help_doc = message_data.help_doc;
+    if(app.help_docs[help_doc])
+    {
+        app.help_docs[help_doc].time_remaining = 15;
+        app.help_docs[help_doc].text_container.visible = true;
     }
 },

@@ -71,14 +71,12 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
 
     pixi_container_main.addChild(pixi_orchard_apple.container);
 
-    if(app.is_subject)
-    {
-        app.add_help_doc_button({x:parseInt(orchard_apple_container.x) + 30, 
-                                 y:parseInt(orchard_apple_container.y) + 110},
-                                {x:parseInt(orchard_apple_container.x), 
-                                 y:parseInt(orchard_apple_container.y) + parseInt(orchard_apple_container.height)},
-                                "apple_orchard");
-    }
+    app.add_help_doc_button({x:parseInt(orchard_apple_container.x) + 225, 
+                             y:parseInt(orchard_apple_container.y) + 110},
+                            {x:parseInt(orchard_apple_container.x) + 225, 
+                             y:parseInt(orchard_apple_container.y) + parseInt(orchard_apple_container.height)},
+                            "apple_orchard");
+    
 
 },
 

@@ -201,6 +201,9 @@ let app = Vue.createApp({
                 case "update_end_game_choice":
                     app.take_update_end_game_choice(message_data);
                     break;
+                case "update_show_help_doc":
+                    app.take_update_show_help_doc(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -467,6 +470,9 @@ let app = Vue.createApp({
 
             //update barriers
             app.update_barriers();
+
+            //update help doc buttons
+            app.clock_tick_help_doc_buttons();
         },
 
         /**

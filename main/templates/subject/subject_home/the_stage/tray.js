@@ -170,6 +170,12 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
                              height:tray_orange_container.height};
 
     pixi_container_main.addChild(pixi_tray_orange.container);
+
+    app.add_help_doc_button({x:parseInt(tray_orange_container.x) + tray_orange_container.width/2-20, 
+                             y:parseInt(tray_orange_container.y) + tray_orange_container.height+30,},
+                            {x:parseInt(tray_orange_container.x)+tray_orange_container.width/2-20, 
+                             y:parseInt(tray_orange_container.y)+440},
+                            "orange_tray");
 },
 
 /**

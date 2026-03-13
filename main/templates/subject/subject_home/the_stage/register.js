@@ -148,6 +148,13 @@ setup_pixi_register: function setup_pixi_register()
     pixi_container_main.addChild(pixi_register.wholesaler_pad_container);
     pixi_container_main.addChild(pixi_register.reseller_pad_container);
 
+    //help doc button
+    app.add_help_doc_button({x:parseInt(register_container.x)+30, 
+                             y:parseInt(register_container.y)-100},
+                            {x:parseInt(register_container.x), 
+                             y:parseInt(register_container.y)+325},
+                            "register");
+
 },
 
 /**
