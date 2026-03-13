@@ -894,6 +894,42 @@ class SubjectUpdatesMixin():
         if event_data["value"] == "success":
             await self.send_message(message_to_self=event_data, message_to_group=None,
                                     message_type=event['type'], send_to_client=True, send_to_group=False)
+            
+    async def show_help_doc(self, event):
+        '''
+        subject requests help doc from subject screen, also show on their group members screens
+        '''
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set_player = self.parameter_set_local["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])] 
+
+        result = {"help_doc" : event_data["help_doc"],
+                  "session_player_id" : player_id}
+
+        self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
+        await self.send_message(message_to_self=None, message_to_group=result,
+                                message_type=event['type'], send_to_client=False,
+                                send_to_group=True, target_list=group["members"])  
+        
+    async def update_show_help_doc(self, event):
+        '''
+        update show help doc from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
     
     async def end_game_choice(self, event):
         '''
