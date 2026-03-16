@@ -50,6 +50,12 @@
                     {%include "subject/subject_home/the_stage/buyer_prices_overlay.html"%}
                 </div>
 
+                <div id="orchard_prices_overlay" 
+                      v-if="is_subject && 
+                            get_parameter_set_player_from_player_id(session_player.id).id_label=='W'">
+                    {%include "subject/subject_home/the_stage/orchard_prices_overlay.html"%}
+                </div>
+
                 <div id="end_game_steal_overlay" 
                      class="end_game_overlay"                     
                      v-if="is_subject && 
