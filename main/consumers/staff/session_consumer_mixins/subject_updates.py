@@ -416,6 +416,9 @@ class SubjectUpdatesMixin():
         parameter_set_period_id = self.parameter_set_local["parameter_set_periods_order"][group["current_period"]-1]
         parameter_set_period = self.parameter_set_local["parameter_set_periods"][str(parameter_set_period_id)]
         parameter_set = self.parameter_set_local
+
+        wholesaler = await get_player_by_type(world_state, self.parameter_set_local, "W", group)
+        reseller = await get_player_by_type(world_state, self.parameter_set_local, "R", group)
        
         if parameter_set_player["id_label"] == "W":
             #check if all fruit is harvested from orchard
@@ -457,6 +460,16 @@ class SubjectUpdatesMixin():
 
         elif parameter_set_player["id_label"] == "R":
             #reseller moved fruit from tray to inventory
+
+            #if trees are not fully harvested, reseller cannot move fruit from tray to inventory
+            if group["apple_orchard_inventory"] > 0 or group["orange_orchard_inventory"] > 0:
+                status = "fail"
+                error_message = "The Wholesaler must harvested all the fruit."
+
+            #if the wholeseller has not placed all their fruit on the tray, reseller cannot move fruit from tray to inventory
+            if wholesaler["apples"] > 0 or wholesaler["oranges"] > 0:
+                status = "fail"
+                error_message = "The Wholesaler has not placed all the fruit on the trays."
             
             #check if reseller already checked out
             if session_player["checkout"]:
@@ -785,6 +798,13 @@ class SubjectUpdatesMixin():
             if session_player["apples"] == 0 and session_player["oranges"] == 0:
                 status = "fail"
                 error_message = "You have no fruit to sell."
+
+        #check if reseller still needs to checkout
+        if status == "success":
+            if group["end_game_mode"] != EndGameChoices.STEAL:
+                if not session_player["checkout"]:
+                    status = "fail"
+                    error_message = "You need to checkout before selling to the buyer."
 
         apples_sold = 0
         oranges_sold = 0
