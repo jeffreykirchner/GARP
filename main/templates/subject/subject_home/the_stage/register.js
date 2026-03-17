@@ -227,7 +227,7 @@ register_double_click: function register_double_click()
             return;
         }
 
-        wholesaler_position = wholesaler.current_location;
+       
         if(wholesaler.id == app.session_player.id)
         {
             app.add_text_emitters("Error: The reseller must checkout.",
@@ -241,9 +241,10 @@ register_double_click: function register_double_click()
             return;
         }
         
+        wholesaler_position = wholesaler.current_location;
         reseller_position = reseller.current_location;
         
-        if(!app.is_in_wholesaler_pad(wholesaler_position))
+        if(!app.is_in_register_wholesaler_pad(wholesaler_position))
         {
             app.add_text_emitters("Error: Wholesaler not on pad", 
                     session_player.current_location.x, 
@@ -256,7 +257,7 @@ register_double_click: function register_double_click()
             return;
         }
         
-        if(!app.is_in_reseller_pad(reseller_position))
+        if(!app.is_in_register_reseller_pad(reseller_position))
         {
             app.add_text_emitters("Error: You are not on the pad", 
                     session_player.current_location.x, 
@@ -368,8 +369,9 @@ take_update_checkout: function take_update_checkout(data)
 
 /**
  * check if point is in wholesaler pad
+ * @param {Object} point - object with x and y properties representing the point to check
  */
-is_in_wholesaler_pad: function is_in_wholesaler_pad(point)
+is_in_register_wholesaler_pad: function is_in_register_wholesaler_pad(point)
 {
     return app.check_point_in_rectagle(point, 
                 {x:pixi_register.wholesaler_pad_container.x,
@@ -379,9 +381,10 @@ is_in_wholesaler_pad: function is_in_wholesaler_pad(point)
 },
 
 /**
- *  check if point is in reseller pad
+ * check if point is in reseller pad
+ * @param {Object} point - object with x and y properties representing the point to check
  */
-is_in_reseller_pad: function is_in_reseller_pad(point)
+is_in_register_reseller_pad: function is_in_register_reseller_pad(point)
 {
     return app.check_point_in_rectagle(point, 
                 {x:pixi_register.reseller_pad_container.x,
@@ -408,7 +411,8 @@ update_check_marks: function update_check_marks()
     {
         wholesaler_position = wholesaler_player.current_location;
 
-        if(app.is_in_wholesaler_pad(wholesaler_position))
+        //check if wholesaler is in the register wholesaler pad
+        if(app.is_in_register_wholesaler_pad(wholesaler_position))
         {
             pixi_register.check_mark_wholesaler_sprite.visible = true;
             pixi_register.x_mark_wholesaler_sprite.visible = false;
@@ -418,13 +422,26 @@ update_check_marks: function update_check_marks()
             pixi_register.check_mark_wholesaler_sprite.visible = false;
             pixi_register.x_mark_wholesaler_sprite.visible = true;
         }
+
+        //check if wholesaler is in tray wholesaler pad
+        if(app.is_in_tray_wholesaler_pad(wholesaler_position))
+        {
+            pixi_tray_orange.check_mark_wholesaler_sprite.visible = true;
+            pixi_tray_orange.x_mark_wholesaler_sprite.visible = false;
+        }
+        else
+        {
+            pixi_tray_orange.check_mark_wholesaler_sprite.visible = false;
+            pixi_tray_orange.x_mark_wholesaler_sprite.visible = true;
+        }
     }
 
     if(reseller_player)
     {
         reseller_position = reseller_player.current_location;
 
-        if(app.is_in_reseller_pad(reseller_position))
+        //check if reseller is in the register reseller pad
+        if(app.is_in_register_reseller_pad(reseller_position))
         {
             pixi_register.check_mark_reseller_sprite.visible = true;
             pixi_register.x_mark_reseller_sprite.visible = false;
@@ -433,6 +450,18 @@ update_check_marks: function update_check_marks()
         {
             pixi_register.check_mark_reseller_sprite.visible = false;
             pixi_register.x_mark_reseller_sprite.visible = true;
+        }
+
+        //check if reseller is in tray reseller pad
+        if(app.is_in_tray_reseller_pad(reseller_position))
+        {
+            pixi_tray_orange.check_mark_reseller_sprite.visible = true;
+            pixi_tray_orange.x_mark_reseller_sprite.visible = false;
+        }
+        else
+        {
+            pixi_tray_orange.check_mark_reseller_sprite.visible = false;
+            pixi_tray_orange.x_mark_reseller_sprite.visible = true;
         }
     }    
 },

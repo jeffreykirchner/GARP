@@ -51,8 +51,8 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_register();
         app.setup_pixi_buyer();
        
-        app.setup_pixi_tray_apple();
         app.setup_pixi_tray_orange();
+        app.setup_pixi_tray_apple();
 
         if(app.session.started)
         {

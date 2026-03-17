@@ -31,7 +31,7 @@ setup_pixi_tray_apple: function setup_pixi_tray_apple()
     let double_click_graphic = new PIXI.Sprite(app.pixi_textures['double_click_tex']);
     double_click_graphic.anchor.set(0.5);
     
-    tray_apple_container.addChild(double_click_graphic);
+    // tray_apple_container.addChild(double_click_graphic);
     tray_apple_container.addChild(tray);
     tray_apple_container.addChild(label_price);
 
@@ -86,9 +86,16 @@ setup_pixi_tray_apple: function setup_pixi_tray_apple()
 setup_pixi_tray_orange: function setup_pixi_tray_orange()
 {
     let tray_orange_container = new PIXI.Container();
+    let wholesaler_pad_container = new PIXI.Container();
+    let reseller_pad_container = new PIXI.Container();
+
     tray_orange_container.zIndex = 1;
+    wholesaler_pad_container.zIndex = 1;
+    reseller_pad_container.zIndex = 1;
+
 
     let location = app.session.parameter_set.orange_tray_location.split(",");
+    let world_state = app.session.world_state;
 
     tray_orange_container.position.set(location[0], location[1]);
 
@@ -118,8 +125,8 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
     tray_orange_container.addChild(label_price);
 
     label_price.position.set(tray.width/2, tray.height + label_price.height/2 + 5);
-    double_click_graphic.position.set(label_price.x + label_price.width/2 + double_click_graphic.width/2 +10,
-                                      label_price.y-5);
+    double_click_graphic.position.set(label_price.width/2 +45 ,
+                                      label_price.y+50);
 
     //add oranges tray based on parameter_set orange_tray_capacity
     let oranges = [];
@@ -147,6 +154,12 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
                         label_price:null,
                         last_click:null,
                         rect:null,
+                        wholesaler_pad_container:null,
+                        reseller_pad_container:null,
+                        check_mark_wholesaler_sprite:null,
+                        x_mark_wholesaler_sprite:null,
+                        check_mark_reseller_sprite:null,
+                        x_mark_reseller_sprite:null,
                         oranges:oranges};
 
     // let bounding_box = new PIXI.Graphics();
@@ -160,21 +173,98 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
 
     // tray_orange_container.addChild(bounding_box);
 
+    //add wholesaler pad
+    let wholesaler_outline_dash = new PIXI.Graphics();
+    let check_mark_wholesaler_sprite = new PIXI.Sprite(app.pixi_textures['check_mark_tex']);
+    let x_mark_wholesaler_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
+
+    let wholesaler_outline_fill_color = 0xFFFFFF;
+    let wholesaler = app.get_player_by_type("W");
+    if(world_state.session_players_order && world_state.session_players_order.length > 0)
+    {
+        wholesaler_outline_fill_color = app.get_parameter_set_player_from_player_id(wholesaler.id).hex_color;
+    }
+    wholesaler_outline_dash.rect(0, 0, 400, 300);
+    wholesaler_outline_dash.fill({color:wholesaler_outline_fill_color, alpha:0.25});
+
+    let matrix_2 = new PIXI.Matrix(1,0,0,1,0,0);
+    matrix_2.rotate(1.5708);
+    wholesaler_outline_dash.stroke({width:10,
+                            texture:app.pixi_textures['dash_tex'],
+                            alpha:0.5,
+                            alignment:1,
+                            color:0x000000,
+                            matrix:matrix_2});
+
+    wholesaler_pad_container.addChild(wholesaler_outline_dash);
+    wholesaler_pad_container.addChild(check_mark_wholesaler_sprite);
+    wholesaler_pad_container.addChild(x_mark_wholesaler_sprite);
+
+    x_mark_wholesaler_sprite.position.set(10, 10);
+    check_mark_wholesaler_sprite.position.set(10, 10);
+
+    wholesaler_pad_container.position.set(tray_orange_container.x - wholesaler_pad_container.width + 13,
+                                          tray_orange_container.y);
+
+    //add reseller pad
+    let reseller_outline_dash = new PIXI.Graphics();
+    let check_mark_reseller_sprite = new PIXI.Sprite(app.pixi_textures['check_mark_tex']);
+    let x_mark_reseller_sprite = new PIXI.Sprite(app.pixi_textures['x_mark_tex']);
+
+    reseller_outline_dash.rect(0, 0, 400, 300);
+    let reseller_outline_fill_color = 0xFFFFFF;
+    let reseller = app.get_player_by_type("R");
+ 
+    if(reseller)
+    {
+        reseller_outline_fill_color = app.get_parameter_set_player_from_player_id(reseller.id).hex_color;
+    }
+    
+    reseller_outline_dash.fill({color:reseller_outline_fill_color, alpha:0.5});
+    reseller_outline_dash.anchor = 0.5;
+
+    let matrix_3 = new PIXI.Matrix(1,0,0,1,0,0);
+    matrix_3.rotate(1.5708);
+    reseller_outline_dash.stroke({width:10,
+                            texture:app.pixi_textures['dash_tex'],
+                            alpha:0.5,
+                            alignment:1,
+                            color:0x000000,
+                            matrix:matrix_3});
+
+    reseller_pad_container.addChild(reseller_outline_dash);
+    reseller_pad_container.addChild(check_mark_reseller_sprite);
+    reseller_pad_container.addChild(x_mark_reseller_sprite);
+
+    x_mark_reseller_sprite.position.set(parseInt(reseller_outline_dash.width) - parseInt(x_mark_reseller_sprite.width) - 10, 10);
+    check_mark_reseller_sprite.position.set(parseInt(reseller_outline_dash.width) - parseInt(check_mark_reseller_sprite.width) - 10, 10);
+    reseller_pad_container.position.set(parseInt(tray_orange_container.x) + parseInt(tray_orange_container.width)/2 + 100,
+                                        tray_orange_container.y);
+
     const absolute_position = tray_orange_container.toGlobal(new PIXI.Point(0, 0));
 
     pixi_tray_orange.container = tray_orange_container;
+    pixi_tray_orange.wholesaler_pad_container = wholesaler_pad_container;
+    pixi_tray_orange.reseller_pad_container = reseller_pad_container;
+    pixi_tray_orange.check_mark_wholesaler_sprite = check_mark_wholesaler_sprite;
+    pixi_tray_orange.x_mark_wholesaler_sprite = x_mark_wholesaler_sprite;
+    pixi_tray_orange.check_mark_reseller_sprite = check_mark_reseller_sprite;
+    pixi_tray_orange.x_mark_reseller_sprite = x_mark_reseller_sprite;
+
     pixi_tray_orange.label_price = label_price;
     pixi_tray_orange.rect = {x:absolute_position.x, 
                              y:absolute_position.y, 
                              width:tray_orange_container.width, 
                              height:tray_orange_container.height};
 
+    pixi_container_main.addChild(pixi_tray_orange.wholesaler_pad_container);
+    pixi_container_main.addChild(pixi_tray_orange.reseller_pad_container);
     pixi_container_main.addChild(pixi_tray_orange.container);
 
-    app.add_help_doc_button({x:parseInt(tray_orange_container.x) + tray_orange_container.width/2-20, 
-                             y:parseInt(tray_orange_container.y) + tray_orange_container.height+30,},
-                            {x:parseInt(tray_orange_container.x)+tray_orange_container.width/2-20, 
-                             y:parseInt(tray_orange_container.y)+440},
+    app.add_help_doc_button({x:parseInt(tray_orange_container.x) + tray_orange_container.width/2-50, 
+                             y:parseInt(tray_orange_container.y) + tray_orange_container.height-25,},
+                            {x:parseInt(tray_orange_container.x)+tray_orange_container.width/2, 
+                             y:parseInt(tray_orange_container.y)-150},
                             "orange_tray");
 },
 
@@ -254,6 +344,16 @@ tray_apple_double_click: function tray_apple_double_click()
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_tray_apple.rect;
 
+    let wholesaler_position = null;
+    let reseller_position = null;
+
+    let wholesaler = app.get_player_by_type("W");
+    let reseller = app.get_player_by_type("R");
+
+    let world_state = app.session.world_state;
+    let session_player = world_state.session_players[app.session_player.id];
+    
+    //check if the tray is within range of the player
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                 y:local_player.current_location.y, 
                                                 radius:app.session.parameter_set.interaction_range},
@@ -267,6 +367,35 @@ tray_apple_double_click: function tray_apple_double_click()
                                 0xFFFFFF,
                                 28,
                                 null);
+        return;
+    }
+
+    wholesaler_position = wholesaler.current_location;
+    reseller_position = reseller.current_location;
+    
+    if(!app.is_in_tray_wholesaler_pad(wholesaler_position))
+    {
+        app.add_text_emitters(wholesaler.id != app.session_player.id ? "Error: Wholesaler not on pad" : "Error: You are not on the pad", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null)
+        return;
+    }
+    
+    if(!app.is_in_tray_reseller_pad(reseller_position))
+    {
+        app.add_text_emitters(reseller.id != app.session_player.id ? "Error: Reseller not on pad" : "Error: You are not on the pad", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null)
         return;
     }
 
@@ -306,6 +435,15 @@ tray_orange_double_click: function tray_orange_double_click()
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let rect = pixi_tray_orange.rect;
 
+    let wholesaler_position = null;
+    let reseller_position = null;
+
+    let wholesaler = app.get_player_by_type("W");
+    let reseller = app.get_player_by_type("R");
+
+    let world_state = app.session.world_state;
+    let session_player = world_state.session_players[app.session_player.id];
+
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                 y:local_player.current_location.y, 
                                                 radius:app.session.parameter_set.interaction_range},
@@ -319,6 +457,35 @@ tray_orange_double_click: function tray_orange_double_click()
                                 0xFFFFFF,
                                 28,
                                 null);
+        return;
+    }
+
+    wholesaler_position = wholesaler.current_location;
+    reseller_position = reseller.current_location;
+    
+    if(!app.is_in_tray_wholesaler_pad(wholesaler_position))
+    {
+        app.add_text_emitters(wholesaler.id != app.session_player.id ? "Error: Wholesaler not on pad" : "Error: You are not on the pad", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null)
+        return;
+    }
+    
+    if(!app.is_in_tray_reseller_pad(reseller_position))
+    {
+        app.add_text_emitters(reseller.id != app.session_player.id ? "Error: Reseller not on pad" : "Error: You are not on the pad", 
+                session_player.current_location.x, 
+                session_player.current_location.y,
+                session_player.current_location.x,
+                session_player.current_location.y-100,
+                0xFFFFFF,
+                28,
+                null)
         return;
     }
 
@@ -624,5 +791,31 @@ take_update_reset_reseller_inventory: function take_update_reset_reseller_invent
     }
 
 
+},
+
+/**
+ * check if point is in wholesaler pad
+ * @param {Object} point - object with x and y properties representing the point to check
+ */
+is_in_tray_wholesaler_pad: function is_in_tray_wholesaler_pad(point)
+{
+    return app.check_point_in_rectagle(point, 
+                {x:pixi_tray_orange.wholesaler_pad_container.x,
+                 y:pixi_tray_orange.wholesaler_pad_container.y,
+                 width:pixi_tray_orange.wholesaler_pad_container.width,
+                 height:pixi_tray_orange.wholesaler_pad_container.height});
+},
+
+/**
+ * check if point is in reseller pad
+ * @param {Object} point - object with x and y properties representing the point to check
+ */
+is_in_tray_reseller_pad: function is_in_tray_reseller_pad(point)
+{
+    return app.check_point_in_rectagle(point, 
+                {x:pixi_tray_orange.reseller_pad_container.x,
+                 y:pixi_tray_orange.reseller_pad_container.y,
+                 width:pixi_tray_orange.reseller_pad_container.width,
+                 height:pixi_tray_orange.reseller_pad_container.height});
 },
 

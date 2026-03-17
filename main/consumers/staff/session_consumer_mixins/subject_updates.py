@@ -326,22 +326,32 @@ class SubjectUpdatesMixin():
         error_message = ""
         fruit_cost = 0
 
-        if event_data["fruit_type"] == "apple":
-            if group["apple_orchard_inventory"] <= 0:
-                status = "fail"
-                error_message = "No apples left to harvest"
-            else:
-                group["apple_orchard_inventory"] -= 1
-                session_player["apples"] += 1
-                fruit_cost = parameter_set_period["orchard_apple_price"]
-        elif event_data["fruit_type"] == "orange":
-            if group["orange_orchard_inventory"] <= 0:
-                status = "fail"
-                error_message = "No oranges left to harvest"
-            else:
-                group["orange_orchard_inventory"] -= 1
-                session_player["oranges"] += 1                
-                fruit_cost = parameter_set_period["orchard_orange_price"]
+        #check if player is a wholesaler
+        if parameter_set_player["id_label"] != "W":
+            status = "fail"
+            error_message = "Only wholesalers can harvest fruit."
+
+        if status == "success":
+            if event_data["fruit_type"] == "apple":
+
+                #check if there are apples left to harvest
+                if group["apple_orchard_inventory"] <= 0:
+                    status = "fail"
+                    error_message = "No apples left to harvest"
+                else:
+                    group["apple_orchard_inventory"] -= 1
+                    session_player["apples"] += 1
+                    fruit_cost = parameter_set_period["orchard_apple_price"]
+            elif event_data["fruit_type"] == "orange":
+
+                #check if there are oranges left to harvest
+                if group["orange_orchard_inventory"] <= 0:
+                    status = "fail"
+                    error_message = "No oranges left to harvest"
+                else:
+                    group["orange_orchard_inventory"] -= 1
+                    session_player["oranges"] += 1                
+                    fruit_cost = parameter_set_period["orchard_orange_price"]
 
         if status == "success":
 
@@ -351,8 +361,6 @@ class SubjectUpdatesMixin():
             group["results"]["orange_harvested"] = session_player["oranges"]
             group["results"]["apple_harvested"] = session_player["apples"]
 
-            
-        
         result = {"value" : status,
                   "error_message" : error_message, 
                   "apples" : session_player["apples"], 
