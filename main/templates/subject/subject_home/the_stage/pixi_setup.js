@@ -72,6 +72,7 @@ setup_pixi: function setup_pixi(){
         {
             // app.setup_pixi_minimap();
             app.setup_subject_status_overlay();
+            app.setup_final_choice();
 
             if(app.session.world_state.current_experiment_phase == 'Instructions')
             {

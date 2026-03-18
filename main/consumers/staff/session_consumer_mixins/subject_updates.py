@@ -463,7 +463,8 @@ class SubjectUpdatesMixin():
                 
             #check if reseller barrier should go down
             if group["apple_tray_inventory"] == parameter_set["apple_tray_capacity"] and \
-                group["orange_tray_inventory"] == parameter_set["orange_tray_capacity"]:
+                group["orange_tray_inventory"] == parameter_set["orange_tray_capacity"] and \
+                group["reseller_barrier"] is not None:
                 group["barriers"][str(group["reseller_barrier"])]["enabled"] = False
 
         elif parameter_set_player["id_label"] == "R":
@@ -547,8 +548,8 @@ class SubjectUpdatesMixin():
                   "session_player_budget" : session_player["budget"],
                   "apple_tray_inventory" : group["apple_tray_inventory"],
                   "orange_tray_inventory" : group["orange_tray_inventory"],
-                  "reseller_barrier_up" : group["barriers"][str(group["reseller_barrier"])]["enabled"],
-                  "checkout_barrier_up" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
+                  "reseller_barrier_up" : group["barriers"][str(group["reseller_barrier"])]["enabled"] if group["reseller_barrier"] is not None else False,
+                  "checkout_barrier_up" : group["barriers"][str(group["checkout_barrier"])]["enabled"] if group["checkout_barrier"] is not None else False,
                   "fruit_type" : event_data["fruit_type"],
                   "show_end_game_choice_steal" : group["show_end_game_choice_steal"],
                   "show_end_game_choice_no_price" : group["show_end_game_choice_no_price"],

@@ -647,8 +647,8 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         group.apple_tray_inventory = data.apple_tray_inventory;
         group.orange_tray_inventory = data.orange_tray_inventory;
 
-        group["barriers"][group["reseller_barrier"]]["enabled"] = data.reseller_barrier_up;
-        group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
+        if(group["reseller_barrier"]) group["barriers"][group["reseller_barrier"]]["enabled"] = data.reseller_barrier_up;
+        if(group["checkout_barrier"]) group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier_up;
     }
     else if(app.is_subject &&
             parameter_set_player_local.id_label == "W" && 

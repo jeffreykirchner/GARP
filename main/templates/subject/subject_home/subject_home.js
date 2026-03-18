@@ -593,6 +593,7 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/buyer.js"%}
         {%include "subject/subject_home/the_stage/end_game.js"%}
         {%include "subject/subject_home/the_stage/help_doc_buttons.js"%}
+        {%include "subject/subject_home/the_stage/final_choice.js"%}
         
         /** clear form error messages
         */
