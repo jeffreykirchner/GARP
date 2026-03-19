@@ -664,7 +664,9 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         {
             app.end_game_notice_visible = true;
             app.end_game_notice_message = "The Reseller is deciding whether or not to see the prices before paying you for the bundle.<br><br>Please wait for them to make their choice.";
-        }   
+        }  
+        
+        app.update_final_choice();
     }
 
     if(app.is_player_in_group(session_player_id))

@@ -8,8 +8,8 @@ setup_final_choice: function setup_final_choice()
     let world_state = app.session.world_state;
 
     let final_choice_container = new PIXI.Container();
-    let width = 500;
-    let height = 200;
+    let width = 600;
+    let height = 250;
 
     final_choice_container.zIndex = 2;
 
@@ -22,7 +22,7 @@ setup_final_choice: function setup_final_choice()
     //question text
     let pixi_text = new PIXI.HTMLText({text: "",
                                     style: {fontFamily: 'Arial',
-                                            fontSize: 22,
+                                            fontSize: 20,
                                             align : 'justify',
                                             wordWrap: true,      // Enable word wrapping
                                             wordWrapWidth: width-20,  // Set the maximum width for the text
@@ -38,7 +38,9 @@ setup_final_choice: function setup_final_choice()
     yes_button_bg.fill({color: 'LightGreen'});
     yes_button_bg.stroke({width: 1, color: 0x000000});
 
-    let yes_button_text = new PIXI.Text("Yes", {fontFamily: 'Arial', fontSize: 20});
+    let yes_button_text = new PIXI.Text({text:"Yes",
+                                         style: {fontFamily: 'Arial', 
+                                                 fontSize: 20}});
     yes_button_text.anchor.set(0.5);
     yes_button_text.x = 50;
     yes_button_text.y = 25;
@@ -60,7 +62,9 @@ setup_final_choice: function setup_final_choice()
     no_button_bg.fill({color: 'LightCoral'});
     no_button_bg.stroke({width: 1, color: 0x000000});
 
-    let no_button_text = new PIXI.Text("No", {fontFamily: 'Arial', fontSize: 20});
+    let no_button_text = new PIXI.Text({text:"No",
+                                        style: {fontFamily: 'Arial', 
+                                                fontSize: 20}});
     no_button_text.anchor.set(0.5);
     no_button_text.x = 50;
     no_button_text.y = 25;
@@ -105,20 +109,57 @@ update_final_choice: function update_final_choice()
 {
     let html_text = "";
 
-    if(app.show_end_game_steal_part_1())
+    if(app.show_end_game_steal_overlay())
     {
-        html_text = "Wholesaler,<br>Do you want to know how many pieces of fruit you can take without paying the wholesaler for them?"
+        if(app.show_end_game_steal_part_1())
+        {
+            html_text = "Reseller,<br>Do you want to know how many pieces of fruit you can take without paying the Wholesaler for them?";
+        }
+        else
+        {
+            html_text = "Reseller,<br>"
+
+            if(app.show_end_game_steal_part_2_info())
+            {
+                html_text += "You can take up to " + app.get_max_fruit() + " pieces of fruit without paying the wholesaler and proceed directly to the buyer.";
+                html_text += "<br><br>";
+            }
+
+            html_text += "Select which option you would like to do:";
+        }
+    }
+    else if(app.show_end_game_no_price_overlay())
+    {
+        html_text = "Reseller,<br>Do you want to know what the prices are before paying the Wholesaler for your bundle?";
+    }
+    else
+    {
+        final_choice.container.visible = false;
+        return;
     }
     
     final_choice.pixi_text.text = html_text;
     final_choice.container.visible = true;
+
+    let reseller = app.get_player_by_type("R");
+    if(app.session_player.id != reseller.id || !app.show_end_game_steal_part_1())
+    {
+        final_choice.yes_button.visible = false;
+        final_choice.no_button.visible = false;
+    }
+    else
+    {
+        final_choice.yes_button.visible = true;
+        final_choice.no_button.visible = true;
+    }
 },
 
 /** click handler for the yes button in the final choice container
  */
 final_choice_yes_click: function final_choice_yes_click()
 {
-   console.log("final choice yes click");
+    app.end_game_steal_yes();
+    app.update_final_choice();
 },
 
 /**
@@ -127,6 +168,7 @@ final_choice_yes_click: function final_choice_yes_click()
 final_choice_yes_over: function final_choice_yes_over()
 {
     final_choice.yes_button.alpha = 1;
+    app.update_final_choice();
 },
 
 /** pointerover handler for the no button in the final choice container
@@ -140,7 +182,8 @@ final_choice_no_over: function final_choice_no_over()
  */
 final_choice_no_click: function final_choice_no_click()
 {
-    console.log("final choice no click");
+    app.end_game_steal_no();
+    app.update_final_choice();
 },
 
 /** pointerout handler for the yes and no buttons in the final choice container

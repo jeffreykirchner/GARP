@@ -28,14 +28,14 @@
             <button class="btn btn-success me-4 btn-lg" 
                 v-on:click="end_game_steal_yes()" 
                 v-bind:disabled="reconnecting || working"                
-                title="Would you like to steal? Yes.">
+                title="Yes">
                 Yes <i class="fas fa-check"></i>
             </button>
 
             <button class="btn btn-danger btn-lg" 
                     v-on:click="end_game_steal_no()" 
                     v-bind:disabled="reconnecting || working"               
-                    title="Would you like to steal? No.">
+                    title="No">
                 No <i class="fas fa-times"></i>
             </button>
         </div>
