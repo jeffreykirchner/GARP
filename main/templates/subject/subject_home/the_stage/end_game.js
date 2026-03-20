@@ -8,7 +8,7 @@ show_end_game_steal_overlay: function show_end_game_steal_overlay()
 
     //check if local player is reseller
     let reseller = app.get_player_by_type("R");
-    if(app.session_player.id != reseller.id) return false;
+    // if(app.session_player.id != reseller.id) return false;
 
     let group = app.session.world_state.groups[app.current_group];
 
@@ -57,7 +57,7 @@ show_end_game_no_price_overlay: function show_end_game_no_price_overlay()
 
     //check if local player is reseller
     let reseller = app.get_player_by_type("R");
-    if(app.session_player.id != reseller.id) return false;
+    // if(app.session_player.id != reseller.id) return false;
 
     let group = app.session.world_state.groups[app.current_group];
 
@@ -69,17 +69,22 @@ show_end_game_no_price_overlay: function show_end_game_no_price_overlay()
  */
 end_game_steal_yes: function end_game_steal_yes()
 {
-    
+    if(app.working) return;
+    app.working = true;
+
     let group = app.session.world_state.groups[app.current_group];
 
     if(group.end_game_choice_part_1 === null)
     {
         group.end_game_choice_part_1 = true;
+
+         app.send_message("end_game_steal_more_info",
+                          {"end_game_choice_part_1" : true, },
+                           "group");
     }
     else
     {
-        group.end_game_choice_part_2 = true;
-        app.working = true;
+        group.end_game_choice_part_2 = true;        
         app.send_message("end_game_choice", 
                         {"end_game_choice_part_1" : group.end_game_choice_part_1, 
                          "end_game_choice_part_2" : group.end_game_choice_part_2
@@ -94,17 +99,21 @@ end_game_steal_yes: function end_game_steal_yes()
  */
 end_game_steal_no: function end_game_steal_no()
 {
+    if(app.working) return;
+    app.working = true;
+
     let group = app.session.world_state.groups[app.current_group];
 
     if(group.end_game_choice_part_1 === null)
     {
-        group.end_game_choice_part_1 = false;
+        app.send_message("end_game_steal_more_info",
+                          {"end_game_choice_part_1" : false, },
+                           "group");
     }
     else
     {
-        group.end_game_choice_part_2 = false;
-    
-        app.working = true;
+        group.end_game_choice_part_2 = false;    
+        
         app.send_message("end_game_choice", 
                         {"end_game_choice_part_1" : group.end_game_choice_part_1, 
                          "end_game_choice_part_2" : group.end_game_choice_part_2
@@ -118,11 +127,14 @@ end_game_steal_no: function end_game_steal_no()
  */
 end_game_no_price_yes: function end_game_no_price_yes()
 {
+    if(app.working) return;
+    app.working = true;
+
     let group = app.session.world_state.groups[app.current_group];
 
     group.end_game_choice_part_1 = true;
 
-    app.working = true;
+   
     app.send_message("end_game_choice", 
                     {"end_game_choice_part_1" : group.end_game_choice_part_1, 
                      "end_game_choice_part_2" : group.end_game_choice_part_2
@@ -135,6 +147,8 @@ end_game_no_price_yes: function end_game_no_price_yes()
  */
 end_game_no_price_no: function end_game_no_price_no()
 {
+    if(app.working) return;
+
     let group = app.session.world_state.groups[app.current_group];
     
     group.end_game_choice_part_1 = false;
@@ -145,6 +159,27 @@ end_game_no_price_no: function end_game_no_price_no()
                      "end_game_choice_part_2" : group.end_game_choice_part_2
                     },
                     "group");
+},
+
+/**
+ * take result of end game steal more info
+ */
+take_update_end_game_steal_more_info : function take_update_end_game_steal_more_info (data)
+{
+
+    let session_player_id = data.session_player_id;
+    let group = app.session.world_state.groups[app.current_group];
+
+    if(app.is_subject && session_player_id == app.session_player.id)
+    {
+        app.working = false;
+        if(data.value == "fail")
+        {
+        }
+    }
+
+    group.end_game_choice_part_1 = data.end_game_choice_part_1;
+    app.update_final_choice();   
 },
 
 /**
@@ -188,6 +223,7 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
         app.update_barriers();
         app.update_tray_labels();
         app.update_register_labels();
+        app.update_final_choice();
     }
 },
 

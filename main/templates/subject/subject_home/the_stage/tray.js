@@ -592,7 +592,6 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
             source_location = session_player.current_location;
 
-        
             if(app.is_subject &&
                session_player.apples == 0 && 
                session_player.oranges == 0)
@@ -658,14 +657,17 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
         if(group["show_end_game_choice_steal"])
         {
             app.end_game_notice_visible = true;
-            app.end_game_notice_message = "The Reseller is deciding whether to take fruit without paying you for them <u>or</u> to pick up fruit and pay you for them.<br><br>Please wait for them to make their choice.";
+            // app.end_game_notice_message = "The Reseller is deciding whether to take fruit without paying you for them <u>or</u> to pick up fruit and pay you for them.<br><br>Please wait for them to make their choice.";
         }
         else if(group["show_end_game_choice_no_price"])
         {
             app.end_game_notice_visible = true;
-            app.end_game_notice_message = "The Reseller is deciding whether or not to see the prices before paying you for the bundle.<br><br>Please wait for them to make their choice.";
+            // app.end_game_notice_message = "The Reseller is deciding whether or not to see the prices before paying you for the bundle.<br><br>Please wait for them to make their choice.";
         }  
-        
+    }
+
+    if( group["show_end_game_choice_steal"] || group["show_end_game_choice_no_price"])
+    {
         app.update_final_choice();
     }
 

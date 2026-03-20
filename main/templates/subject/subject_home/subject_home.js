@@ -204,6 +204,9 @@ let app = Vue.createApp({
                 case "update_show_help_doc":
                     app.take_update_show_help_doc(message_data);
                     break;
+                case "update_end_game_steal_more_info":
+                    app.take_update_end_game_steal_more_info(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -293,6 +296,7 @@ let app = Vue.createApp({
             app.update_orchard_labels();
             app.update_tray_labels();
             app.set_avatar_visibility();
+            app.setup_final_choice();
         },
 
         /** send winsock request to get session info

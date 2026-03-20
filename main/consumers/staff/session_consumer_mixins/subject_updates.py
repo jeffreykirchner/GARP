@@ -1034,6 +1034,60 @@ class SubjectUpdatesMixin():
         await self.send_message(message_to_self=event_data, message_to_group=None,
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
 
+    async def end_game_steal_more_info(self, event):
+        '''
+        end game choice by reseller to show stealing infomation from subject screen
+        '''
+        if self.controlling_channel != self.channel_name:
+            return
+        
+        logger = logging.getLogger(__name__) 
+        # logger.info("end_game_steal_choice")
+
+        status = "success"
+        error_message = ""
+
+        event_data =  event["message_text"]
+        player_id = self.session_players_local[event["player_key"]]["id"]
+        session_player = self.world_state_local["session_players"][str(player_id)]
+        parameter_set = self.parameter_set_local
+        parameter_set_player = parameter_set["parameter_set_players"][str(session_player["parameter_set_player_id"])]
+        world_state = self.world_state_local
+        group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
+
+        group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
+
+        result = {"value" : status,
+                  "error_message" : error_message,
+                  "end_game_choice_part_1" : group["end_game_choice_part_1"],
+                  "session_player_id" : player_id}
+
+        if status == "fail":
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=[player_id])
+        else:
+            self.session_events.append(SessionEvent(session_id=self.session_id,
+                                                    session_player_id=player_id,
+                                                    type=event['type'],
+                                                    period_number=group["current_period"],
+                                                    time_remaining=group["time_remaining"],
+                                                    data=result))
+             
+            await self.send_message(message_to_self=None, message_to_group=result,
+                                    message_type=event['type'], send_to_client=False,
+                                    send_to_group=True, target_list=group["members"])
+    
+    async def update_end_game_steal_more_info(self, event):
+        '''
+        update end game steal more info from subject screen
+        '''
+
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_group=None,
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+
 async def get_player_by_type(world_state, parameter_set, player_type, group):
     '''
     get player by type
