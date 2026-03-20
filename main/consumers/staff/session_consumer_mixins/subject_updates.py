@@ -991,6 +991,7 @@ class SubjectUpdatesMixin():
            if group["end_game_choice_part_2"]:
                group["end_game_mode"] = EndGameChoices.STEAL
                group["barriers"][str(group["exit_barrier"])]["enabled"] = True
+               group["barriers"][str(group["center_barrier"])]["enabled"] = True
 
         elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
             if group["end_game_choice_part_1"]:
@@ -1004,6 +1005,7 @@ class SubjectUpdatesMixin():
                   "end_game_choice_part_2" : group["end_game_choice_part_2"],
                   "end_game_mode" : group["end_game_mode"],
                   "exit_barrier_enabled" : group["barriers"][str(group["exit_barrier"])]["enabled"],
+                  "center_barrier_enabled" : group["barriers"][str(group["center_barrier"])]["enabled"],
                   "session_player_id" : player_id}
 
         if status == "fail":

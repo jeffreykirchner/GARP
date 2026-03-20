@@ -137,6 +137,12 @@ update_barriers: function update_barriers()
             let exit_barrier_container = pixi_barriers[group.exit_barrier].barrier_container;
             exit_barrier_container.visible = group.barriers[group.exit_barrier].enabled;
         }
+
+        if(group.barriers[group.center_barrier])
+        {
+            let center_barrier_container = pixi_barriers[group.center_barrier].barrier_container;
+            center_barrier_container.visible = group.barriers[group.center_barrier].enabled;
+        }
     }
     catch(err)
     {
