@@ -9,7 +9,7 @@ setup_final_choice: function setup_final_choice()
 
     let final_choice_container = new PIXI.Container();
     let width = 600;
-    let height = 250;
+    let height = 300;
 
     final_choice_container.zIndex = 2;
 
@@ -79,13 +79,48 @@ setup_final_choice: function setup_final_choice()
     no_button.on("pointerdown", app.final_choice_no_click);
     no_button.on("pointerout", app.final_choice_no_out);
 
+    //steal button
+    let steal_button = new PIXI.Container();
+    let steal_button_bg = new PIXI.Graphics();
+
+    let steal_button_text = new PIXI.Text({text:"Take fruit and proceed directly to the buyer without paying the wholesaler for them.",
+                                           style: {fontFamily: 'Arial', 
+                                                   align : 'center', 
+                                                   wordWrap: true,
+                                                   wordWrapWidth: width-20,
+                                                   fontSize: 20}});
+    // steal_button_text.anchor.set(0.5);
+    steal_button_text.x = 0;
+    steal_button_text.y = 0;
+    steal_button_text.zIndex = 2;
+
+    steal_button.alpha = 0.75;
+    steal_button.sortableChildren = true;
+
+    steal_button_bg.roundRect(-5, -5, steal_button_text.width+10, steal_button_text.height+10, 10);
+    steal_button_bg.fill({color: 'white'});
+    steal_button_bg.stroke({width: 1, color: 0x000000});
+    steal_button_bg.zIndex = 1;
+
+    steal_button.addChild(steal_button_bg);
+    steal_button.addChild(steal_button_text);
+    
+
+    steal_button.eventMode = 'static';
+    // steal_button.on("pointerover", app.final_choice_steal_over);
+    // steal_button.on("pointerout", app.final_choice_steal_out);
+    // steal_button.on("pointerdown", app.final_choice_steal_click);
+
     final_choice_container.addChild(text_bg);
     final_choice_container.addChild(pixi_text);
     final_choice_container.addChild(yes_button);
     final_choice_container.addChild(no_button);
+    final_choice_container.addChild(steal_button);
 
     yes_button.position.set(width/2 - yes_button.width - 10, height - 70);
-    no_button.position.set(width/2 + 10, height - 70);
+    no_button.position.set(width/2, height - 70);
+
+    steal_button.position.set(width/2 - steal_button.width/2 +5, height - steal_button.height);
 
     final_choice_container.position.set(parseInt(app.session.parameter_set.world_width/2) - width/2, 
                                         location[1] - final_choice_container.height - 50);
@@ -96,7 +131,7 @@ setup_final_choice: function setup_final_choice()
     final_choice.pixi_text = pixi_text;
     final_choice.yes_button = yes_button;
     final_choice.no_button = no_button;
-
+    final_choice.steal_button = steal_button;
     pixi_container_main.addChild(final_choice_container);
 
     app.update_final_choice();
