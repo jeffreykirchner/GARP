@@ -352,6 +352,8 @@ tray_apple_double_click: function tray_apple_double_click()
 
     let world_state = app.session.world_state;
     let session_player = world_state.session_players[app.session_player.id];
+
+    let group = world_state.groups[app.current_group];
     
     //check if the tray is within range of the player
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
@@ -373,7 +375,8 @@ tray_apple_double_click: function tray_apple_double_click()
     wholesaler_position = wholesaler.current_location;
     reseller_position = reseller.current_location;
     
-    if(!app.is_in_tray_wholesaler_pad(wholesaler_position))
+    if(!app.is_in_tray_wholesaler_pad(wholesaler_position) && 
+        group.end_game_mode != "Steal")
     {
         app.add_text_emitters(wholesaler.id != app.session_player.id ? "Error: Wholesaler not on pad" : "Error: You are not on the pad", 
                 session_player.current_location.x, 
@@ -444,6 +447,8 @@ tray_orange_double_click: function tray_orange_double_click()
     let world_state = app.session.world_state;
     let session_player = world_state.session_players[app.session_player.id];
 
+    let group = world_state.groups[app.current_group];
+
     if(!app.check_for_circle_rect_intersection({x:local_player.current_location.x, 
                                                 y:local_player.current_location.y, 
                                                 radius:app.session.parameter_set.interaction_range},
@@ -463,7 +468,8 @@ tray_orange_double_click: function tray_orange_double_click()
     wholesaler_position = wholesaler.current_location;
     reseller_position = reseller.current_location;
     
-    if(!app.is_in_tray_wholesaler_pad(wholesaler_position))
+    if(!app.is_in_tray_wholesaler_pad(wholesaler_position) && 
+       group.end_game_mode != "Steal")
     {
         app.add_text_emitters(wholesaler.id != app.session_player.id ? "Error: Wholesaler not on pad" : "Error: You are not on the pad", 
                 session_player.current_location.x, 
