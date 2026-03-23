@@ -76,7 +76,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
     text_container.addChild(pixi_text);
 
     let text_bg = new PIXI.Graphics();
-    text_bg.roundRect(0, 0, text_container.width+10, text_container.height-40, 10);
+    text_bg.roundRect(0, 0, text_container.width+10, text_container.height, 10);
     text_bg.fill({color: 0xFFFFFF});
     text_bg.stroke({width: 1, color: 0x000000});
 
@@ -86,7 +86,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
     // pixi_text.y = text_container.height / 2;
 
     pixi_text.x = 5;
-    // pixi_text.y = 5;
+    pixi_text.y = 2;
 
     text_container.position.set(popup_location.x - text_container.width / 2, 
                                 popup_location.y - text_container.height / 2);

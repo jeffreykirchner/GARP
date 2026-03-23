@@ -152,7 +152,7 @@ setup_pixi_register: function setup_pixi_register()
     app.add_help_doc_button({x:parseInt(register_container.x)+30, 
                              y:parseInt(register_container.y)-100},
                             {x:parseInt(register_container.x), 
-                             y:parseInt(register_container.y)+325},
+                             y:parseInt(register_container.y)+250},
                             "register");
 
 },
