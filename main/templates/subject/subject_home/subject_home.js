@@ -552,7 +552,7 @@ let app = Vue.createApp({
 
                 if(parameter_set_player_local.id_label == "R")
                 { 
-                    app.add_notice("Please wait.", app.session.world_state.current_period+1, 1)
+                    app.add_notice("Move to the fruit trays and wait.", app.session.world_state.current_period+1, 1)
                 }
                 else if(parameter_set_player_local.id_label == "W")
                 {
