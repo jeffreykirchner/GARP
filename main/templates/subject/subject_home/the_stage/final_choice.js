@@ -270,7 +270,20 @@ update_final_choice: function update_final_choice()
     }
     else if(app.show_end_game_no_price_overlay())
     {
-        html_text = "Reseller,<br>Do you want to know what the prices are before paying the Wholesaler for your bundle?";
+        html_text = "<br><br><br><br>Reseller,<br>Do you want to know what the prices are before paying the Wholesaler for your bundle?";
+
+        if(app.session_player.id == reseller.id)
+        {
+            local_player.target_location.x = final_choice.container.x + final_choice.container.width;
+            local_player.target_location.y = final_choice.container.y + final_choice.container.height + 50;
+        }
+        else
+        {
+            local_player.target_location.x = final_choice.container.x;
+            local_player.target_location.y = final_choice.container.y + final_choice.container.height + 50;
+        }
+
+        app.target_location_update();
     }
     else
     {
@@ -313,7 +326,14 @@ update_final_choice: function update_final_choice()
  */
 final_choice_yes_click: function final_choice_yes_click()
 {
-    app.end_game_steal_yes();
+    if(app.show_end_game_steal_overlay())
+    {
+        app.end_game_steal_yes();
+    }
+    else
+    {
+        app.end_game_no_price_yes();
+    }
 },
 
 /**
@@ -336,7 +356,14 @@ final_choice_no_over: function final_choice_no_over()
  */
 final_choice_no_click: function final_choice_no_click()
 {
-    app.end_game_steal_no();
+    if(app.show_end_game_steal_overlay())
+    {
+        app.end_game_steal_no();
+    }
+    else
+    {
+        app.end_game_no_price_no();
+    }
 },
 
 /** pointerout handler for the yes buttons in the final choice container
