@@ -264,7 +264,7 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
     app.add_help_doc_button({x:parseInt(tray_orange_container.x) + tray_orange_container.width/2-50, 
                              y:parseInt(tray_orange_container.y) + tray_orange_container.height-25,},
                             {x:parseInt(tray_orange_container.x)+tray_orange_container.width/2, 
-                             y:parseInt(tray_orange_container.y)-150},
+                             y:parseInt(tray_orange_container.y)-200},
                             "orange_tray");
 },
 
