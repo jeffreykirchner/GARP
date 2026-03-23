@@ -492,18 +492,19 @@ class SubjectUpdatesMixin():
                     error_message = "You have reached the maximum fruit limit."
 
             #check if reseller has needs to answer end game questions
-            if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
-                if parameter_set["end_game_choice"] == EndGameChoices.STEAL:
-                    if group["show_end_game_choice_steal"] == False and \
-                       group["end_game_choice_part_1"] is None:
+            if status == "success":
+                if group["current_period"] == len(self.parameter_set_local["parameter_set_periods_order"]):
+                    if parameter_set["end_game_choice"] == EndGameChoices.STEAL:
+                        if group["show_end_game_choice_steal"] == False and \
+                        group["end_game_choice_part_1"] is None:
 
-                        group["show_end_game_choice_steal"] = True
+                            group["show_end_game_choice_steal"] = True
 
-                elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
-                    if group["show_end_game_choice_no_price"] == False and \
-                       group["end_game_choice_part_1"] is None:
+                    elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                        if group["show_end_game_choice_no_price"] == False and \
+                        group["end_game_choice_part_1"] is None:
 
-                        group["show_end_game_choice_no_price"] = True
+                            group["show_end_game_choice_no_price"] = True
       
             if status == "success" and \
                not group["show_end_game_choice_steal"] and \

@@ -5,6 +5,12 @@ setup_final_choice: function setup_final_choice()
 {
     if(!app.session) return;
     if(!app.session.started) return;
+
+    //if exists, destroy the old container
+    if(final_choice)    
+    {
+        pixi_container_main.removeChild(final_choice.container);
+    }
     
     let location = app.session.parameter_set.orange_tray_location.split(",");
     let world_state = app.session.world_state;
