@@ -50,7 +50,13 @@
                     {%include "subject/subject_home/the_stage/buyer_prices_overlay.html"%}
                 </div>
 
-                <div id="end_game_steal_overlay" 
+                <div id="orchard_prices_overlay" 
+                      v-if="is_subject && 
+                            get_parameter_set_player_from_player_id(session_player.id).id_label=='W'">
+                    {%include "subject/subject_home/the_stage/orchard_prices_overlay.html"%}
+                </div>
+
+                <!-- <div id="end_game_steal_overlay" 
                      class="end_game_overlay"                     
                      v-if="is_subject && 
                            show_end_game_steal_overlay()">
@@ -62,14 +68,14 @@
                      v-if="is_subject && 
                            show_end_game_no_price_overlay()">
                     {%include "subject/subject_home/the_stage/end_game_no_price_overlay.html"%}
-                </div>
+                </div> -->
 
-                <div id="end_game_notice_overlay" 
+                <!-- <div id="end_game_notice_overlay" 
                      class="end_game_overlay"                     
                      v-if="is_subject && 
                            end_game_notice_visible">
                     {%include "subject/subject_home/the_stage/end_game_notice_overlay.html"%}
-                </div>
+                </div> -->
 
                 <canvas class="field" 
                         key="sd_graph" 
@@ -126,7 +132,10 @@
         </div>
 
         <div class="row justify-content-center mt-2" 
-             v-show="session.started" v-if="pixi_mode=='subject' && session && session.parameter_set.enable_chat">
+             v-if="session.started && 
+                   pixi_mode=='subject' && 
+                   session && 
+                   show_chat()">
             <div class="col-4">
                 <div class="row">
                     <div class="col">

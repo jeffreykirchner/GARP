@@ -93,6 +93,9 @@ let app = Vue.createApp({
                     end_game_notice_message : "",
                     end_game_notice_visible : false,
                     end_game_steal_choice : null,
+
+                    //on screen help docs
+                    help_docs : {},
                     
                 }},
     methods: {
@@ -198,6 +201,12 @@ let app = Vue.createApp({
                 case "update_end_game_choice":
                     app.take_update_end_game_choice(message_data);
                     break;
+                case "update_show_help_doc":
+                    app.take_update_show_help_doc(message_data);
+                    break;
+                case "update_end_game_steal_more_info":
+                    app.take_update_end_game_steal_more_info(message_data);
+                    break;
             }
 
             app.first_load_done = true;
@@ -287,6 +296,7 @@ let app = Vue.createApp({
             app.update_orchard_labels();
             app.update_tray_labels();
             app.set_avatar_visibility();
+            app.setup_final_choice();
         },
 
         /** send winsock request to get session info
@@ -464,6 +474,9 @@ let app = Vue.createApp({
 
             //update barriers
             app.update_barriers();
+
+            //update help doc buttons
+            app.clock_tick_help_doc_buttons();
         },
 
         /**
@@ -539,7 +552,7 @@ let app = Vue.createApp({
 
                 if(parameter_set_player_local.id_label == "R")
                 { 
-                    app.add_notice("Please wait.", app.session.world_state.current_period+1, 1)
+                    app.add_notice("Move to the fruit trays and wait.", app.session.world_state.current_period+1, 1)
                 }
                 else if(parameter_set_player_local.id_label == "W")
                 {
@@ -583,9 +596,9 @@ let app = Vue.createApp({
         {%include "subject/subject_home/the_stage/register.js"%}
         {%include "subject/subject_home/the_stage/buyer.js"%}
         {%include "subject/subject_home/the_stage/end_game.js"%}
+        {%include "subject/subject_home/the_stage/help_doc_buttons.js"%}
+        {%include "subject/subject_home/the_stage/final_choice.js"%}
         
-        
-
         /** clear form error messages
         */
         clear_main_form_errors: function clear_main_form_errors(){

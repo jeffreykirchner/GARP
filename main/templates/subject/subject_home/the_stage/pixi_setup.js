@@ -31,13 +31,14 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'x_mark_tex', src:'{% static "x_mark.png"%}'});
     PIXI.Assets.add({alias:'dollar_symbol_tex', src:'{% static "dollar_symbol.png"%}'});
     PIXI.Assets.add({alias:'cents_symbol_tex', src:'{% static "cents_symbol.png"%}'});
+    PIXI.Assets.add({alias:'help_tex', src:'{% static "help.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
                                                'buyer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
                                                'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
                                                'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex', 
-                                               'dollar_symbol_tex', 'cents_symbol_tex']);
+                                               'dollar_symbol_tex', 'cents_symbol_tex', 'help_tex']);
 
     textures_promise.then((textures) => {
         app.setup_pixi_sheets(textures);
@@ -50,8 +51,8 @@ setup_pixi: function setup_pixi(){
         app.setup_pixi_register();
         app.setup_pixi_buyer();
        
-        app.setup_pixi_tray_apple();
         app.setup_pixi_tray_orange();
+        app.setup_pixi_tray_apple();
 
         if(app.session.started)
         {
@@ -71,6 +72,7 @@ setup_pixi: function setup_pixi(){
         {
             // app.setup_pixi_minimap();
             app.setup_subject_status_overlay();
+            app.setup_final_choice();
 
             if(app.session.world_state.current_experiment_phase == 'Instructions')
             {
@@ -122,6 +124,7 @@ setup_pixi_sheets: function setup_pixi_sheets(textures){
     app.background_tile_tex = textures.bg_tex;
 
     pixi_container_main = new PIXI.Container();
+    pixi_container_main.sortableChildren = true;
     pixi_container_main.sortableChildren = true;
 
     pixi_app.stage.addChild(pixi_container_main);

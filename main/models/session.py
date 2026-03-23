@@ -172,6 +172,9 @@ class Session(models.Model):
 
         if group["checkout_barrier"]:
             group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
+        
+        if group["center_barrier"]:
+            group["barriers"][str(group["center_barrier"])]["enabled"] = False
 
         #setup orchard inventory
         group["orange_orchard_inventory"] = parameter_set["orange_tray_capacity"] - group["orange_tray_inventory"]
@@ -237,6 +240,7 @@ class Session(models.Model):
             group["reseller_barrier"] = None
             group["wholesaler_barrier"] = None
             group["checkout_barrier"] = None
+            group["center_barrier"] = None
             group["time_remaining"] = 0
             group["current_period"] = 1
             group["barriers"] = {}
@@ -298,6 +302,9 @@ class Session(models.Model):
                 elif i.info == 'Exit':
                     group["exit_barrier"] = i.id
                     group["barriers"][str(i.id)] = {"enabled":False}
+                elif i.info == 'Center':
+                    group["center_barrier"] = i.id
+                    group["barriers"][str(i.id)] = {"enabled":False}
 
         parameter_set  = self.parameter_set.json_for_session
 
@@ -328,23 +335,23 @@ class Session(models.Model):
         '''
         self.session_players.all().update(connecting=False, connected_count=0)
     
-    def get_current_session_period(self):
-        '''
-        return the current session period
-        '''
-        if not self.started:
-            return None
+    # def get_current_session_period(self):
+    #     '''
+    #     return the current session period
+    #     '''
+    #     if not self.started:
+    #         return None
 
-        return self.session_periods.get(period_number=self.world_state["current_period"])
+    #     return self.session_periods.get(period_number=self.world_state["current_period"])
 
-    async def aget_current_session_period(self):
-        '''
-        return the current session period
-        '''
-        if not self.started:
-            return None
+    # async def aget_current_session_period(self):
+    #     '''
+    #     return the current session period
+    #     '''
+    #     if not self.started:
+    #         return None
 
-        return await self.session_periods.aget(period_number=self.world_state["current_period"])
+    #     return await self.session_periods.aget(period_number=self.world_state["current_period"])
     
     def update_player_count(self):
         '''

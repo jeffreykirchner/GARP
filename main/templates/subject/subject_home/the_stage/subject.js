@@ -56,7 +56,6 @@ subject_pointer_click: function subject_pointer_click(event)
     local_player.target_location.y = local_pos.y;
 
     app.target_location_update();
-
 },
 
 /**

@@ -87,3 +87,19 @@ take_update_chat: function take_update_chat(message_data){
 
 },
 
+/**
+ * show chat if chat enabled in parameters and stealing has not occured yet
+ */
+show_chat: function show_chat()
+{
+    if(!app.session) return false;
+    if(!app.session.started) return false;
+    if(!app.session.parameter_set.enable_chat) return false;
+
+    let group = app.session.world_state.groups[app.current_group];
+
+    if(group.end_game_choice_part_2 == true) return false;
+    
+    return true;
+},
+

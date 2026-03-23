@@ -71,6 +71,13 @@ setup_pixi_orchard_apple: function setup_pixi_orchard_apple()
 
     pixi_container_main.addChild(pixi_orchard_apple.container);
 
+    app.add_help_doc_button({x:parseInt(orchard_apple_container.x) + 225, 
+                             y:parseInt(orchard_apple_container.y) + 110},
+                            {x:parseInt(orchard_apple_container.x) + 225, 
+                             y:parseInt(orchard_apple_container.y) + parseInt(orchard_apple_container.height)},
+                            "apple_orchard");
+    
+
 },
 
 /**
@@ -162,8 +169,8 @@ update_orchard_labels: function update_orchard_labels()
 
     if(!parameter_set_period) return;
 
-    pixi_orchard_apple.label.text = "Harvest: " + parameter_set_period.orchard_apple_price + "¢ / Apple";
-    pixi_orchard_orange.label.text = "Harvest: " + parameter_set_period.orchard_orange_price + "¢ / Orange";
+    pixi_orchard_apple.label.text = "Harvest Apples";
+    pixi_orchard_orange.label.text = "Harvest Oranges";
 
     //hide fruit if it has been harvested
     for(let i=0; i<pixi_orchard_apple.apples.length; i++)

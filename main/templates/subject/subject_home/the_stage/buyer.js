@@ -68,6 +68,13 @@ setup_pixi_buyer: function setup_pixi_buyer()
     pixi_container_main.addChild(pixi_buyer.buyer_container);
 
     app.update_buyer_label();
+
+    //help doc button
+    app.add_help_doc_button({x:parseInt(buyer_container.x)-35, 
+                             y:parseInt(buyer_container.y)-80},
+                            {x:parseInt(buyer_container.x), 
+                             y:parseInt(buyer_container.y)+275},
+                            "buyer");
 },
 
 update_buyer_label: function update_buyer_label()
@@ -218,7 +225,7 @@ take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
         {
             if(parameter_set_player_local.id_label == "R")
             { 
-                app.add_notice("Please wait.", world_state.current_period+1, 1)
+                app.add_notice("Move to the fruit trays and wait.", world_state.current_period+1, 1)
             }
             else if(parameter_set_player_local.id_label == "W")
             {

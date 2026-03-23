@@ -57,7 +57,7 @@ class InterfaceMixin():
         event_data = event["message_text"]
 
         session_player = await SessionPlayer.objects.select_related('parameter_set_player__parameter_set_group').aget(id=self.session_player_id)
-
+        
         prompt = strip_tags(event_data["prompt"]).strip()
 
         session_player.chat_gpt_prompt.append({
@@ -102,6 +102,7 @@ class InterfaceMixin():
                             session_player_id=session_player.id,
                             type="chat_gpt_prompt",
                             period_number=event_data["current_period"],
+                            time_remaining=event_data["time_remaining"],
                             data=result_staff)
         
         # Send the response back to the client
@@ -183,10 +184,25 @@ class InterfaceMixin():
 
         await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
                                 message_type=event['type'], send_to_client=True, send_to_group=False)
+    
+    @check_message_for_me
+    async def update_show_help_doc(self, event):
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
         
     @check_message_for_me
     async def update_end_game_choice(self, event):
 
+        event_data = json.loads(event["group_data"])
+
+        await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 
+                                message_type=event['type'], send_to_client=True, send_to_group=False)
+
+    @check_message_for_me
+    async def update_end_game_steal_more_info(self, event):
+        
         event_data = json.loads(event["group_data"])
 
         await self.send_message(message_to_self=event_data, message_to_subjects=None, message_to_staff=None, 

@@ -49,6 +49,11 @@ class StaffSessionView(SingleObjectMixin, View):
         website_instance_id = os.environ.get('WEBSITE_INSTANCE_ID', None)
         Session.objects.filter(id=session.id).update(website_instance_id=website_instance_id)
 
+        session_player_first = session.session_players.first()
+        instructions={}
+        if session_player_first:
+            instructions = json.dumps(session_player_first.get_instruction_set(), cls=DjangoJSONEncoder)
+
         return render(request=request,
                       template_name=self.template_name,
                       context={"channel_key" : session.channel_key,
@@ -63,6 +68,7 @@ class StaffSessionView(SingleObjectMixin, View):
                                "parameters" : parameters,
                                "session" : session,
                                "website_instance_id" : website_instance_id,
+                               "instructions" : instructions,
                                })
     
     @method_decorator(login_required)

@@ -214,6 +214,32 @@ get_buyer_price: function get_buyer_price(orange, apple){
 },
 
 /**
+ * get apple orchard price
+ */
+get_apple_orchard_price: function get_apple_orchard_price(){
+    if(!app.first_load_done) return "---";
+    if(!app.session.started) return "---";
+
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    if (!parameter_set_period) return "---";
+    return parameter_set_period.orchard_apple_price;
+},
+
+/**
+ * get orange orchard price
+ */
+get_orange_orchard_price: function get_orange_orchard_price(){
+    if(!app.first_load_done) return "---";
+    if(!app.session.started) return "---";
+
+    let parameter_set_period = app.get_current_parameter_set_period();
+
+    if (!parameter_set_period) return "---";
+    return parameter_set_period.orchard_orange_price;
+},
+
+/**
  * get buyer price style
  */
 get_buyer_price_style: function get_buyer_price_style(orange, apple){

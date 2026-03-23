@@ -11,6 +11,6 @@ from .sessions import ExperimentPhase
 from .sessions import ChatGPTMode
 from .sessions import EndGameChoices
 
-from .validate_input import is_positive_integer
+from .validate_input import is_non_negative
 
 from .open_ai import chat_gpt_generate_completion
