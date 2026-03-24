@@ -231,12 +231,13 @@ class SubjectUpdatesMixin():
             self.world_state_local["last_update"] = str(dt_now)
             await self.store_world_state()
 
+            data = {}
             for i in self.world_state_local["groups"]:
-                group = self.world_state_local["groups"][i]
+                g = self.world_state_local["groups"][i]
                 target_locations = {}
                 current_locations = {}
 
-                for j in group["members"]:
+                for j in g["members"]:
                     target_locations[j] = self.world_state_local["session_players"][str(j)]["target_location"]
                     current_locations[j] = self.world_state_local["session_players"][str(j)]["current_location"]
                 
@@ -247,8 +248,8 @@ class SubjectUpdatesMixin():
                 self.session_events.append(SessionEvent(session_id=self.session_id, 
                                                         session_player_id=player_id,
                                                         type=event['type'],
-                                                        period_number=group["current_period"],
-                                                        time_remaining=group["time_remaining"],
+                                                        period_number=g["current_period"],
+                                                        time_remaining=g["time_remaining"],
                                                         data=data))
 
                 # await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
@@ -982,21 +983,26 @@ class SubjectUpdatesMixin():
         world_state = self.world_state_local
         group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
 
-        group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
-        group["end_game_choice_part_2"] = event_data["end_game_choice_part_2"]
+        if parameter_set_player["id_label"] == "W":
+            status = "fail"
+            error_message = "Only Resellers can make end game choices."
 
-        group["show_end_game_choice_steal"] = False
-        group["show_end_game_choice_no_price"] = False
+        if status == "success":
+            group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
+            group["end_game_choice_part_2"] = event_data["end_game_choice_part_2"]
 
-        if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
-           if group["end_game_choice_part_2"]:
-               group["end_game_mode"] = EndGameChoices.STEAL
-               group["barriers"][str(group["exit_barrier"])]["enabled"] = True
-               group["barriers"][str(group["center_barrier"])]["enabled"] = True
+            group["show_end_game_choice_steal"] = False
+            group["show_end_game_choice_no_price"] = False
 
-        elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
-            if group["end_game_choice_part_1"]:
-                group["end_game_mode"] = EndGameChoices.OFF
+            if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
+                if group["end_game_choice_part_2"]:
+                    group["end_game_mode"] = EndGameChoices.STEAL
+                    group["barriers"][str(group["exit_barrier"])]["enabled"] = True
+                    group["barriers"][str(group["center_barrier"])]["enabled"] = True
+
+            elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                if group["end_game_choice_part_1"]:
+                    group["end_game_mode"] = EndGameChoices.OFF
 
         result = {"value" : status,
                   "error_message" : error_message,
