@@ -983,21 +983,26 @@ class SubjectUpdatesMixin():
         world_state = self.world_state_local
         group = world_state["groups"][str(parameter_set_player["parameter_set_group"])]
 
-        group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
-        group["end_game_choice_part_2"] = event_data["end_game_choice_part_2"]
+        if parameter_set_player["id_label"] == "W":
+            status = "fail"
+            error_message = "Only Resellers can make end game choices."
 
-        group["show_end_game_choice_steal"] = False
-        group["show_end_game_choice_no_price"] = False
+        if status == "success":
+            group["end_game_choice_part_1"] = event_data["end_game_choice_part_1"]
+            group["end_game_choice_part_2"] = event_data["end_game_choice_part_2"]
 
-        if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
-           if group["end_game_choice_part_2"]:
-               group["end_game_mode"] = EndGameChoices.STEAL
-               group["barriers"][str(group["exit_barrier"])]["enabled"] = True
-               group["barriers"][str(group["center_barrier"])]["enabled"] = True
+            group["show_end_game_choice_steal"] = False
+            group["show_end_game_choice_no_price"] = False
 
-        elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
-            if group["end_game_choice_part_1"]:
-                group["end_game_mode"] = EndGameChoices.OFF
+            if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
+                if group["end_game_choice_part_2"]:
+                    group["end_game_mode"] = EndGameChoices.STEAL
+                    group["barriers"][str(group["exit_barrier"])]["enabled"] = True
+                    group["barriers"][str(group["center_barrier"])]["enabled"] = True
+
+            elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
+                if group["end_game_choice_part_1"]:
+                    group["end_game_mode"] = EndGameChoices.OFF
 
         result = {"value" : status,
                   "error_message" : error_message,
