@@ -309,6 +309,8 @@ do_test_mode_run_w: function do_test_mode_run_w()
     let parameter_set = app.session.parameter_set;
     let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
 
+    let reseller = app.get_player_by_type("R");
+
     if(group.complete) return;
 
     // harvest apples
@@ -383,6 +385,15 @@ do_test_mode_run_w: function do_test_mode_run_w()
         return;
     }
 
+    //reseller transfers from trays to themselves
+    if(app.is_in_tray_reseller_pad(reseller.current_location))
+    {
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.wholesaler_pad_container.x) + 100, 
+                                        "y":parseInt(pixi_tray_orange.wholesaler_pad_container.y) + 100};
+        app.target_location_update();
+        return;
+    }
+
     // go to the register
     if (!pixi_register || !pixi_register.wholesaler_pad_container) {
         return;
@@ -406,6 +417,8 @@ do_test_mode_run_r: function do_test_mode_run_r()
     let local_player = app.session.world_state.session_players[app.session_player.id];
     let parameter_set = app.session.parameter_set;
     let parameter_set_period = app.get_current_parameter_set_period();
+
+    let wholesaler = app.get_player_by_type("W");
 
     if(group.complete) return;
 
@@ -435,7 +448,7 @@ do_test_mode_run_r: function do_test_mode_run_r()
         return;
     }
 
-    if(group.barriers[group.reseller_barrier].enabled) return;
+    // if(group.barriers[group.reseller_barrier].enabled) return;
 
     //move to buyer
     if(local_player.checkout || (group.end_game_mode == "Steal" && local_player.apples + local_player.oranges ==  parameter_set_period.max_fruit))
@@ -459,11 +472,11 @@ do_test_mode_run_r: function do_test_mode_run_r()
     if (pixi_register && pixi_register.reseller_pad_container && group.end_game_mode != "Steal")
     {
         if((local_player.budget<parameter_set_period.wholesale_apple_price &&
-           local_player.budget<parameter_set_period.wholesale_orange_price) ||
-           local_player.apples + local_player.oranges >= parameter_set_period.max_fruit)
+            local_player.budget<parameter_set_period.wholesale_orange_price) ||
+            local_player.apples + local_player.oranges >= parameter_set_period.max_fruit)
         {
             local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 200, 
-                                            "y":parseInt(pixi_register.reseller_pad_container.y) };
+                                            "y":parseInt(pixi_register.reseller_pad_container.y) + 100};
             app.target_location_update();
 
             app.register_double_click();
@@ -471,6 +484,21 @@ do_test_mode_run_r: function do_test_mode_run_r()
             
             return;
         }
+    }
+
+    //move to fruit trays for wholesaler transfer
+    if(wholesaler.oranges > 0 || wholesaler.apples > 0)
+    {
+        if (!pixi_tray_apple || !pixi_tray_apple.container || !pixi_tray_orange || !pixi_tray_orange.container) {
+            return;
+        }
+
+        //move to apple tray
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.reseller_pad_container.x) + 200, 
+                                        "y":parseInt(pixi_tray_orange.reseller_pad_container.y) + 100 };
+        app.target_location_update();
+
+        return;
     }
 
     // pick up fruit from trays
@@ -481,8 +509,8 @@ do_test_mode_run_r: function do_test_mode_run_r()
         }
 
         //move to apple tray
-        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 50, 
-                                        "y":parseInt(pixi_tray_apple.container.y)};
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.reseller_pad_container.x) + 100, 
+                                        "y":parseInt(pixi_tray_orange.reseller_pad_container.y) + 100 };
         app.target_location_update();
 
         app.tray_apple_double_click();
@@ -497,8 +525,8 @@ do_test_mode_run_r: function do_test_mode_run_r()
         }
 
         //move to orange tray
-        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 50, 
-                                        "y":parseInt(pixi_tray_orange.container.y)};
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.reseller_pad_container.x) + 100, 
+                                        "y":parseInt(pixi_tray_orange.reseller_pad_container.y) + 100 };
         app.target_location_update();
 
         app.tray_orange_double_click();
