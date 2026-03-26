@@ -137,9 +137,13 @@ help_doc_button_click: function help_doc_button_click(event)
     {
         app.help_docs[help_doc].text_container.visible = true;
         app.help_docs[help_doc].time_remaining = 15;
-        app.send_message("show_help_doc", 
-                        {"help_doc": help_doc},    
-                         "group");
+
+        if(app.session.world_state.current_experiment_phase != "Instructions")
+        {
+            app.send_message("show_help_doc", 
+                            {"help_doc": help_doc},    
+                             "group");
+        }
     }
 },
 
