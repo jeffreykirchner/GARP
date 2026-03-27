@@ -241,6 +241,7 @@ class Session(models.Model):
             group["wholesaler_barrier"] = None
             group["checkout_barrier"] = None
             group["center_barrier"] = None
+            group["exit_barrier"] = None
             group["time_remaining"] = 0
             group["current_period"] = 1
             group["barriers"] = {}
@@ -285,6 +286,7 @@ class Session(models.Model):
                 self.world_state["groups"][group_id_s]["members"].append(i['id'])
 
         #barriers enabled
+        #create copy of barriers for each group and enable based on parameter set
         for g in self.parameter_set.parameter_set_groups.all():
             group = self.world_state["groups"][str(g.id)]
 

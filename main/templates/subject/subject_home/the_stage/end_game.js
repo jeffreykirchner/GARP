@@ -216,8 +216,8 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
     group.show_end_game_choice_steal = data.show_end_game_choice_steal;
 
     group.end_game_mode = data.end_game_mode;
-    group.barriers[group.exit_barrier].enabled = data.exit_barrier_enabled;
-    group.barriers[group.center_barrier].enabled = data.center_barrier_enabled;
+    if(group.exit_barrier) group.barriers[group.exit_barrier].enabled = data.exit_barrier_enabled;
+    if(group.center_barrier) group.barriers[group.center_barrier].enabled = data.center_barrier_enabled;
 
     if(app.is_player_in_group(session_player_id))
     {

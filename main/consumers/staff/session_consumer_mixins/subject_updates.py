@@ -470,6 +470,8 @@ class SubjectUpdatesMixin():
 
         elif parameter_set_player["id_label"] == "R":
             #reseller moved fruit from tray to inventory
+            #reseller can only move fruit if wholesaler has harvested all their fruit and placed it on the tray
+            #reseller's budget is reduced by wholesale price of fruit when they move it from tray to inventory
 
             #if trees are not fully harvested, reseller cannot move fruit from tray to inventory
             if group["apple_orchard_inventory"] > 0 or group["orange_orchard_inventory"] > 0:
@@ -541,7 +543,8 @@ class SubjectUpdatesMixin():
                 
                 #raise checkout barrier when reseller takes fruit from tray
                 if group["end_game_mode"] != EndGameChoices.STEAL:
-                    group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
+                    if str(group["checkout_barrier"]) in group["barriers"]:
+                        group["barriers"][str(group["checkout_barrier"])]["enabled"] = True
 
         result = {"value" : status,
                   "error_message" : error_message,
@@ -587,6 +590,7 @@ class SubjectUpdatesMixin():
     async def checkout(self, event):
         '''
         checkout fruit from subject screen
+        transfer money from reseller's budget to wholesaler's earnings, and disable checkout barrier
         '''
         if self.controlling_channel != self.channel_name:
             return
@@ -643,8 +647,9 @@ class SubjectUpdatesMixin():
             group["results"]["apple_sold"] += apples
             group["results"]["wholesaler_earnings"] += payment
 
-            group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
-            
+            if group["checkout_barrier"] is not None:
+                group["barriers"][str(group["checkout_barrier"])]["enabled"] = False
+
         result = {"value" : status,
                   "error_message" : error_message,
                   "payment" : payment,
@@ -653,7 +658,7 @@ class SubjectUpdatesMixin():
                   "reseller_budget" : session_player["budget"],
                   "reseller_checkout" : session_player["checkout"],
                   "wholesaler_earnings" : wholesaler["earnings"],
-                  "checkout_barrier" : group["barriers"][str(group["checkout_barrier"])]["enabled"],
+                  "checkout_barrier" : group["barriers"][str(group["checkout_barrier"])]["enabled"] if group["checkout_barrier"] is not None else False,
                   "session_player_id" : player_id}
         
         if status == "fail":
@@ -997,8 +1002,12 @@ class SubjectUpdatesMixin():
             if parameter_set["end_game_choice"] == EndGameChoices.STEAL:           
                 if group["end_game_choice_part_2"]:
                     group["end_game_mode"] = EndGameChoices.STEAL
-                    group["barriers"][str(group["exit_barrier"])]["enabled"] = True
-                    group["barriers"][str(group["center_barrier"])]["enabled"] = True
+
+                    if group["exit_barrier"] is not None:
+                        group["barriers"][str(group["exit_barrier"])]["enabled"] = True
+                    
+                    if group["center_barrier"] is not None:
+                        group["barriers"][str(group["center_barrier"])]["enabled"] = True
 
             elif parameter_set["end_game_choice"] == EndGameChoices.NO_PRICE:
                 if group["end_game_choice_part_1"]:
@@ -1011,8 +1020,8 @@ class SubjectUpdatesMixin():
                   "end_game_choice_part_1" : group["end_game_choice_part_1"],
                   "end_game_choice_part_2" : group["end_game_choice_part_2"],
                   "end_game_mode" : group["end_game_mode"],
-                  "exit_barrier_enabled" : group["barriers"][str(group["exit_barrier"])]["enabled"],
-                  "center_barrier_enabled" : group["barriers"][str(group["center_barrier"])]["enabled"],
+                  "exit_barrier_enabled" : group["barriers"][str(group["exit_barrier"])]["enabled"] if group["exit_barrier"] is not None else False,
+                  "center_barrier_enabled" : group["barriers"][str(group["center_barrier"])]["enabled"] if group["center_barrier"] is not None else False,
                   "session_player_id" : player_id}
 
         if status == "fail":
