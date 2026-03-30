@@ -53,8 +53,8 @@ class ParameterSet(models.Model):
     orange_tray_location = models.CharField(max_length=100, default="500,150", verbose_name="Orange Tray Location", blank=True, null=True)           #x,y location of orange tray
     apple_tray_location = models.CharField(max_length=100, default="700,150", verbose_name="Apple Tray Location", blank=True, null=True)             #x,y location of apple tray
 
-    orange_tray_capacity = models.IntegerField(verbose_name='Orange Tray Capacity', default=100)           #maximum capacity of orange tray
-    apple_tray_capacity = models.IntegerField(verbose_name='Apple Tray Capacity', default=100)             #maximum capacity of apple tray
+    orange_tray_capacity = models.IntegerField(verbose_name='Orange Tray Capacity', default=10)           #maximum capacity of orange tray
+    apple_tray_capacity = models.IntegerField(verbose_name='Apple Tray Capacity', default=10)             #maximum capacity of apple tray
     orange_tray_starting_inventory = models.IntegerField(verbose_name='Orange Tray Starting Inventory', default=0)  #starting inventory of orange tray
     apple_tray_starting_inventory = models.IntegerField(verbose_name='Apple Tray Starting Inventory', default=0)    #starting inventory of apple tray
 

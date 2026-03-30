@@ -16,15 +16,12 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'grass_tex', src:'{% static "background_tile_low.jpg"%}'});
     PIXI.Assets.add({alias:'water_tex', src:'{% static "water_tile.jpg"%}'});
     PIXI.Assets.add({alias:'dash_tex', src:'{% static "dash_1.png"%}'});
-    PIXI.Assets.add({alias:'factory_tex', src:'{% static "factory.png"%}'});
     PIXI.Assets.add({alias:'buyer_tex', src:'{% static "consumer.png"%}'});
     PIXI.Assets.add({alias:'tray_tex', src:'{% static "tray.png"%}'});
     PIXI.Assets.add({alias:'cash_register_tex', src:'{% static "cash_register.png"%}'});
     PIXI.Assets.add({alias:'counter_top_tex', src:'{% static "counter_top.png"%}'});
     PIXI.Assets.add({alias:'orange_tex', src:'{% static "orange.png"%}'});
     PIXI.Assets.add({alias:'apple_tex', src:'{% static "apple.png"%}'});
-    PIXI.Assets.add({alias:'orchard_apple_tex', src:'{% static "apple_tree.png"%}'});
-    PIXI.Assets.add({alias:'orchard_orange_tex', src:'{% static "orange_tree.png"%}'});
     PIXI.Assets.add({alias:'double_click_tex', src:'{% static "double_click.png"%}'}); 
     PIXI.Assets.add({alias:'tree_tex', src:'{% static "tree.png"%}'}); 
     PIXI.Assets.add({alias:'check_mark_tex', src:'{% static "check_mark.png"%}'}); 
@@ -34,7 +31,7 @@ setup_pixi: function setup_pixi(){
     PIXI.Assets.add({alias:'help_tex', src:'{% static "help.png"%}'});
 
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
-                                               'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 'factory_tex', 
+                                               'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 
                                                'buyer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
                                                'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
                                                'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex', 
