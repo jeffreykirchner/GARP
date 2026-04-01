@@ -15,7 +15,6 @@ ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.env
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS').split()
 
 # Database
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',

@@ -346,7 +346,10 @@ take_update_checkout: function take_update_checkout(data)
 
     reseller_player.budget = data.reseller_budget;
     reseller_player.checkout = data.reseller_checkout;
-    group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier;
+    if(group["checkout_barrier"])
+    {
+        group["barriers"][group["checkout_barrier"]]["enabled"] = data.checkout_barrier;
+    }
     //add transfer beam
     if(app.is_player_in_group(session_player_id))
     {
