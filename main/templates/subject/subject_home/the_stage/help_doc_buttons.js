@@ -90,8 +90,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
 
     text_container.position.set(popup_location.x - text_container.width / 2, 
                                 popup_location.y - text_container.height / 2);
-    text_container.zIndex = 1;
-    text_container.visible = false;
+    text_container.zIndex = 1;    
 
     app.help_docs[help_doc] = {};
     app.help_docs[help_doc].button_container = button_container;
@@ -100,7 +99,8 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
 
     pixi_container_main.addChild(button_container);
     pixi_container_main.addChild(text_container);
-    
+
+    text_container.visible = false;
 },
 
 /**

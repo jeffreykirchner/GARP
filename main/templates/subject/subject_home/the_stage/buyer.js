@@ -28,7 +28,7 @@ setup_pixi_buyer: function setup_pixi_buyer()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"Resell to Buyer", style:style});
+    let label = new PIXI.Text({text:"Resell to the Buyer", style:style});
     label.anchor.set(0.5);
     let label2 = new PIXI.Text({text:"Checkout", style:style});
     label2.anchor.set(0.5);
