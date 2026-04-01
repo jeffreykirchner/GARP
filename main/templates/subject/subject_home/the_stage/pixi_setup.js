@@ -33,7 +33,7 @@ setup_pixi: function setup_pixi(){
     const textures_promise = PIXI.Assets.load(['sprite_sheet', 'bg_tex', 'sprite_sheet_2', 'grass_tex', 'water_tex',
                                                'wall_tex', 'barrier_tex', 'bridge_tex', 'dash_tex', 
                                                'buyer_tex', 'tray_tex', 'cash_register_tex', 'counter_top_tex',
-                                               'orange_tex', 'apple_tex', 'orchard_apple_tex', 'orchard_orange_tex',
+                                               'orange_tex', 'apple_tex',
                                                'double_click_tex', 'tree_tex', 'check_mark_tex', 'x_mark_tex', 
                                                'dollar_symbol_tex', 'cents_symbol_tex', 'help_tex']);
 
