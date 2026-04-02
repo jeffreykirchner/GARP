@@ -371,10 +371,17 @@ let app = Vue.createApp({
 
             app.remove_all_notices();
 
+            //reset notices seen
             app.notices_seen = [];
             app.end_game_notice_message = "";
             app.end_game_notice_visible = false;
             app.end_game_steal_choice = null;
+
+            //hide all help doc text containers
+            for(let h in app.help_docs)
+            {
+                app.help_docs[h].text_container.visible = false;
+            }
         },
 
         /**

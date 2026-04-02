@@ -240,7 +240,7 @@ update_final_choice: function update_final_choice()
     {
         if(app.show_end_game_steal_part_1())
         {
-            html_text = "<br><br><br><br>Reseller,<br>Do you want to know how many pieces of fruit you can take without paying the Wholesaler for them?";
+            html_text = "<br><br><br><br>Reseller:<br>Do you want to know how many pieces of fruit you can take without paying the Wholesaler for them?";
 
             if(app.session_player.id == reseller.id)
             {
@@ -257,7 +257,7 @@ update_final_choice: function update_final_choice()
         }
         else
         {
-            html_text = "Reseller,<br>"
+            html_text = "Reseller:<br>"
 
             if(app.show_end_game_steal_part_2_info())
             {
@@ -270,7 +270,7 @@ update_final_choice: function update_final_choice()
     }
     else if(app.show_end_game_no_price_overlay())
     {
-        html_text = "<br><br><br><br>Reseller,<br>Do you want to know what the prices are before paying the Wholesaler for your bundle?";
+        html_text = "<br><br><br><br>Reseller:<br>Do you want to know what the prices are before paying the Wholesaler for your bundle?";
 
         if(app.session_player.id == reseller.id)
         {

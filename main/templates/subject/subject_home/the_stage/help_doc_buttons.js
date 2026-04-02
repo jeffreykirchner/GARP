@@ -188,7 +188,7 @@ take_update_show_help_doc: function take_update_show_help_doc(message_data)
     let help_doc = message_data.help_doc;
     if(app.help_docs[help_doc])
     {
-        app.help_docs[help_doc].time_remaining = 15;
+        app.help_docs[help_doc].time_remaining = 25;
         app.help_docs[help_doc].text_container.visible = true;
     }
 },
