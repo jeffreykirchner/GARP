@@ -351,7 +351,7 @@ take_update_harvest_fruit: function take_update_harvest_fruit(data)
     {
         let elements = [];
         elements.push({source_change: "",
-                        target_change: "-" + data.fruit_cost + "¢   +", 
+                        target_change: "+", 
                         texture:source_tex});
         app.add_transfer_beam(source_location, 
                             session_player.current_location,

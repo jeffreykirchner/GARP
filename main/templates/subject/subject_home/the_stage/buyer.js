@@ -243,8 +243,8 @@ take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
 
         //transfer beam to reseller
         let elements = [];
-        let element = {source_change: "-" + period_earnings,
-                    target_change: "+" + period_earnings, 
+        let element = {source_change: "",
+                    target_change: "+", 
                     texture:app.pixi_textures['cents_symbol_tex'],
                     }
         elements.push(element);
