@@ -128,6 +128,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
 help_doc_button_click: function help_doc_button_click(event)
 {
     let help_doc = event.currentTarget.label;
+    let local_player = app.session.world_state.session_players[app.session_player.id];
     
     if(app.help_docs[help_doc].text_container.visible)
     {
@@ -143,6 +144,18 @@ help_doc_button_click: function help_doc_button_click(event)
             app.send_message("show_help_doc", 
                             {"help_doc": help_doc},    
                              "group");
+        }
+        else
+        {
+            //show error message that help docs are not available during instructions phase
+             app.add_text_emitters("Error: Disabled during the instructions phase.", 
+                                local_player.current_location.x, 
+                                local_player.current_location.y,
+                                local_player.current_location.x,
+                                local_player.current_location.y-100,
+                                0xFFFFFF,
+                                28,
+                                null);
         }
     }
 },
