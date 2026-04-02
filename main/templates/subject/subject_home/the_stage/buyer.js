@@ -28,7 +28,7 @@ setup_pixi_buyer: function setup_pixi_buyer()
         align: 'center',
     });
 
-    let label = new PIXI.Text({text:"Resell to the Buyer", style:style});
+    let label = new PIXI.Text({text:"Computerized Buyer", style:style});
     label.anchor.set(0.5);
     let label2 = new PIXI.Text({text:"Checkout", style:style});
     label2.anchor.set(0.5);
@@ -225,11 +225,11 @@ take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
         {
             if(parameter_set_player_local.id_label == "R")
             { 
-                app.add_notice("Move to the fruit trays and wait.", world_state.current_period+1, 1)
+                // app.add_notice("Move to the fruit trays and wait.", world_state.current_period+1, 1)
             }
             else if(parameter_set_player_local.id_label == "W")
             {
-                app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
+                // app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
             }
         }
 
@@ -243,8 +243,8 @@ take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
 
         //transfer beam to reseller
         let elements = [];
-        let element = {source_change: "-" + period_earnings,
-                    target_change: "+" + period_earnings, 
+        let element = {source_change: "",
+                    target_change: "+", 
                     texture:app.pixi_textures['cents_symbol_tex'],
                     }
         elements.push(element);

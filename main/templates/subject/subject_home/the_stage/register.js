@@ -328,12 +328,12 @@ take_update_checkout: function take_update_checkout(data)
         if(parameter_set_player_local.id_label == "R")
         {
             app.remove_all_notices();
-            app.add_notice("Move to the buyer.", group.current_period+1, 1)
+            // app.add_notice("Move to the buyer.", group.current_period+1, 1)
         }
         else if(parameter_set_player_local.id_label == "W")
         {
             app.remove_all_notices();
-            app.add_notice("Please wait.", group.current_period+1, 1)
+            // app.add_notice("Please wait.", group.current_period+1, 1)
             app.session.world_state.session_players[app.session_player.id].earnings = data.wholesaler_earnings;
             app.update_subject_status_overlay();
         }

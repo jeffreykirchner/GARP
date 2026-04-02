@@ -567,7 +567,7 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
             parameter_set_player_local.id_label == "W")
         {
             app.remove_all_notices();
-            app.add_notice("Move to the register for checkout.", world_state.current_period+1, 1)
+            // app.add_notice("Move to the register for checkout.", world_state.current_period+1, 1)
         }
 
         session_player.apples = data.session_player_apples;
@@ -605,11 +605,11 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
                 app.remove_all_notices();
                 if(parameter_set_player_local.id_label == "W")
                 {
-                    app.add_notice("Please wait.", world_state.current_period+1, 1)
+                    // app.add_notice("Please wait.", world_state.current_period+1, 1)
                 }
                 else
                 {
-                    app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
+                    // app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
                 }            
             }
         }

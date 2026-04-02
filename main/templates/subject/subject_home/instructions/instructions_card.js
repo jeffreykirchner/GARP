@@ -162,7 +162,7 @@ process_instruction_page: function process_instruction_page(){
                 app.update_register_labels();
 
                 app.remove_all_notices();
-                app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
+                // app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
             }
             return;
             break;

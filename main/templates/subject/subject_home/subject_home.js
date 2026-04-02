@@ -371,10 +371,17 @@ let app = Vue.createApp({
 
             app.remove_all_notices();
 
+            //reset notices seen
             app.notices_seen = [];
             app.end_game_notice_message = "";
             app.end_game_notice_visible = false;
             app.end_game_steal_choice = null;
+
+            //hide all help doc text containers
+            for(let h in app.help_docs)
+            {
+                app.help_docs[h].text_container.visible = false;
+            }
         },
 
         /**
@@ -552,11 +559,11 @@ let app = Vue.createApp({
 
                 if(parameter_set_player_local.id_label == "R")
                 { 
-                    app.add_notice("Move to the fruit trays and wait.", app.session.world_state.current_period+1, 1)
+                    // app.add_notice("Move to the fruit trays and wait.", app.session.world_state.current_period+1, 1)
                 }
                 else if(parameter_set_player_local.id_label == "W")
                 {
-                    app.add_notice("Harvest all of the fruit and place it on the trays.", app.session.world_state.current_period+1, 1)
+                    // app.add_notice("Harvest all of the fruit and place it on the trays.", app.session.world_state.current_period+1, 1)
                 }
             }
         },
