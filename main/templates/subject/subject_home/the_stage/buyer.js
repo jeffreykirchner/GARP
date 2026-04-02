@@ -225,11 +225,11 @@ take_update_sell_to_buyer: function take_update_sell_to_buyer(data)
         {
             if(parameter_set_player_local.id_label == "R")
             { 
-                app.add_notice("Move to the fruit trays and wait.", world_state.current_period+1, 1)
+                // app.add_notice("Move to the fruit trays and wait.", world_state.current_period+1, 1)
             }
             else if(parameter_set_player_local.id_label == "W")
             {
-                app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
+                // app.add_notice("Harvest all of the fruit and place it on the trays.", world_state.current_period+1, 1)
             }
         }
 
