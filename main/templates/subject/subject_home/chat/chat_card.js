@@ -99,6 +99,7 @@ show_chat: function show_chat()
     let group = app.session.world_state.groups[app.current_group];
 
     if(group.end_game_choice_part_2 == true) return false;
+    if(group.complete) return false;
     
     return true;
 },
