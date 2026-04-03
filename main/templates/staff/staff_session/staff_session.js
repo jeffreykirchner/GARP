@@ -241,6 +241,9 @@ let app = Vue.createApp({
                 case "update_end_game_choice":
                     app.take_update_end_game_choice(message_data);
                     break;
+                case "update_show_help_doc":
+                    app.take_update_show_help_doc(message_data);
+                    break;
                 case "update_end_game_steal_more_info":
                     app.take_update_end_game_steal_more_info(message_data);
                     break;

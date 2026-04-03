@@ -944,7 +944,8 @@ class SubjectUpdatesMixin():
         group = world_state["groups"][str(parameter_set_player["parameter_set_group"])] 
 
         result = {"help_doc" : event_data["help_doc"],
-                  "session_player_id" : player_id}
+                  "session_player_id" : player_id,
+                  "value" : "success"}
 
         self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,

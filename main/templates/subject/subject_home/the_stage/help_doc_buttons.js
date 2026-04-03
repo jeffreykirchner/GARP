@@ -185,10 +185,15 @@ clock_tick_help_doc_buttons: function update_help_doc_buttons()
  */
 take_update_show_help_doc: function take_update_show_help_doc(message_data)
 {
-    let help_doc = message_data.help_doc;
-    if(app.help_docs[help_doc])
+    let session_player_id = message_data.session_player_id;
+
+    if(app.is_player_in_group(session_player_id))
     {
-        app.help_docs[help_doc].time_remaining = 25;
-        app.help_docs[help_doc].text_container.visible = true;
+        let help_doc = message_data.help_doc;
+        if(app.help_docs[help_doc])
+        {
+            app.help_docs[help_doc].time_remaining = 25;
+            app.help_docs[help_doc].text_container.visible = true;
+        }
     }
 },

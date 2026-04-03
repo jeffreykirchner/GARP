@@ -34,4 +34,10 @@ update_current_group : function update_current_group() {
     {
         app.reset_replay();
     }
+
+    //hide all help doc text containers
+    for(let h in app.help_docs)
+    {
+        app.help_docs[h].text_container.visible = false;
+    }
 },

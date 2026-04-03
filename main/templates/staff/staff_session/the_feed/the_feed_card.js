@@ -107,6 +107,11 @@ process_the_feed: function process_the_feed(message_type, message_data)
                     html_text = "The " + player_label + " chose <i>not to</i> reveal the prices.";
                 }
             }
+            break;
+        case "update_show_help_doc":
+            let help_doc_name = message_data.help_doc.split("_").slice(1).join(" ");
+            html_text = "The " + player_label + " opened the " + help_doc_name + " help document.";
+            break;
     }
 
     if(html_text != "") {
