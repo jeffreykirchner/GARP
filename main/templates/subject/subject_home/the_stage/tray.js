@@ -674,7 +674,7 @@ take_update_tray_fruit: function take_update_tray_fruit(data)
 
     if( group["show_end_game_choice_steal"] || group["show_end_game_choice_no_price"])
     {
-        app.update_final_choice();
+        if(app.is_subject) app.update_final_choice();
     }
 
     if(app.is_player_in_group(session_player_id))

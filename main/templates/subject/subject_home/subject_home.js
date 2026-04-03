@@ -382,6 +382,13 @@ let app = Vue.createApp({
             {
                 app.help_docs[h].text_container.visible = false;
             }
+
+            //reset feed
+            app.the_feed = {};
+            for(let i in app.session.world_state.groups)
+            {
+                app.the_feed[i] = [];
+            }
         },
 
         /**
