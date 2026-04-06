@@ -225,7 +225,11 @@ take_update_end_game_choice : function take_update_end_game_choice (data)
         app.update_barriers();
         app.update_tray_labels();
         app.update_register_labels();
-        app.update_final_choice();
+
+        if(app.is_subject)
+        {
+            app.update_final_choice();
+        }
     }
 },
 

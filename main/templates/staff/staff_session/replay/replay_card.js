@@ -120,7 +120,7 @@ process_replay_events: function process_replay_events(update_current_location = 
 
     let result = {complete:false, current_period:current_period};
 
-    if (!app.session_events[current_period].hasOwnProperty(time_remaining)) return;
+    if (!app.session_events[current_period].hasOwnProperty(time_remaining)) return result;
 
     for(let i in app.session_events[current_period][time_remaining])    
     {   

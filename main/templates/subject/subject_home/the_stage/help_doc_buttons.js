@@ -128,6 +128,14 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
 help_doc_button_click: function help_doc_button_click(event)
 {
     let help_doc = event.currentTarget.label;
+    app.help_doc_button_click_action(help_doc);
+},
+
+/*
+*help doc button click action
+*/
+help_doc_button_click_action: function help_doc_button_click_action(help_doc)
+{
     let local_player = app.session.world_state.session_players[app.session_player.id];
     
     if(app.help_docs[help_doc].text_container.visible)
