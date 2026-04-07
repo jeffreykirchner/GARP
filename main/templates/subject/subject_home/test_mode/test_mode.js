@@ -35,6 +35,7 @@ do_test_mode: function do_test_mode(){
     if(app.session.started && app.test_mode && app.working == false)
     {
         let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+        let group = app.session.world_state.groups[app.current_group];
         let go=true;
 
         switch (app.session.world_state.current_experiment_phase)
@@ -44,21 +45,24 @@ do_test_mode: function do_test_mode(){
                 break;
             case "Run":
                 //if chat text is not empty, send chat, otherwise randomly decide to chat or take an action
-                if(app.chat_text != "")
+                if(group.end_game_mode != "Steal" && app.chat_text != "")
                 {
                     document.getElementById("send_chat_id").click();
                     go = false;
                 }
 
                 //randomly decide to chat or take an action, with higher chance of taking an action
-                if(go && app.session.parameter_set.enable_chat && app.random_number(1,10) == 1)
+                if(go && 
+                   group.end_game_mode != "Steal" && 
+                   app.session.parameter_set.enable_chat && 
+                   app.random_number(1,10) == 1)
                 {
                     app.do_test_mode_chat();
                     go = false;
                 }
 
                 //randomly decide to open a help doc
-                if(go && app.random_number(1,20) == 1)
+                if(go  && app.random_number(1,20) == 1)
                 {
                     let keys = Object.keys(app.help_docs);
 
