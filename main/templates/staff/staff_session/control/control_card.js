@@ -28,6 +28,13 @@ reset_experiment: async function reset_experiment(){
 
     if(worker) worker.terminate();
 
+    //reset feed
+    app.the_feed = {};
+    for(let i in app.session.world_state.groups)
+    {
+        app.the_feed[i] = [];
+    }
+
     app.session.world_state.timer_running = false;
     app.working = true;
     app.send_message("reset_experiment", {});

@@ -35,6 +35,7 @@ do_test_mode: function do_test_mode(){
     if(app.session.started && app.test_mode && app.working == false)
     {
         let parameter_set_player = app.get_parameter_set_player_from_player_id(app.session_player.id);
+        let go=true;
 
         switch (app.session.world_state.current_experiment_phase)
         {
@@ -42,12 +43,41 @@ do_test_mode: function do_test_mode(){
                 app.do_test_mode_instructions();
                 break;
             case "Run":
-                if(parameter_set_player.id_label == "W")
-                    app.do_test_mode_run_w();
-                else if(parameter_set_player.id_label == "R")
-                    app.do_test_mode_run_r();
+                //if chat text is not empty, send chat, otherwise randomly decide to chat or take an action
+                if(app.chat_text != "")
+                {
+                    document.getElementById("send_chat_id").click();
+                    go = false;
+                }
+
+                //randomly decide to chat or take an action, with higher chance of taking an action
+                if(go && app.session.parameter_set.enable_chat && app.random_number(1,10) == 1)
+                {
+                    app.do_test_mode_chat();
+                    go = false;
+                }
+
+                //randomly decide to open a help doc
+                if(go && app.random_number(1,20) == 1)
+                {
+                    let keys = Object.keys(app.help_docs);
+
+                    // Pick a random value from that array
+                    let random_help_doc = keys[Math.floor(Math.random() * keys.length)];
+
+                    app.help_doc_button_click_action(random_help_doc);
+                    go = false;
+                }
+                
+                //decide action based on player type
+                if(go)
+                {
+                    if(parameter_set_player.id_label == "W")
+                        app.do_test_mode_run_w();
+                    else if(parameter_set_player.id_label == "R")
+                        app.do_test_mode_run_r();
+                }
                 break;
-            
         }        
        
     }
@@ -532,30 +562,15 @@ do_test_mode_run_r: function do_test_mode_run_r()
         app.tray_orange_double_click();
         app.tray_orange_double_click();
     }
-
-    // if((local_player.apples > 2 || local_player.oranges > 2) && app.random_number(1,3) == 1)
-    // {
-    //     // go to the register
-    //     if (!pixi_register || !pixi_register.reseller_pad_container) {
-    //         return;
-    //     }
-
-    //     //move to register
-    //     local_player.target_location = {"x":parseInt(pixi_register.reseller_pad_container.x) + 
-    //                                         parseInt(pixi_register.reseller_pad_container.width)/2, 
-    //                                     "y":parseInt(pixi_register.reseller_pad_container.y) +
-    //                                         parseInt(pixi_register.reseller_pad_container.height)/2};
-    //     app.target_location_update();
-    // }
 },
 
-// /**
-//  * test mode chat
-//  */
-// do_test_mode_chat: function do_test_mode_chat(){
+/**
+ * test mode chat
+ */
+do_test_mode_chat: function do_test_mode_chat(){
 
-//     app.chat_text = app.random_string(5, 20);
-// },
+    app.chat_text = app.random_string(5, 20);
+},
 
 
 {%endif%}

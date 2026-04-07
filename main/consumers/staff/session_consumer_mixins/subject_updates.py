@@ -2,6 +2,7 @@
 import logging
 import math
 import json
+import copy
 
 from datetime import datetime, timedelta
 from tokenize import group
@@ -867,8 +868,14 @@ class SubjectUpdatesMixin():
             session_player["apples"] = 0
             session_player["oranges"] = 0
 
+            # store for event event
+            temp_current_period = copy.copy(group["current_period"])
+            temp_time_remaining = copy.copy(group["time_remaining"])
+
             if group["current_period"] < len(self.parameter_set_local["parameter_set_periods_order"]):
                 #setup next period
+                #copy current period and time remaining
+            
                 group["current_period"] += 1
                 group["time_remaining"] = 0
                 group["results"] = {}
@@ -905,10 +912,10 @@ class SubjectUpdatesMixin():
             self.session_events.append(SessionEvent(session_id=self.session_id,
                                                     session_player_id=player_id,
                                                     type=event['type'],
-                                                    period_number=group["current_period"],
-                                                    time_remaining=group["time_remaining"],
+                                                    period_number=temp_current_period,
+                                                    time_remaining=temp_time_remaining,
                                                     data=result))
-             
+              
             await self.send_message(message_to_self=None, message_to_group=result,
                                     message_type=event['type'], send_to_client=False,
                                     send_to_group=True, target_list=group["members"])
