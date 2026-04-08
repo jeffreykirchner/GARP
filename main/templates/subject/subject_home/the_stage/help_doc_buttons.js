@@ -152,6 +152,9 @@ help_doc_button_click_action: function help_doc_button_click_action(help_doc)
 
         if(app.session.world_state.current_experiment_phase != "Instructions")
         {
+            if(app.working) return;
+            app.working = true;
+
             app.send_message("show_help_doc", 
                             {"help_doc": help_doc},    
                              "group");
@@ -197,6 +200,11 @@ clock_tick_help_doc_buttons: function update_help_doc_buttons()
 take_update_show_help_doc: function take_update_show_help_doc(message_data)
 {
     let session_player_id = message_data.session_player_id;
+
+    if(app.session_player.id == session_player_id)
+    {
+        app.working = false;
+    }
 
     if(app.is_player_in_group(session_player_id))
     {
