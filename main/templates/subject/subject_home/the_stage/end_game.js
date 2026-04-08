@@ -179,7 +179,11 @@ take_update_end_game_steal_more_info : function take_update_end_game_steal_more_
     }
 
     group.end_game_choice_part_1 = data.end_game_choice_part_1;
-    app.update_final_choice();   
+
+    if(app.is_subject)
+    {
+        app.update_final_choice();   
+    }
 },
 
 /**
