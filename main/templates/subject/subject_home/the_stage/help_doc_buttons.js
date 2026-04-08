@@ -6,18 +6,21 @@
  */
 add_help_doc_button: function add_help_doc_button(button_location, popup_location, help_doc)
 {
-    // if the help doc exists, destroy the old button and text
-    if(app.help_docs[help_doc])
-    {
-        if(app.help_docs[help_doc].button_container)
-        {
-            pixi_container_main.removeChild(app.help_docs[help_doc].button_container);
-        }
-        if(app.help_docs[help_doc].text_container)
-        {
-            pixi_container_main.removeChild(app.help_docs[help_doc].text_container);
-        }
-    }
+    //check if the help doc exists in the instructions, if not, return
+    if(help_doc in app.help_docs) return;
+
+    // // if the help doc exists, destroy the old button and text
+    // if(app.help_docs[help_doc])
+    // {
+    //     if(app.help_docs[help_doc].button_container)
+    //     {
+    //        app.help_docs[help_doc].button_container.destroy({children: true});
+    //     }
+    //     if(app.help_docs[help_doc].text_container)
+    //     {
+    //         app.help_docs[help_doc].text_container.destroy({children: true});
+    //     }
+    // }
 
     //button container
     let button_container = new PIXI.Container();
@@ -149,6 +152,9 @@ help_doc_button_click_action: function help_doc_button_click_action(help_doc)
 
         if(app.session.world_state.current_experiment_phase != "Instructions")
         {
+            if(app.working) return;
+            app.working = true;
+
             app.send_message("show_help_doc", 
                             {"help_doc": help_doc},    
                              "group");
@@ -194,6 +200,11 @@ clock_tick_help_doc_buttons: function update_help_doc_buttons()
 take_update_show_help_doc: function take_update_show_help_doc(message_data)
 {
     let session_player_id = message_data.session_player_id;
+
+    if(app.session_player.id == session_player_id)
+    {
+        app.working = false;
+    }
 
     if(app.is_player_in_group(session_player_id))
     {
