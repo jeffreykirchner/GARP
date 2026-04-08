@@ -64,7 +64,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
     let text_container = new PIXI.Container();
     let text_container_width = 400;
 
-    let pixi_text = new PIXI.HTMLText({text: html_text,
+    let pixi_text = new PIXI.Text({text: app.strip_html(html_text),
                                     style: {fontFamily: 'Arial',
                                             fontSize: 14,
                                             wordWrap: true,      // Enable word wrapping
@@ -104,6 +104,11 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
     pixi_container_main.addChild(text_container);
 
     text_container.visible = false;
+},
+
+strip_html: function strip_html(html) {
+   const doc = new DOMParser().parseFromString(html, 'text/html');
+   return doc.body.textContent || '';
 },
 
 /**
@@ -201,7 +206,7 @@ take_update_show_help_doc: function take_update_show_help_doc(message_data)
 {
     let session_player_id = message_data.session_player_id;
 
-    if(app.session_player.id == session_player_id)
+    if(app.is_subject && app.session_player.id == session_player_id)
     {
         app.working = false;
     }
