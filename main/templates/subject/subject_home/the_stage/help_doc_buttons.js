@@ -6,18 +6,21 @@
  */
 add_help_doc_button: function add_help_doc_button(button_location, popup_location, help_doc)
 {
-    // if the help doc exists, destroy the old button and text
-    if(app.help_docs[help_doc])
-    {
-        if(app.help_docs[help_doc].button_container)
-        {
-            pixi_container_main.removeChild(app.help_docs[help_doc].button_container);
-        }
-        if(app.help_docs[help_doc].text_container)
-        {
-            pixi_container_main.removeChild(app.help_docs[help_doc].text_container);
-        }
-    }
+    //check if the help doc exists in the instructions, if not, return
+    if(help_doc in app.help_docs) return;
+
+    // // if the help doc exists, destroy the old button and text
+    // if(app.help_docs[help_doc])
+    // {
+    //     if(app.help_docs[help_doc].button_container)
+    //     {
+    //        app.help_docs[help_doc].button_container.destroy({children: true});
+    //     }
+    //     if(app.help_docs[help_doc].text_container)
+    //     {
+    //         app.help_docs[help_doc].text_container.destroy({children: true});
+    //     }
+    // }
 
     //button container
     let button_container = new PIXI.Container();
