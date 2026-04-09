@@ -35,6 +35,10 @@ class ParameterSetForm(forms.ModelForm):
                                       choices=((1, 'Yes'), (0,'No' )),
                                       widget=forms.Select(attrs={"v-model":"parameter_set.prolific_mode",}))
 
+    show_help_buttons = forms.ChoiceField(label='Show Help Buttons',
+                                          choices=((1, 'Yes'), (0,'No' )),
+                                          widget=forms.Select(attrs={"v-model":"parameter_set.show_help_buttons",}))
+
     prolific_completion_link =  forms.CharField(label='After Session, Forward Subjects to URL',
                                                 required=False,
                                                 widget=forms.TextInput(attrs={"v-model":"parameter_set.prolific_completion_link",}))
@@ -167,7 +171,7 @@ class ParameterSetForm(forms.ModelForm):
         model=ParameterSet
         fields =['chat_gpt_mode', 'show_instructions', 
                  'survey_required', 'survey_link', 'prolific_mode', 'prolific_completion_link', 'reconnection_limit',
-                 'interaction_range',
+                 'interaction_range', 'show_help_buttons',
                  'avatar_scale', 'avatar_bound_box_percent', 'avatar_move_speed', 'avatar_animation_speed',
                  'world_width', 'world_height','orchard_orange_location', 'orchard_apple_location', 'register_location', 'buyer_location',
                  'orange_tray_location', 'apple_tray_location',

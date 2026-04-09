@@ -132,6 +132,13 @@ process_instruction_page: function process_instruction_page(){
 
                 app.update_player_inventory();
                 app.update_orchard_labels();
+
+                //move Reseller to pad next to the trays
+                let session_player_r = app.get_player_by_type("R");                
+                session_player_r.target_location =  {"x":parseInt(pixi_tray_orange.reseller_pad_container.x) + pixi_tray_orange.reseller_pad_container.width/2,
+                                                     "y":parseInt(pixi_tray_orange.reseller_pad_container.y) + pixi_tray_orange.reseller_pad_container.height/2};
+
+                app.target_location_update();
             }
             return;
             break;
@@ -155,7 +162,10 @@ process_instruction_page: function process_instruction_page(){
                 group.apple_tray_inventory = parameter_set.apple_tray_capacity;
                 group.orange_tray_inventory = parameter_set.orange_tray_capacity;
 
-                group.barriers[group.reseller_barrier].enabled = false;
+                if(group.reseller_barrier in group.barriers)
+                {
+                    group.barriers[group.reseller_barrier].enabled = false;
+                }
                 app.update_barriers();
                 app.update_player_inventory();
                 app.update_orchard_labels();
@@ -163,6 +173,13 @@ process_instruction_page: function process_instruction_page(){
 
                 app.remove_all_notices();
                 // app.add_notice("Collect fruit from the trays.", world_state.current_period+1, 1)
+
+                //move the Wholesaler to the tray pad
+                let session_player_w = app.get_player_by_type("W");                
+                session_player_w.target_location =  {"x":parseInt(pixi_tray_orange.wholesaler_pad_container.x) + pixi_tray_orange.wholesaler_pad_container.width/2,
+                                                     "y":parseInt(pixi_tray_orange.wholesaler_pad_container.y) + pixi_tray_orange.wholesaler_pad_container.height/2};
+
+                app.target_location_update();
             }
             return;
             break;
@@ -174,8 +191,8 @@ process_instruction_page: function process_instruction_page(){
                 let current_instruction_complete = JSON.parse(JSON.stringify(app.session_player.current_instruction_complete));
 
                 let session_player_w = app.get_player_by_type("W");
-                session_player_w.target_location = {"x":pixi_register.wholesaler_pad_container.x + pixi_register.wholesaler_pad_container.width/2,
-                                                    "y":pixi_register.wholesaler_pad_container.y + pixi_register.wholesaler_pad_container.height/2 + 50};
+                session_player_w.target_location = {"x":parseInt(pixi_register.wholesaler_pad_container.x) + pixi_register.wholesaler_pad_container.width/2,
+                                                    "y":parseInt(pixi_register.wholesaler_pad_container.y) + pixi_register.wholesaler_pad_container.height/2 + 50};
 
                 let session_player_r = app.get_player_by_type("R");
                 app.session_player = app.session.session_players[session_player_r.id];
@@ -197,7 +214,10 @@ process_instruction_page: function process_instruction_page(){
                 group.orange_tray_inventory = parameter_set.orange_tray_capacity-1;
 
                 group.barriers[group.checkout_barrier].enabled = true;
-                group.barriers[group.reseller_barrier].enabled = false;
+                if(group.reseller_barrier in group.barriers)
+                {
+                    group.barriers[group.reseller_barrier].enabled = false;
+                }
 
                 app.update_barriers();
                 app.update_player_inventory();
@@ -229,7 +249,10 @@ process_instruction_page: function process_instruction_page(){
                 group.orange_tray_inventory = parameter_set.orange_tray_capacity-1;
 
                 group.barriers[group.checkout_barrier].enabled = false;
-                group.barriers[group.reseller_barrier].enabled = false;
+                if(group.reseller_barrier in group.barriers)
+                {
+                    group.barriers[group.reseller_barrier].enabled = false;
+                }
 
                 app.update_barriers();
                 app.update_player_inventory();

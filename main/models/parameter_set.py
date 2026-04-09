@@ -32,6 +32,8 @@ class ParameterSet(models.Model):
     prolific_mode = models.BooleanField(default=False, verbose_name="Prolific Mode")                          #put study into prolific mode
     prolific_completion_link = models.CharField(max_length = 1000, default = '', verbose_name = 'Forward to Prolific after sesison', blank=True, null=True) #at the completion of the study forward subjects to link
 
+    show_help_buttons = models.BooleanField(default=True, verbose_name="Show Help Buttons")                    #if true show help buttons
+
     world_width = models.IntegerField(verbose_name='Width of world in pixels', default=10000)                 #world width in pixels
     world_height = models.IntegerField(verbose_name='Height of world in pixels', default=10000)               #world height in pixels
 
@@ -96,6 +98,8 @@ class ParameterSet(models.Model):
 
             self.prolific_mode = True if new_ps.get("prolific_mode", False) else False
             self.prolific_completion_link = new_ps.get("prolific_completion_link", None)
+
+            self.show_help_buttons = True if new_ps.get("show_help_buttons", True) else False
 
             self.world_width = new_ps.get("world_width", 1000)
             self.world_height = new_ps.get("world_height", 1000)
@@ -304,6 +308,7 @@ class ParameterSet(models.Model):
 
         self.json_for_session["prolific_mode"] = 1 if self.prolific_mode else 0
         self.json_for_session["prolific_completion_link"] = self.prolific_completion_link
+        self.json_for_session["show_help_buttons"] = 1 if self.show_help_buttons else 0
         
         self.json_for_session["world_width"] = self.world_width
         self.json_for_session["world_height"] = self.world_height

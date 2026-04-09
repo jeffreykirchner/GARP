@@ -205,7 +205,8 @@ class SubjectUpdatesMixin():
         
         event_data =  event["message_text"]
 
-        if self.world_state_local["current_experiment_phase"] != ExperimentPhase.RUN:
+        if not "current_experiment_phase" in self.world_state_local or \
+           self.world_state_local["current_experiment_phase"] != ExperimentPhase.RUN:
             return
 
         try:

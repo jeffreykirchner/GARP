@@ -44,6 +44,14 @@
             <div class="col text-start">
                 <span v-if="parameter_set.prolific_mode">Yes</span><span v-else>No</span>                
             </div>  
+        </div>
+        <div class="row">
+            <div class="col-7 text-end">
+                {{parameter_set_form.show_help_buttons.label}}:                
+            </div>
+            <div class="col text-start">
+                <span v-if="parameter_set.show_help_buttons">Yes</span><span v-else>No</span>                
+            </div>  
         </div>  
         <div class="row">
             <div class="col-7 text-end">
