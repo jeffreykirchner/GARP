@@ -29,6 +29,7 @@ update_current_group : function update_current_group() {
     app.update_register_labels();
     app.update_check_marks();
     app.update_tray_labels();
+    app.update_player_inventory();
 
     if(app.session_events)
     {
