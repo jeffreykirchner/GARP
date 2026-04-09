@@ -6,6 +6,9 @@
  */
 add_help_doc_button: function add_help_doc_button(button_location, popup_location, help_doc)
 {
+    //if show help buttons is false, return
+    if(!app.session.parameter_set.show_help_buttons) return;
+
     //check if the help doc exists in the instructions, if not, return
     if(help_doc in app.help_docs) return;
 
