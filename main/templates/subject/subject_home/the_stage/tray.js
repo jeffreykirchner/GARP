@@ -194,6 +194,7 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
                             alpha:0.5,
                             alignment:1,
                             color:0x000000,
+                            textureSpace: 'global',
                             matrix:matrix_2});
 
     wholesaler_pad_container.addChild(wholesaler_outline_dash);
@@ -230,6 +231,7 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
                             alpha:0.5,
                             alignment:1,
                             color:0x000000,
+                            textureSpace: 'global',
                             matrix:matrix_3});
 
     reseller_pad_container.addChild(reseller_outline_dash);
