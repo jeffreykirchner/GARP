@@ -93,7 +93,6 @@ setup_pixi_tray_orange: function setup_pixi_tray_orange()
     wholesaler_pad_container.zIndex = 1;
     reseller_pad_container.zIndex = 1;
 
-
     let location = app.session.parameter_set.orange_tray_location.split(",");
     let world_state = app.session.world_state;
 
