@@ -168,7 +168,8 @@ take_update_end_game_steal_more_info : function take_update_end_game_steal_more_
 {
 
     let session_player_id = data.session_player_id;
-    let group = app.session.world_state.groups[app.current_group];
+    let group_id = app.get_players_group_id(session_player_id);
+    let group = app.session.world_state.groups[group_id];
 
     if(app.is_subject && session_player_id == app.session_player.id)
     {
