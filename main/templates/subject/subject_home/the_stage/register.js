@@ -73,6 +73,7 @@ setup_pixi_register: function setup_pixi_register()
                             alpha:0.5,
                             alignment:1,
                             color:0x000000,
+                            textureSpace: 'global',
                             matrix:matrix_2});
 
 
@@ -110,6 +111,7 @@ setup_pixi_register: function setup_pixi_register()
                             alpha:0.5,
                             alignment:1,
                             color:0x000000,
+                            textureSpace: 'global',
                             matrix:matrix_3});
 
     reseller_pad_container.addChild(reseller_outline_dash);

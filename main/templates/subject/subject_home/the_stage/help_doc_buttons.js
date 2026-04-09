@@ -64,7 +64,7 @@ add_help_doc_button: function add_help_doc_button(button_location, popup_locatio
     let text_container = new PIXI.Container();
     let text_container_width = 400;
 
-    let pixi_text = new PIXI.Text({text: app.strip_html(html_text),
+    let pixi_text = new PIXI.HTMLText({text: html_text,
                                     style: {fontFamily: 'Arial',
                                             fontSize: 14,
                                             wordWrap: true,      // Enable word wrapping
