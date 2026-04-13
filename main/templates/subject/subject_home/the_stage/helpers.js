@@ -210,6 +210,15 @@ get_buyer_price: function get_buyer_price(orange, apple){
 
     let key = "o" + orange + "a" + apple;
     if (!Object.prototype.hasOwnProperty.call(app.session.parameter_set.buyer_prices, key)) return null;
+
+    let value = app.session.parameter_set.buyer_prices[key];
+
+    // instruction phase don't show price
+    if(value != -1 && app.session.world_state.current_experiment_phase == "Instructions") 
+    {
+        return "???";
+    }
+
     return app.session.parameter_set.buyer_prices[key];
 },
 
@@ -219,6 +228,9 @@ get_buyer_price: function get_buyer_price(orange, apple){
 get_apple_orchard_price: function get_apple_orchard_price(){
     if(!app.first_load_done) return "---";
     if(!app.session.started) return "---";
+
+    //if instruction phase don't show price
+    if(app.session.world_state.current_experiment_phase == "Instructions") return "???";
 
     let parameter_set_period = app.get_current_parameter_set_period();
 
@@ -232,6 +244,9 @@ get_apple_orchard_price: function get_apple_orchard_price(){
 get_orange_orchard_price: function get_orange_orchard_price(){
     if(!app.first_load_done) return "---";
     if(!app.session.started) return "---";
+
+    //if instruction phase don't show price
+    if(app.session.world_state.current_experiment_phase == "Instructions") return "???";
 
     let parameter_set_period = app.get_current_parameter_set_period();
 
