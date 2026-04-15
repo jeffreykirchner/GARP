@@ -214,9 +214,9 @@ do_test_mode_instructions_3: function do_test_mode_instructions_3()
             return;
         }
 
-        //move to register
-        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x-50), 
-                                        "y":parseInt(pixi_tray_apple.container.y)};
+
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.wholesaler_pad_container.x) + pixi_tray_orange.wholesaler_pad_container.width/2, 
+                                        "y":parseInt(pixi_tray_orange.wholesaler_pad_container.y) + pixi_tray_orange.wholesaler_pad_container.height/2};
         app.target_location_update();
 
         app.tray_apple_double_click();
@@ -233,8 +233,8 @@ do_test_mode_instructions_3: function do_test_mode_instructions_3()
         }
 
         //move to register
-        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x-50), 
-                                        "y":parseInt(pixi_tray_orange.container.y)};
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.wholesaler_pad_container.x) + pixi_tray_orange.wholesaler_pad_container.width/2, 
+                                        "y":parseInt(pixi_tray_orange.wholesaler_pad_container.y) + pixi_tray_orange.wholesaler_pad_container.height/2};
         app.target_location_update();
 
         app.tray_orange_double_click();
@@ -260,8 +260,8 @@ do_test_mode_instructions_4: function do_test_mode_instructions_4()
         }
 
         //move to register
-        local_player.target_location = {"x":parseInt(pixi_tray_apple.container.x) + 50, 
-                                        "y":parseInt(pixi_tray_apple.container.y)};
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.reseller_pad_container.x) + pixi_tray_orange.reseller_pad_container.width/2, 
+                                        "y":parseInt(pixi_tray_orange.reseller_pad_container.y) + pixi_tray_orange.reseller_pad_container.height/2};
         app.target_location_update();
 
         app.tray_apple_double_click();
@@ -278,8 +278,8 @@ do_test_mode_instructions_4: function do_test_mode_instructions_4()
         }
 
         //move to register
-        local_player.target_location = {"x":parseInt(pixi_tray_orange.container.x) + 50, 
-                                        "y":parseInt(pixi_tray_orange.container.y)};
+        local_player.target_location = {"x":parseInt(pixi_tray_orange.reseller_pad_container.x) + pixi_tray_orange.reseller_pad_container.width/2, 
+                                        "y":parseInt(pixi_tray_orange.reseller_pad_container.y) + pixi_tray_orange.reseller_pad_container.height/2};
         app.target_location_update();
 
         app.tray_orange_double_click();
