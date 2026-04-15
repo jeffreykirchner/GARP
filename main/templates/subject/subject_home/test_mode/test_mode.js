@@ -62,7 +62,9 @@ do_test_mode: function do_test_mode(){
                 }
 
                 //randomly decide to open a help doc
-                if(go  && app.random_number(1,20) == 1)
+                if(go  && 
+                   app.session.parameter_set.show_help_buttons &&
+                   app.random_number(1,20) == 1)
                 {
                     let keys = Object.keys(app.help_docs);
 
