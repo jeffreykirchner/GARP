@@ -135,10 +135,10 @@ process_replay_events: function process_replay_events(update_current_location = 
     {   
         let event =  app.session_events[current_period][time_remaining][i];
 
-        if(event.data.hasOwnProperty("group_id"))
-        {
-            if(event.data.group_id != app.current_group) continue;
-        }
+        // if(event.data.hasOwnProperty("group_id"))
+        // {
+        //     if(event.data.group_id != app.current_group) continue;
+        // }
 
         if(event.type == "target_location_update")
         {
@@ -165,8 +165,14 @@ process_replay_events: function process_replay_events(update_current_location = 
 
             if(event.type == "sell_to_buyer")
             {
-                result.current_period = event.data.current_period;
-                result.complete = event.data.complete;
+                let group_id = app.get_parameter_set_group_from_player_id(event.data.session_player_id).id;   
+                let group = app.session.world_state.groups[group_id];
+
+                if(group_id == app.current_group)
+                {
+                    result.current_period = event.data.current_period;
+                    result.complete = event.data.complete;
+                }
             };
         }
         

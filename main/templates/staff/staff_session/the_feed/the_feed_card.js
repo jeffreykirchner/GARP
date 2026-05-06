@@ -72,7 +72,7 @@ process_the_feed: function process_the_feed(message_type, message_data)
             break;
         case "update_sell_to_buyer":
             html_text = "The " + player_label + " sold " + message_data.apples_sold + " apples(s) <img src='/static/apple.png' width='20'> and " 
-                                              + message_data.oranges_sold + " orange(s) <img src='/static/orange.png' width='20'> to the buyer for a profit of" 
+                                              + message_data.oranges_sold + " orange(s) <img src='/static/orange.png' width='20'> to the buyer for a profit of " 
                                               + message_data.period_earnings + "¢.";
             break;
         case "update_end_game_choice":

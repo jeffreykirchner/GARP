@@ -33,7 +33,7 @@ class InterfaceMixin():
             # for j in range(total_period_length+1):
             #     session_events_local[str(i.period_number)][str(j)] = []
 
-        async for i in session.session_events.exclude(type="help_doc"):
+        async for i in session.session_events.exclude(type="help_doc").exclude(type="time"):
             v = {"type" : i.type, "data" : i.data}
             if str(i.time_remaining) not in session_events_local[str(i.period_number)]:
                 session_events_local[str(i.period_number)][str(i.time_remaining)] = []
