@@ -138,12 +138,14 @@ class TimerMixin():
 
             for g in world_state["groups"]:
                 group = world_state["groups"][g]
+                r = result.copy()
+                r["group_id"] = g
                 
                 self.session_events.append(SessionEvent(session_id=self.session_id, 
                                                         type="time",
                                                         period_number=group["current_period"],
                                                         time_remaining=group["time_remaining"],
-                                                        data=result))
+                                                        data=r))
             
             await SessionEvent.objects.abulk_create(self.session_events, ignore_conflicts=True)
 
