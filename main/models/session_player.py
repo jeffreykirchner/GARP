@@ -176,6 +176,13 @@ class SessionPlayer(models.Model):
         '''
 
         parameter_set = self.parameter_set_player.parameter_set.json()
+
+        if not parameter_set:
+            return text
+
+        if str(self.parameter_set_player.id) not in parameter_set["parameter_set_players"]:
+            return text
+
         parameter_set_period_id = parameter_set["parameter_set_periods_order"][0]
         parameter_set_period = parameter_set["parameter_set_periods"][str(parameter_set_period_id)]
         parameter_set_player = parameter_set["parameter_set_players"][str(self.parameter_set_player.id)]

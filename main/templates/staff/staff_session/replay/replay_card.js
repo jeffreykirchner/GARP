@@ -24,6 +24,15 @@ take_load_session_events: function take_load_session_events(message_data)
         app.replay_time_remaining = 0;
 
         app.replay_load_world_state();
+
+        app.set_avatar_visibility();
+        app.update_barriers();
+        app.update_buyer_label();
+        app.update_orchard_labels();
+        app.update_register_labels();
+        app.update_check_marks();
+        app.update_tray_labels();
+        app.update_player_inventory();
     }
 },
 
@@ -126,10 +135,15 @@ process_replay_events: function process_replay_events(update_current_location = 
     {   
         let event =  app.session_events[current_period][time_remaining][i];
 
+        // if(event.data.hasOwnProperty("group_id"))
+        // {
+        //     if(event.data.group_id != app.current_group) continue;
+        // }
+
         if(event.type == "target_location_update")
         {
             let group_id = event.data.group_id;
-            let group = app.session.world_state.groups[group_id];
+            let group = app.session.world_state.groups[parseInt(group_id)];
 
             for(let i in group.members)
             {
@@ -151,17 +165,23 @@ process_replay_events: function process_replay_events(update_current_location = 
 
             if(event.type == "sell_to_buyer")
             {
-                result.current_period = event.data.current_period;
-                result.complete = event.data.complete;
+                let group_id = app.get_parameter_set_group_from_player_id(event.data.session_player_id).id;   
+                let group = app.session.world_state.groups[group_id];
+
+                if(group_id == app.current_group)
+                {
+                    result.current_period = event.data.current_period;
+                    result.complete = event.data.complete;
+                }
             };
         }
         
     }
 
     app.session.world_state["current_experiment_phase"] = "Done";
-    app.session.world_state["time_remaining"] = app.replay_time_remaining;
-    app.session.world_state["current_period"] = app.replay_current_period;
-
+    app.session.world_state.groups[app.current_group]["time_remaining"] = app.replay_time_remaining;
+    app.session.world_state.groups[app.current_group]["current_period"] = app.replay_current_period;
+    
     return result;
 },
 
@@ -211,4 +231,13 @@ advance_period: function advance_period(direction)
     // }
 
     app.process_replay_events(true);
+
+    app.set_avatar_visibility();
+    app.update_barriers();
+    app.update_buyer_label();
+    app.update_orchard_labels();
+    app.update_register_labels();
+    app.update_check_marks();
+    app.update_tray_labels();
+    app.update_player_inventory();
 },
