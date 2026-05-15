@@ -392,12 +392,11 @@ get_final_choice_display: function get_final_choice_display(session_player)
 
     let parameter_set_player = app.get_parameter_set_player_from_player_id(session_player.id);
 
-    if(parameter_set_player.id_label == "W") return "---";
-
     let group_id = app.get_parameter_set_group_from_player_id(session_player.id).id;   
     let group = app.session.world_state.groups[group_id];
     let parameter_set = app.session.parameter_set;
     
+    if(parameter_set_player.id_label == "W") return "---";
     let v = "---";
 
     if(parameter_set.end_game_choice == "Steal")
@@ -419,6 +418,10 @@ get_final_choice_display: function get_final_choice_display(session_player)
         {
             v += ", Steal: No";
         }
+        else
+        {
+            v = "Period " + group.current_period;
+        }
     }
     else if(parameter_set.end_game_choice == "No Price")
     {
@@ -430,7 +433,12 @@ get_final_choice_display: function get_final_choice_display(session_player)
         {
             v = "Show Prices: No";
         }
+        else
+        {
+            v = "Period " + group.current_period;
+        }
     }
+    
 
     return v;
 },
