@@ -47,8 +47,18 @@ do_test_mode: function do_test_mode(){
                 //if chat text is not empty, send chat, otherwise randomly decide to chat or take an action
                 if(group.end_game_mode != "Steal" && app.chat_text != "")
                 {
-                    document.getElementById("send_chat_id").click();
-                    go = false;
+                    let send_chat_button = document.getElementById("send_chat_id");
+
+                    if(send_chat_button && !send_chat_button.disabled)
+                    {
+                        send_chat_button.click();
+                        go = false;
+                    }
+                    else
+                    {
+                        app.chat_text = "";
+                    }
+                    
                 }
 
                 //randomly decide to chat or take an action, with higher chance of taking an action
