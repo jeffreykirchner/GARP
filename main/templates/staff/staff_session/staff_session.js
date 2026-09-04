@@ -90,6 +90,9 @@ let app = Vue.createApp({
 
                     //on screen help docs
                     help_docs : {},
+
+                    //error messages
+                    start_button_error_message : null,
                 }},
     methods: {
 
@@ -127,6 +130,9 @@ let app = Vue.createApp({
                     break;
                 case "update_session":
                     app.take_update_session(message_data);
+                    break;
+                case "start_experiment":
+                    app.take_start_experiment(message_data);
                     break;
                 case "update_start_experiment":
                     app.take_update_start_experiment(message_data);

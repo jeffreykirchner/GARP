@@ -2,6 +2,7 @@
 */
 start_experiment: function start_experiment(){
     app.working = true;
+    app.start_button_error_message = null;
     app.send_message("start_experiment", {});
 },
 
@@ -9,7 +10,10 @@ start_experiment: function start_experiment(){
  * @param message_data {json}
 */
 take_start_experiment: function take_start_experiment(message_data){
-    app.take_get_session(message_data);
+
+    if (message_data.value == "fail") {
+        app.start_button_error_message = message_data.error_message;
+    }
 },
 
 /** update start status
