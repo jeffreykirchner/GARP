@@ -29,11 +29,20 @@ class ExperimentControlsMixin():
 
         #Send message to staff page
         if result["value"] == "fail":
-            await self.send_message(message_to_self={"world_state":result["session"]["world_state"]}, message_to_group=None,
-                                    message_type=event['type'], send_to_client=True, send_to_group=False)
+            await self.send_message(message_to_self={"world_state":result["session"]["world_state"],
+                                                     "error_message": result["error_message"],
+                                                     "value": "fail"}, 
+                                    message_to_group=None,
+                                    message_type=event['type'], 
+                                    send_to_client=True, 
+                                    send_to_group=False)
         else:
-            await self.send_message(message_to_self=None, message_to_group={"world_state":result["session"]["world_state"]},
-                                    message_type=event['type'], send_to_client=False, send_to_group=True)
+            await self.send_message(message_to_self=None, 
+                                    message_to_group={"world_state":result["session"]["world_state"],
+                                                      "value": "success"},
+                                    message_type=event['type'], 
+                                    send_to_client=False, 
+                                    send_to_group=True)
     
     async def update_start_experiment(self, event):
         '''
@@ -187,12 +196,24 @@ def take_start_experiment(session_id, data):
     #session_id = data["session_id"]   
     session = Session.objects.get(id=session_id)
 
-    if not session.started:
-        session.start_experiment()
-
     value = "success"
-    
+    error_message = ""
+
+    #verify that all paramterset groups have at least two participants before starting the experiment
+    groups = session.parameter_set.parameter_set_groups.all()
+
+    for group in groups:
+        if group.parameter_set_players_b.count() < 2:
+            value = "fail"
+            error_message = f"Group '{group.name}' has less than 2 participants."
+            break
+
+    if value == "success":
+        if not session.started:
+            session.start_experiment()
+
     return {"value" : value, 
+            "error_message" : error_message,
             "session" : session.json()}
 
 def take_reset_experiment(session_id, data):

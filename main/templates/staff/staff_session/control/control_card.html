@@ -21,6 +21,9 @@
                         v-bind:disabled="reconnecting || working || session.started">
                     Start session <i class="far fa-play-circle"></i>
                 </button>
+                <p class="text-danger" v-show="start_button_error_message">
+                    Error: [[ start_button_error_message ]]
+                </p>
             </div>
         </div>
 
